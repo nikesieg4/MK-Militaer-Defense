@@ -17,6 +17,8 @@ Grafiken und Generatoren liegen im Repo `nikesieg4/Maiskolbistan-Info` unter `se
 
 ## Kampagne
 
+Die Wege führen aus der Karte hinaus (kein Kornspeicher mehr); Ostkolbistan endet im Salzsee, Maisburg am Regierungspalast. Wer das Wegende erreicht, kostet Leben.
+
 | Nr. | Bundesland | Karte | Wellen | Leben der Gegner | Verdienstorden (erster Sieg) |
 | --- | --- | --- | --- | --- | --- |
 | 1 | Westkolbistan | Grenzfelder | 20 | ×1,00 | 3 |

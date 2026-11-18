@@ -68,14 +68,19 @@
           ],
           [
             960,
-            650
+            680
+          ],
+          [
+            985,
+            880
           ]
         ]
       ],
       "ziel": [
-        960,
-        650
+        985,
+        880
       ],
+      "ende": "kartenrand",
       "freischalten": "von Anfang an",
       "sperren": []
     },
@@ -137,15 +142,24 @@
             735
           ],
           [
-            290,
-            715
+            260,
+            730
+          ],
+          [
+            120,
+            760
+          ],
+          [
+            -60,
+            780
           ]
         ]
       ],
       "ziel": [
-        290,
-        715
+        -60,
+        780
       ],
+      "ende": "kartenrand",
       "freischalten": "nach Westkolbistan",
       "sperren": []
     },
@@ -211,15 +225,20 @@
             220
           ],
           [
-            815,
-            170
+            820,
+            140
+          ],
+          [
+            800,
+            -60
           ]
         ]
       ],
       "ziel": [
-        815,
-        170
+        800,
+        -60
       ],
+      "ende": "kartenrand",
       "freischalten": "nach Paprikistan",
       "sperren": [
         {
@@ -310,15 +329,16 @@
             650
           ],
           [
-            140,
-            665
+            -60,
+            650
           ]
         ]
       ],
       "ziel": [
-        140,
-        665
+        -60,
+        650
       ],
+      "ende": "kartenrand",
       "freischalten": "nach Nordkolbistan",
       "sperren": [
         {
@@ -354,7 +374,7 @@
       "stufe": 5,
       "schwierigkeit": "Schwer",
       "wellen": 35,
-      "text": "Der Weg umrundet die Oase. Das Wasser ist frei, aber nicht bebaubar.",
+      "text": "Der Weg umrundet die Oase und endet im Salzsee. Das Wasser ist nicht bebaubar.",
       "bild": "karte_5_ostkolbistan.png",
       "groesse": {
         "w": 1140,
@@ -401,15 +421,20 @@
             220
           ],
           [
-            440,
-            250
+            430,
+            268
+          ],
+          [
+            500,
+            338
           ]
         ]
       ],
       "ziel": [
-        440,
-        250
+        500,
+        338
       ],
+      "ende": "see",
       "freischalten": "nach Maisdosistan",
       "sperren": [
         {
@@ -476,6 +501,10 @@
           [
             560,
             730
+          ],
+          [
+            430,
+            880
           ]
         ],
         [
@@ -498,9 +527,10 @@
         ]
       ],
       "ziel": [
-        560,
-        730
+        430,
+        880
       ],
+      "ende": "kartenrand",
       "freischalten": "nach Ostkolbistan",
       "sperren": [
         {
@@ -566,6 +596,7 @@
         1010,
         400
       ],
+      "ende": "palast",
       "freischalten": "nach Südkolbistan",
       "sperren": [
         {

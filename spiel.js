@@ -875,7 +875,7 @@
     P.orden += lohn; if (sieg) P.sterne[K.id] = Math.max(alteSterne, sterne); sichern();
     S.ende = true; S.pause = true;
     const naechste = A.karten.indexOf(K) + 1;
-    overlay(`<h1>${sieg ? K.land + ' ist sicher!' : aufgegeben ? 'Karte verlassen' : (K.palast ? 'Der Regierungspalast ist gefallen' : 'Der Kornspeicher ist gefallen')}</h1>
+    overlay(`<h1>${sieg ? K.land + ' ist sicher!' : aufgegeben ? 'Karte verlassen' : (K.ende === 'palast' ? 'Der Regierungspalast ist gefallen' : K.ende === 'see' ? 'Die Gegner haben den Salzsee erreicht' : 'Die Gegner sind durchgebrochen')}</h1>
       <p style="font-size:17px">${sieg ? `Alle ${K.wellen} Wellen abgewehrt mit ${Math.ceil(S.leben)} Leben übrig. <span style="color:#E8C766;letter-spacing:.1em">${'★'.repeat(sterne)}${'☆'.repeat(3 - sterne)}</span>` : `${geschafft} von ${K.wellen} Wellen geschafft.`}</p>
       <p>${sieg ? `Verdienstorden für den Techbaum: <b style="color:#E8C766">+${lohn}</b> (jetzt ${fmt(P.orden)}). Ausgeben kannst du sie auf dem Weltbildschirm.` : 'Verdienstorden gibt es nur für besiegte Karten.'}${sieg && naechste < A.karten.length && erstSieg ? ` Neue Karte freigeschaltet: <b>${A.karten[naechste].land}</b>.` : ''}</p>
       <div style="display:flex;gap:12px;margin-top:16px"><button class="gold" type="button" id="zurKampagne" style="width:260px">Zur Kampagne</button><button class="rand" type="button" id="nochmal" style="width:220px">Nochmal spielen</button>${sieg ? '<button class="rand" type="button" id="freeplay" style="width:260px">∞ Freeplay weiterspielen</button>' : ''}</div>
