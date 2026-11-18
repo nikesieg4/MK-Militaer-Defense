@@ -131,6 +131,8 @@
       json('daten/gegner_atlas.json'), json('daten/effekte_atlas.json'), json('daten/ranger_draufsicht.json'), json('daten/scharfschuetze_draufsicht.json'), json('daten/karten.json')
     ]);
     A = { depot, rangerTop, sniperTop, gegnerImg, effImg, gegnerAtlas, effAtlas, ranger: rangerJ, sniper: sniperJ, karten: karten.karten, bilder: {} };
+    if (typeof P.stufe !== 'number') { P.stufe = 1; P.xp = 0; }
+    if (!P.rekord) P.rekord = {};
     if (typeof P.orden !== 'number') {   // alter Spielstand mit Kornvorrat -> in Orden umrechnen
       let o = 0;
       A.karten.forEach((k, i) => { if (P.sterne[k.id]) o += ORDEN[i] + P.sterne[k.id]; });
@@ -174,6 +176,24 @@
     let m = Infinity;
     for (const weg of wege) for (let i = 0; i < weg.pts.length; i += 2) { const [px, py] = weg.pts[i]; const d = (px - x) ** 2 + (py - y) ** 2; if (d < m) m = d; }
     return Math.sqrt(m);
+  }
+
+  // ---------- Spieler-Stufe (Erfahrung) ----------
+  const XP_BEDARF = (stufe) => Math.round((3000 * Math.pow(1.35, stufe - 1)) / 50) * 50;   // 3.000, 4.050, 5.450, …
+  let xpSichern = 0;
+  function erfahrung(n) {
+    P.xp += n;
+    while (P.xp >= XP_BEDARF(P.stufe)) {
+      P.xp -= XP_BEDARF(P.stufe); P.stufe++; P.orden++;
+      toast(`Stufe ${P.stufe} erreicht! +1 Verdienstorden`);
+      sichern();
+    }
+    if (++xpSichern % 25 === 0) sichern();
+  }
+  let toastT = null;
+  function toast(text) {
+    const el = $('toast'); el.textContent = text; el.style.display = 'block';
+    clearTimeout(toastT); toastT = setTimeout(() => { el.style.display = 'none'; }, 3200);
   }
 
   // ---------- Türme ----------
@@ -262,7 +282,7 @@
     return q;
   }
   function gegnerNeu(typ) {
-    const g = GEGNER[typ], f = (1 + S.welle * 0.06) * HP_KARTE[K.stufe - 1];
+    const g = GEGNER[typ], f = (1 + S.welle * 0.06) * HP_KARTE[K.stufe - 1] * (S.welle > K.wellen ? Math.pow(1.1, S.welle - K.wellen) : 1);
     const w = S.spawnNr++ % wege.length, p = wegPos(w, 0);
     if (g.boss) { S.bannerBis = S.zeit + 4; $('hinweis').textContent = 'Achtung: Die Stahlratte rollt an! Sie hält an und betäubt Türme mit ihren Geschützen. Panzerbrechende Munition, Granaten und Laser helfen.'; }
     return { typ, w, hp: g.hp * f, max: g.hp * f, d: -20, t: Math.random(), brennt: 0, sichtbarBis: 0, x: p.x, y: p.y, links: false, schussCd: 6, stopp: 0, feuerT: 99, geschossen: true };
@@ -287,7 +307,7 @@
     let m = menge;
     if (GEGNER[g.typ].panzer && art === 'kugel' && !(w && (w.panzerbrechend || w.laser))) m *= 0.35;
     g.hp -= m;
-    if (g.hp <= 0) { S.koerner += GEGNER[g.typ].lohn; effekt('explosion', g.x, g.y - 20, 0, g.typ === 'ratte' ? 1.8 : g.typ === 'panzer' || g.typ === 'humvee' ? 0.9 : 0.35); }
+    if (g.hp <= 0) { S.koerner += GEGNER[g.typ].lohn; erfahrung(GEGNER[g.typ].lohn); effekt('explosion', g.x, g.y - 20, 0, g.typ === 'ratte' ? 1.8 : g.typ === 'panzer' || g.typ === 'humvee' ? 0.9 : 0.35); }
   }
   function muendung(t) {
     const code = t.a + '-' + t.b, info = A[t.typ].frames[code].bilder[0].muendung;
@@ -427,7 +447,13 @@
       S.laeuft = false;
       S.koerner += Math.round((150 + S.welle * 25) * (P.tech.ernte ? 1.1 : 1));
       if (P.tech.reserve) S.leben += 1;
-      if (S.welle >= K.wellen && !S.ende) { S.ende = true; ende(true); }
+      erfahrung(10 + S.welle * 2);
+      if (S.freeplay) {
+        const fp = S.welle - K.wellen;
+        P.rekord[K.id] = Math.max(P.rekord[K.id] || 0, S.welle);
+        if (fp > 0 && fp % 20 === 0) { P.orden++; toast(`${fp} Freeplay-Wellen geschafft! +1 Verdienstorden`); }
+        sichern();
+      } else if (S.welle >= K.wellen && !S.ende) { S.ende = true; ende(true); }
     }
   }
 
@@ -553,7 +579,7 @@
   }
   let letzteLeiste = '';
   function oberflaeche() {
-    $('welle').textContent = S.welle; $('wellenMax').textContent = K.wellen;
+    $('welle').textContent = S.welle; $('wellenMax').textContent = S.freeplay ? '∞ Freeplay' : K.wellen;
     $('koerner').textContent = fmt(S.koerner); $('leben').textContent = Math.max(0, Math.ceil(S.leben));
     $('tempo').textContent = S.tempo + '×'; $('pause').textContent = S.pause ? '▶' : '❚❚';
     const wk = $('welleKnopf');
@@ -637,7 +663,7 @@
     for (const t of S.tuerme) { const d = Math.hypot(t.x - p.x, t.y - p.y); if (d < best) { best = d; treffer = t; } }
     S.wahl = treffer; oberflaeche();
   });
-  window.__mk = { S: () => S, update: (dt) => update(dt), platzOk: (x, y) => platzOk(x, y), abstand: (x, y) => abstandZumWeg(x, y), laden: async (i) => { await karteLaden(i); S = neu(); }, welle: () => welleStarten() };
+  window.__mk = { S: () => S, P: () => P, update: (dt) => update(dt), platzOk: (x, y) => platzOk(x, y), abstand: (x, y) => abstandZumWeg(x, y), laden: async (i) => { await karteLaden(i); S = neu(); }, welle: () => welleStarten() };
   window.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') { S.platzieren = null; S.wahl = null; oberflaeche(); } });
 
   // ---------- Overlays ----------
@@ -646,6 +672,7 @@
   const SCHLOSS = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
   const KORN_ALT = '<svg width="22" height="26" viewBox="0 0 22 26" aria-hidden="true"><ellipse cx="11" cy="12" rx="6" ry="10" fill="#E8C766" stroke="#7A5A10" stroke-width="1.4"/><path d="M8 6v13M11 3v18M14 6v13" stroke="#C9A227" stroke-width="1.2"/><path d="M5 25Q4 15 8 9M17 25Q18 15 14 9" stroke="#2E9E4F" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>';
   const ORDEN_SVG = '<svg width="24" height="28" viewBox="0 0 24 28" aria-hidden="true"><path d="M6 1h5l3 9H9z" fill="#7A0F1A" stroke="#2B0509" stroke-width="1"/><path d="M13 1h5l-3 9h-5z" fill="#A3343C" stroke="#2B0509" stroke-width="1"/><circle cx="12" cy="18" r="8.5" fill="#E8C766" stroke="#7A5A10" stroke-width="1.6"/><circle cx="12" cy="18" r="5.5" fill="none" stroke="#C9A227" stroke-width="1.4"/><path d="M12 14.2l1.2 2.4 2.6.4-1.9 1.8.5 2.6-2.4-1.3-2.4 1.3.5-2.6-1.9-1.8 2.6-.4z" fill="#7A5A10"/></svg>';
+  const stufeChip = () => `<div class="chip" style="min-width:150px"><div style="width:100%"><small>Spieler-Stufe</small><b>${P.stufe}</b><div style="height:6px;border-radius:3px;background:#1A0306;margin-top:4px;overflow:hidden" title="${fmt(P.xp)} / ${fmt(XP_BEDARF(P.stufe))} Erfahrung"><div style="height:6px;width:${Math.round((P.xp / XP_BEDARF(P.stufe)) * 100)}%;background:#7CD992"></div></div><small style="letter-spacing:0;text-transform:none">${fmt(P.xp)} / ${fmt(XP_BEDARF(P.stufe))} EP</small></div></div>`;
   const vorratChip = () => `<div class="chip" style="border-color:#C9A227">${ORDEN_SVG}<div><small>Verdienstorden</small><b style="color:#E8C766">${fmt(P.orden)}</b></div></div>`;
 
   // Techbaum wie im Design (Knoten + Verbindungslinien), dauerhaft
@@ -730,8 +757,8 @@
     const k = L[kWahl], z = zustand(kWahl), st = P.sterne[k.id] || 0;
     const gesamtSterne = Object.values(P.sterne).reduce((a, b) => a + b, 0), gewonnen = Object.keys(P.sterne).length;
     overlay(`<div style="position:absolute;left:40px;top:28px;display:flex;flex-direction:column;gap:4px"><div style="font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#E8C766">Kampagne · Bir Tawil</div>
-        <h1 style="margin:0;font-size:40px;line-height:1">Verteidige die Bundesländer</h1><span style="font-size:15px;color:#E7D4D6">Von Westkolbistan bis zur Hauptstadt Maisburg – jede gewonnene Karte schaltet die nächste frei.</span></div>
-      <div style="position:absolute;left:720px;top:34px;display:flex;gap:10px;align-items:center">${vorratChip()}<button type="button" class="rand" id="zumTech" style="height:58px;padding:0 18px">Techbaum</button></div>
+        <h1 style="margin:0;font-size:34px;line-height:1">Verteidige die Bundesländer</h1><span style="font-size:14px;color:#E7D4D6">Jeder Sieg schaltet die nächste Karte frei.</span></div>
+      <div style="position:absolute;left:560px;top:28px;display:flex;gap:8px;align-items:center">${stufeChip()}${vorratChip()}<button type="button" class="rand" id="zumTech" style="height:58px;padding:0 18px">Techbaum</button></div>
       <div style="position:absolute;left:20px;top:140px;width:1020px;height:360px;border-radius:16px;background:#2B0509;border:1px solid #5A2A30;overflow:hidden">${svg}${marker}</div>
       <div style="position:absolute;left:20px;top:516px;width:1020px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px">${karten}</div>
       <div style="position:absolute;left:20px;top:770px;width:1020px;display:flex;justify-content:space-between;font-size:12px;color:#E7D4D6"><span>Gewonnen: ${gewonnen} von 7 · Sterne: ${gesamtSterne} von 21</span><span>Das Sperrgebiet ist militärisch und nicht spielbar. Der Anspruch auf Bir Tawil ist völkerrechtlich nicht anerkannt.</span></div>
@@ -745,6 +772,7 @@
             <div style="background:#3A0A10;border-radius:10px;padding:10px 12px"><small style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#E7D4D6">Wellen</small><div style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700">${k.wellen}</div></div>
             <div style="background:#3A0A10;border-radius:10px;padding:10px 12px"><small style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#E7D4D6">Belohnung</small><div style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#E8C766">+${st ? 1 : ORDEN[kWahl]} Orden</div></div></div>
           <div style="font-size:26px;letter-spacing:.1em;color:#E8C766">${'★'.repeat(st)}<span style="color:#5A2A30">${'★'.repeat(3 - st)}</span> <span style="font-size:13px;letter-spacing:0;color:#E7D4D6">${st ? st + ' von 3 Sternen' : '3 Sterne: kein Leben verlieren'}</span></div>
+          ${P.rekord[k.id] ? `<div style="font-size:13px;color:#E7D4D6">∞ Freeplay-Rekord: <b style="color:#fff">Welle ${P.rekord[k.id]}</b></div>` : st ? '<div style="font-size:13px;color:#E7D4D6">∞ Freeplay: nach dem Sieg weiterspielen</div>' : ''}
           <div style="flex:1"></div>
           ${z === 'zu' ? `<div style="height:60px;border-radius:14px;border:2px dashed #5A2A30;color:#E7D4D6;display:flex;align-items:center;justify-content:center;gap:10px;font-size:15px;font-weight:700">${SCHLOSS} Erst ${L[kWahl - 1].land} gewinnen</div>`
             : `<button type="button" class="gold" id="spielen">▶ ${st ? 'Nochmal spielen' : 'Spielen'}</button>`}
@@ -761,6 +789,16 @@
     $('hinweis').textContent = `${K.land} – ${K.titel}: ${K.text} Wähle einen Turm und tippe neben den Weg.`;
   }
   function ende(sieg, aufgegeben) {
+    if (S.freeplay) {
+      S.ende = true; S.pause = true; P.rekord[K.id] = Math.max(P.rekord[K.id] || 0, S.welle - 1); sichern();
+      const fp = Math.max(0, S.welle - 1 - K.wellen);
+      overlay(`<h1>Freeplay beendet</h1><p style="font-size:17px">${K.land}: Welle ${S.welle - 1} erreicht, ${fp} Freeplay-Wellen geschafft. Rekord: Welle ${P.rekord[K.id]}.</p>
+        <p>Alle 20 Freeplay-Wellen gab es 1 Verdienstorden. Stufe ${P.stufe} · Verdienstorden: ${fmt(P.orden)}.</p>
+        <div style="display:flex;gap:12px;margin-top:16px"><button class="gold" type="button" id="zurKampagne" style="width:260px">Zur Kampagne</button><button class="rand" type="button" id="nochmal" style="width:220px">Nochmal spielen</button></div>`);
+      $('zurKampagne').onclick = () => kampagne();
+      $('nochmal').onclick = () => { overlayZu(); spielenDirekt(); };
+      return;
+    }
     const geschafft = sieg ? K.wellen : Math.max(0, S.welle - 1);
     const erstSieg = sieg && !P.sterne[K.id];
     const sterne = sieg ? (S.leben >= S.startLeben ? 3 : S.leben >= S.startLeben / 2 ? 2 : 1) : 0;
@@ -772,8 +810,10 @@
     overlay(`<h1>${sieg ? K.land + ' ist sicher!' : aufgegeben ? 'Karte verlassen' : (K.palast ? 'Der Regierungspalast ist gefallen' : 'Der Kornspeicher ist gefallen')}</h1>
       <p style="font-size:17px">${sieg ? `Alle ${K.wellen} Wellen abgewehrt mit ${Math.ceil(S.leben)} Leben übrig. <span style="color:#E8C766;letter-spacing:.1em">${'★'.repeat(sterne)}${'☆'.repeat(3 - sterne)}</span>` : `${geschafft} von ${K.wellen} Wellen geschafft.`}</p>
       <p>${sieg ? `Verdienstorden für den Techbaum: <b style="color:#E8C766">+${lohn}</b> (jetzt ${fmt(P.orden)}). Ausgeben kannst du sie auf dem Weltbildschirm.` : 'Verdienstorden gibt es nur für besiegte Karten.'}${sieg && naechste < A.karten.length && erstSieg ? ` Neue Karte freigeschaltet: <b>${A.karten[naechste].land}</b>.` : ''}</p>
-      <div style="display:flex;gap:12px;margin-top:16px"><button class="gold" type="button" id="zurKampagne" style="width:260px">Zur Kampagne</button><button class="rand" type="button" id="nochmal" style="width:220px">Nochmal spielen</button></div>`);
+      <div style="display:flex;gap:12px;margin-top:16px"><button class="gold" type="button" id="zurKampagne" style="width:260px">Zur Kampagne</button><button class="rand" type="button" id="nochmal" style="width:220px">Nochmal spielen</button>${sieg ? '<button class="rand" type="button" id="freeplay" style="width:260px">∞ Freeplay weiterspielen</button>' : ''}</div>
+      ${sieg ? '<p class="klein" style="margin-top:12px">Freeplay: Die Wellen gehen weiter, die Gegner werden jede Welle 10 % zäher. Alle 20 Freeplay-Wellen gibt es 1 Verdienstorden.</p>' : ''}`);
     $('zurKampagne').onclick = () => { if (sieg && naechste < A.karten.length) kWahl = naechste; kampagne(); };
+    if ($('freeplay')) $('freeplay').onclick = () => { S.freeplay = true; S.ende = false; S.pause = false; overlayZu(); toast('Freeplay! Die Gegner werden jede Welle stärker.'); oberflaeche(); };
     $('nochmal').onclick = () => { overlayZu(); spielenDirekt(); };
   }
   function spielenDirekt() { S = neu(); letzteLeiste = ''; letztesPanel = ''; techZurueck = 'spiel'; overlayZu(); oberflaeche(); }

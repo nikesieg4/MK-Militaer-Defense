@@ -28,8 +28,16 @@ Grafiken und Generatoren liegen im Repo `nikesieg4/Maiskolbistan-Info` unter `se
 | 7 | Maisburg | Hauptstadt (Ziel: Regierungspalast) | 50 | ×1,55 | 6 |
 
 - Nächste Karte wird nach einem Sieg freigeschaltet. Sterne: 3 = kein Leben verloren, 2 = mindestens die Hälfte, 1 = gewonnen.
-- **Zweite Währung: Verdienstorden** (dauerhaft, nur für den Techbaum): **nur für besiegte Karten** – erster Sieg 3–6 Orden, jeder Wiederholungssieg 1 Orden, dazu +1 je neu erreichtem Stern. Niederlage/Aufgeben: 0.
+- **Zweite Währung: Verdienstorden** (dauerhaft, nur für den Techbaum): für besiegte Karten, Stufenaufstiege und alle 20 Freeplay-Wellen – erster Sieg 3–6 Orden, jeder Wiederholungssieg 1 Orden, dazu +1 je neu erreichtem Stern. Niederlage/Aufgeben: 0.
 - Fortschritt im Browser gespeichert (`localStorage` `mkd-fortschritt-1`).
+
+## Freeplay
+
+Nach einem Sieg: „∞ Freeplay weiterspielen“. Die Wellen gehen weiter, Gegner-Leben steigen zusätzlich um **10 % pro Freeplay-Welle** (×1,1^n). **Alle 20 Freeplay-Wellen 1 Verdienstorden.** Rekord je Karte wird gespeichert und in der Kampagne angezeigt. Eine Niederlage im Freeplay kostet nichts.
+
+## Spieler-Stufe
+
+Erfahrung (EP): jeder Abschuss = Körner-Belohnung des Gegners, jede geschaffte Welle 10 + 2 × Welle. Bedarf je Stufe 3.000 × 1,35^(Stufe − 1) (3.000, 4.050, 5.450 …). **Jeder Stufenaufstieg = 1 Verdienstorden** (Meldung im Spiel). Anzeige mit Fortschrittsbalken auf dem Weltbildschirm. Test: ein voller Durchlauf von Karte 1 bringt etwa 2 Stufen.
 
 ## Techbaum (dauerhaft)
 
