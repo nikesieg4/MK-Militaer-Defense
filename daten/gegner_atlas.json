@@ -1,8 +1,8 @@
 {
   "image": "gegner_spritesheet.png",
   "size": {
-    "w": 1024,
-    "h": 672
+    "w": 1728,
+    "h": 1120
   },
   "hinweise": {
     "richtung": "alle Gegner laufen/fahren nach rechts; nach links: horizontal spiegeln (scaleX = -1). Nicht drehen.",
@@ -95,6 +95,37 @@
         "y": 140
       },
       "info": "langsam, sehr viel Leben, kugelfest"
+    },
+    "ratte": {
+      "titel": "Boss: Stahlratte (Fahrt)",
+      "bilder": [
+        "ratte_1",
+        "ratte_2",
+        "ratte_3",
+        "ratte_4"
+      ],
+      "fps": 8,
+      "schleife": true,
+      "anker": {
+        "x": 192,
+        "y": 206
+      },
+      "info": "Boss (Welle 20 Grenzfelder): riesiger Landkreuzer, kugelfest; hält an und beschießt Türme (betäubt sie)"
+    },
+    "ratte_feuer": {
+      "titel": "Boss: Stahlratte (Schuss)",
+      "bilder": [
+        "ratte_feuer_1",
+        "ratte_feuer_2",
+        "ratte_feuer_3"
+      ],
+      "fps": 8,
+      "schleife": true,
+      "anker": {
+        "x": 192,
+        "y": 206
+      },
+      "info": "Schuss-Animation, einmal abspielen, Mündung bei (380, 62)"
     }
   },
   "frames": {
@@ -253,6 +284,48 @@
       "y": 512,
       "w": 256,
       "h": 160
+    },
+    "ratte_1": {
+      "x": 0,
+      "y": 672,
+      "w": 432,
+      "h": 224
+    },
+    "ratte_2": {
+      "x": 432,
+      "y": 672,
+      "w": 432,
+      "h": 224
+    },
+    "ratte_3": {
+      "x": 864,
+      "y": 672,
+      "w": 432,
+      "h": 224
+    },
+    "ratte_4": {
+      "x": 1296,
+      "y": 672,
+      "w": 432,
+      "h": 224
+    },
+    "ratte_feuer_1": {
+      "x": 0,
+      "y": 896,
+      "w": 432,
+      "h": 224
+    },
+    "ratte_feuer_2": {
+      "x": 432,
+      "y": 896,
+      "w": 432,
+      "h": 224
+    },
+    "ratte_feuer_3": {
+      "x": 864,
+      "y": 896,
+      "w": 432,
+      "h": 224
     }
   }
 }

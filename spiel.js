@@ -61,7 +61,8 @@
     tarnsoldat: { hp: 3, tempo: 66, lohn: 7, schaden: 1, gr: 0.6, tarn: true },
     panzersoldat: { hp: 12, tempo: 34, lohn: 14, schaden: 2, gr: 0.62, panzer: true },
     humvee: { hp: 30, tempo: 100, lohn: 20, schaden: 5, gr: 0.6 },
-    panzer: { hp: 180, tempo: 24, lohn: 100, schaden: 20, gr: 0.6, panzer: true }
+    panzer: { hp: 180, tempo: 24, lohn: 100, schaden: 20, gr: 0.6, panzer: true },
+    ratte: { hp: 1000, tempo: 15, lohn: 400, schaden: 1000, gr: 0.55, panzer: true, boss: true, name: 'Stahlratte' }
   };
 
   // Techbaum wie im Design: Spalte c, Zeile r; dauerhaft, bezahlt mit Verdienstorden (nur zwischen den Runden)
@@ -230,12 +231,14 @@
     if (n >= 10 && n % 5 === 0) add('panzer', n / 5 - 1, 4);
     if (n >= 18) add('panzer', Math.min(8, Math.floor((n - 14) / 2)), 3);
     if (n >= 25) add('humvee', Math.floor((n - 20) / 2), 0.9);
+    if (K.id === 'westkolbistan' && n === K.wellen) { t += 4; add('ratte', 1, 0); }
     return q;
   }
   function gegnerNeu(typ) {
     const g = GEGNER[typ], f = (1 + S.welle * 0.06) * HP_KARTE[K.stufe - 1];
     const w = S.spawnNr++ % wege.length, p = wegPos(w, 0);
-    return { typ, w, hp: g.hp * f, max: g.hp * f, d: -20, t: Math.random(), brennt: 0, sichtbarBis: 0, x: p.x, y: p.y, links: false };
+    if (g.boss) { S.bannerBis = S.zeit + 4; $('hinweis').textContent = 'Achtung: Die Stahlratte rollt an! Sie hält an und betäubt Türme mit ihren Geschützen. Panzerbrechende Munition, Granaten und Laser helfen.'; }
+    return { typ, w, hp: g.hp * f, max: g.hp * f, d: -20, t: Math.random(), brennt: 0, sichtbarBis: 0, x: p.x, y: p.y, links: false, schussCd: 6, stopp: 0, feuerT: 99, geschossen: true };
   }
 
   // ---------- Kampf ----------
@@ -257,7 +260,7 @@
     let m = menge;
     if (GEGNER[g.typ].panzer && art === 'kugel' && !(w && (w.panzerbrechend || w.laser))) m *= 0.35;
     g.hp -= m;
-    if (g.hp <= 0) { S.koerner += GEGNER[g.typ].lohn; effekt('explosion', g.x, g.y - 20, 0, g.typ === 'panzer' || g.typ === 'humvee' ? 0.9 : 0.35); }
+    if (g.hp <= 0) { S.koerner += GEGNER[g.typ].lohn; effekt('explosion', g.x, g.y - 20, 0, g.typ === 'ratte' ? 1.8 : g.typ === 'panzer' || g.typ === 'humvee' ? 0.9 : 0.35); }
   }
   function muendung(t) {
     const code = t.a + '-' + t.b, info = A[t.typ].frames[code].bilder[0].muendung;
@@ -286,6 +289,7 @@
   function turmUpdate(t, dt) {
     const w = werte(t);
     t.schussT += dt;
+    if (t.betaeubtBis > S.zeit) { t.burstRest = 0; return; }
     const ziel = zielWahl(t, w);
     if (ziel) {
       const soll = Math.atan2(ziel.y - 18 - t.y, ziel.x - t.x);
@@ -317,10 +321,14 @@
     if (p.wurf) {
       p.flug += dt;
       const k = Math.min(1, p.flug / p.dauer);
-      p.x = p.sx + (p.tx - p.sx) * k; p.y = p.sy + (p.ty - p.sy) * k - Math.sin(k * Math.PI) * 60; p.rot = k * 12;
+      p.x = p.sx + (p.tx - p.sx) * k; p.y = p.sy + (p.ty - p.sy) * k - Math.sin(k * Math.PI) * (p.boss ? 110 : 60);
+      p.rot = p.boss ? Math.atan2((p.ty - p.sy) - Math.cos(k * Math.PI) * Math.PI * 110, p.tx - p.sx) : k * 12;
       if (k >= 1) {
         p.weg = true;
-        if (p.art === 'granate') {
+        if (p.boss) {
+          effekt('explosion', p.tx, p.ty, 0, 0.75);
+          for (const t of S.tuerme) if (Math.hypot(t.x - p.tx, t.y - p.ty) < 50) t.betaeubtBis = S.zeit + 4;
+        } else if (p.art === 'granate') {
           const r = p.stufe >= 2 ? 4 * EINHEIT : 3 * EINHEIT, dmg = p.stufe >= 2 ? 100 : 75;
           effekt('explosion', p.tx, p.ty, 0, r / 70);
           for (const g of S.gegner) if (Math.hypot(g.x - p.tx, g.y - 15 - p.ty) < r) schaden(g, dmg * 0.25, 'explosion');
@@ -344,6 +352,13 @@
     } else { p.x += (dx / d) * s; p.y += (dy / d) * s; }
   }
 
+  function bossSchuss(g) {
+    const def = GEGNER[g.typ], z = g.bossZiel; if (!z) return;
+    const mx = g.x + (380 - 192) * def.gr * (g.links ? -1 : 1), my = g.y + (62 - 206) * def.gr;
+    effekt('muendungsfeuer', mx, my, g.links ? Math.PI : 0, 1.4);
+    S.geschosse.push({ art: 'granate_gross', x: mx, y: my, sx: mx, sy: my, tx: z.x, ty: z.y, flug: 0, dauer: 1.0, wurf: true, boss: true, ziel: z });
+  }
+
   // ---------- Ablauf ----------
   function update(dt) {
     S.zeit += dt;
@@ -353,7 +368,18 @@
     }
     for (const g of S.gegner) {
       const def = GEGNER[g.typ];
-      g.d += def.tempo * dt; g.t += dt;
+      if (def.boss) {
+        g.feuerT += dt; g.schussCd -= dt;
+        if (g.stopp > 0) {
+          g.stopp -= dt;
+          if (!g.geschossen && g.stopp < 1.3) { g.geschossen = true; g.feuerT = 0; bossSchuss(g); }
+        } else if (g.schussCd <= 0 && g.d > 30) {
+          let ziel = null;
+          for (const t of S.tuerme) if (Math.hypot(t.x - g.x, t.y - g.y) < 340 && !(t.betaeubtBis > S.zeit) && (!ziel || t.investiert > ziel.investiert)) ziel = t;
+          if (ziel) { g.stopp = 1.8; g.geschossen = false; g.bossZiel = ziel; g.schussCd = 8; } else g.schussCd = 1;
+        }
+      }
+      if (!(def.boss && g.stopp > 0)) { g.d += def.tempo * dt; g.t += dt; }
       const p = wegPos(g.w, g.d); g.x = p.x; g.y = p.y; if (Math.abs(p.dx) > 0.3) g.links = p.dx < 0;
       if (g.brennt > 0) { g.brennt -= dt; schaden(g, 4 * dt, 'feuer'); }
       if (g.d >= wege[g.w].gesamt) { g.hp = 0; g.durch = true; S.leben -= def.schaden; }
@@ -397,13 +423,14 @@
     ctx.restore();
   }
   function gegnerZeichnen(g) {
-    const an = A.gegnerAtlas.animationen[g.typ], def = GEGNER[g.typ];
-    const f = A.gegnerAtlas.frames[an.bilder[Math.floor(g.t * an.fps) % an.bilder.length]];
+    const def = GEGNER[g.typ], feuer = def.boss && g.feuerT < 0.375;
+    const an = A.gegnerAtlas.animationen[feuer ? 'ratte_feuer' : g.typ];
+    const f = A.gegnerAtlas.frames[an.bilder[feuer ? Math.min(2, Math.floor(g.feuerT * 8)) : Math.floor(g.t * an.fps) % an.bilder.length]];
     const getarnt = def.tarn && g.sichtbarBis <= S.zeit;
     ctx.save(); ctx.globalAlpha = getarnt ? 0.45 : 1;
     frameZeichnen(A.gegnerImg, f, g.x, g.y, (g.links ? -1 : 1) * def.gr, def.gr, an.anker.x, an.anker.y);
     ctx.restore();
-    if (g.hp < g.max) {
+    if (g.hp < g.max && !def.boss) {
       const bw = g.typ === 'panzer' ? 70 : 36, y = g.y - f.h * def.gr * 0.85;
       ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fillRect(g.x - bw / 2 - 1, y - 1, bw + 2, 6);
       ctx.fillStyle = g.hp / g.max > 0.4 ? '#7CD992' : '#FF6B5E'; ctx.fillRect(g.x - bw / 2, y, bw * Math.max(0, g.hp / g.max), 4);
@@ -417,6 +444,7 @@
     if (S.wahl) { ctx.beginPath(); ctx.arc(S.wahl.x, S.wahl.y, w.rangePx, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fill(); ctx.setLineDash([8, 6]); ctx.strokeStyle = '#E8C766'; ctx.lineWidth = 2; ctx.stroke(); ctx.setLineDash([]); }
     const dinge = [...S.gegner.map((g) => ({ y: g.y, f: () => gegnerZeichnen(g) })), ...S.tuerme.map((t) => ({ y: t.y + 20, f: () => {
       if (t === S.wahl) { ctx.save(); ctx.shadowColor = '#E8C766'; ctx.shadowBlur = 16; turmZeichnen(t); ctx.restore(); } else turmZeichnen(t);
+      if (t.betaeubtBis > S.zeit) frameZeichnen(A.effImg, effFrame('betaeubt', S.zeit, true), t.x, t.y - 46, 1, 1);
     } }))];
     dinge.sort((p, q) => p.y - q.y).forEach((d) => d.f());
     for (const p of S.geschosse) {
@@ -429,6 +457,23 @@
       ctx.save(); ctx.translate(e.x, e.y); ctx.rotate(e.rot); ctx.scale(e.gr, e.gr);
       const ax = e.name === 'muendungsfeuer' ? 3 : fr.w / 2;
       ctx.drawImage(A.effImg, fr.x, fr.y, fr.w, fr.h, -ax, -fr.h / 2, fr.w, fr.h); ctx.restore();
+    }
+    const boss = S.gegner.find((g) => GEGNER[g.typ].boss);
+    if (boss) {
+      const x0 = 430, bw = 480;
+      ctx.fillStyle = 'rgba(43,5,9,0.92)'; ctx.strokeStyle = '#C9A227'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.roundRect(x0, 20, bw, 52, 12); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#E8C766'; ctx.font = '700 13px Inter, sans-serif'; ctx.fillText('BOSS · ' + GEGNER[boss.typ].name.toUpperCase(), x0 + 14, 40);
+      ctx.fillStyle = '#E7D4D6'; ctx.textAlign = 'right'; ctx.fillText(fmt(Math.max(0, boss.hp)) + ' / ' + fmt(boss.max), x0 + bw - 14, 40); ctx.textAlign = 'left';
+      ctx.fillStyle = '#1A0306'; ctx.fillRect(x0 + 14, 48, bw - 28, 12);
+      ctx.fillStyle = '#E0361C'; ctx.fillRect(x0 + 14, 48, (bw - 28) * Math.max(0, boss.hp / boss.max), 12);
+    }
+    if (S.bannerBis > S.zeit) {
+      const a = Math.min(1, (S.bannerBis - S.zeit) / 0.5);
+      ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = 'rgba(26,3,6,0.85)'; ctx.fillRect(0, 340, W, 110);
+      ctx.fillStyle = '#C9A227'; ctx.fillRect(0, 340, W, 3); ctx.fillRect(0, 447, W, 3);
+      ctx.textAlign = 'center'; ctx.fillStyle = '#E8C766'; ctx.font = '700 16px Inter, sans-serif'; ctx.fillText('BOSS-WELLE', W / 2, 376);
+      ctx.fillStyle = '#FFFFFF'; ctx.font = '700 44px "Space Grotesk", sans-serif'; ctx.fillText('Die Stahlratte rollt an!', W / 2, 424); ctx.restore(); ctx.textAlign = 'left';
     }
     if (S.platzieren && S.maus) {
       const ok = platzOk(S.maus.x, S.maus.y), r = werte({ typ: S.platzieren, a: 0, b: 0 }).rangePx;

@@ -2,7 +2,7 @@
   "image": "effekte_spritesheet.png",
   "size": {
     "w": 1280,
-    "h": 534
+    "h": 602
   },
   "hinweise": {
     "geschosse": "zeigen nach rechts; in Flugrichtung drehen (Math.atan2(dy, dx))",
@@ -137,6 +137,25 @@
         "leuchtkugel_2",
         "leuchtkugel_3",
         "leuchtkugel_4"
+      ],
+      "fps": 10,
+      "schleife": true
+    },
+    "granate_gross": {
+      "titel": "Schwere Granate (Boss)",
+      "bilder": [
+        "granate_gross"
+      ],
+      "fps": 0,
+      "schleife": false
+    },
+    "betaeubt": {
+      "titel": "Betäubt (Schleife über dem Turm)",
+      "bilder": [
+        "betaeubt_1",
+        "betaeubt_2",
+        "betaeubt_3",
+        "betaeubt_4"
       ],
       "fps": 10,
       "schleife": true
@@ -334,6 +353,36 @@
       "y": 454,
       "w": 64,
       "h": 80
+    },
+    "granate_gross": {
+      "x": 0,
+      "y": 534,
+      "w": 56,
+      "h": 24
+    },
+    "betaeubt_1": {
+      "x": 0,
+      "y": 558,
+      "w": 72,
+      "h": 44
+    },
+    "betaeubt_2": {
+      "x": 72,
+      "y": 558,
+      "w": 72,
+      "h": 44
+    },
+    "betaeubt_3": {
+      "x": 144,
+      "y": 558,
+      "w": 72,
+      "h": 44
+    },
+    "betaeubt_4": {
+      "x": 216,
+      "y": 558,
+      "w": 72,
+      "h": 44
     }
   }
 }
