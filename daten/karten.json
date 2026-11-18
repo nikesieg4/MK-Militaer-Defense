@@ -76,7 +76,8 @@
         960,
         650
       ],
-      "freischalten": "von Anfang an"
+      "freischalten": "von Anfang an",
+      "sperren": []
     },
     {
       "id": "paprikistan",
@@ -145,7 +146,8 @@
         290,
         715
       ],
-      "freischalten": "nach Westkolbistan"
+      "freischalten": "nach Westkolbistan",
+      "sperren": []
     },
     {
       "id": "nordkolbistan",
@@ -218,7 +220,45 @@
         815,
         170
       ],
-      "freischalten": "nach Paprikistan"
+      "freischalten": "nach Paprikistan",
+      "sperren": [
+        {
+          "x": 90,
+          "y": 122,
+          "rx": 96,
+          "ry": 88
+        },
+        {
+          "x": 400,
+          "y": 312,
+          "rx": 86,
+          "ry": 78
+        },
+        {
+          "x": 1060,
+          "y": 132,
+          "rx": 116,
+          "ry": 108
+        },
+        {
+          "x": 1040,
+          "y": 652,
+          "rx": 116,
+          "ry": 138
+        },
+        {
+          "x": 420,
+          "y": 732,
+          "rx": 106,
+          "ry": 68
+        },
+        {
+          "x": 740,
+          "y": 432,
+          "rx": 76,
+          "ry": 68
+        }
+      ]
     },
     {
       "id": "maisdosistan",
@@ -279,7 +319,33 @@
         140,
         665
       ],
-      "freischalten": "nach Nordkolbistan"
+      "freischalten": "nach Nordkolbistan",
+      "sperren": [
+        {
+          "x": 450,
+          "y": 340,
+          "rx": 64,
+          "ry": 44
+        },
+        {
+          "x": 760,
+          "y": 400,
+          "rx": 54,
+          "ry": 64
+        },
+        {
+          "x": 1040,
+          "y": 300,
+          "rx": 64,
+          "ry": 49
+        },
+        {
+          "x": 1040,
+          "y": 560,
+          "rx": 59,
+          "ry": 44
+        }
+      ]
     },
     {
       "id": "ostkolbistan",
@@ -344,7 +410,15 @@
         440,
         250
       ],
-      "freischalten": "nach Maisdosistan"
+      "freischalten": "nach Maisdosistan",
+      "sperren": [
+        {
+          "x": 560,
+          "y": 410,
+          "rx": 190,
+          "ry": 135
+        }
+      ]
     },
     {
       "id": "suedkolbistan",
@@ -427,7 +501,15 @@
         560,
         730
       ],
-      "freischalten": "nach Ostkolbistan"
+      "freischalten": "nach Ostkolbistan",
+      "sperren": [
+        {
+          "x": 1040,
+          "y": 730,
+          "rx": 70,
+          "ry": 42
+        }
+      ]
     },
     {
       "id": "maisburg",
@@ -484,7 +566,15 @@
         1010,
         400
       ],
-      "freischalten": "nach Südkolbistan"
+      "freischalten": "nach Südkolbistan",
+      "sperren": [
+        {
+          "x": 1010,
+          "y": 400,
+          "rx": 125,
+          "ry": 105
+        }
+      ]
     }
   ]
 }

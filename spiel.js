@@ -64,26 +64,39 @@
     panzer: { hp: 180, tempo: 24, lohn: 100, schaden: 20, gr: 0.6, panzer: true }
   };
 
+  // Techbaum wie im Design: Spalte c, Zeile r; dauerhaft, bezahlt mit Kornvorrat
   const TECH = [
-    { id: 'ranger', reihe: 'Türme', n: 'Ranger', t: 'Start-Turm.', k: 0 },
-    { id: 'sniper', reihe: 'Türme', n: 'Scharfschütze', t: 'Neuer Turm mit großer Reichweite.', k: 1500, req: 'ranger' },
-    { id: 'drill1', reihe: 'Ranger', n: 'Ranger-Drill I', t: 'Ranger: +10 % Feuerrate.', k: 400, req: 'ranger' },
-    { id: 'drill2', reihe: 'Ranger', n: 'Ranger-Drill II', t: 'Ranger: weitere +10 % Feuerrate.', k: 900, req: 'drill1' },
-    { id: 'goldmag', reihe: 'Ranger', n: 'Goldmagazin', t: 'Neue Ranger starten mit Panzerbrechend (Sturm 1).', k: 1200, req: 'drill2' },
-    { id: 'ruhig', reihe: 'Scharfschütze', n: 'Ruhige Hand', t: 'Scharfschützen: +15 % Reichweite.', k: 800, req: 'sniper' },
-    { id: 'tarnung', reihe: 'Scharfschütze', n: 'Maisfeld-Tarnung', t: 'Phantom-Ausbauten 20 % günstiger.', k: 1800, req: 'ruhig' },
-    { id: 'ernte', reihe: 'Allgemein', n: 'Erntebonus', t: '+10 % Körner pro geschaffter Welle.', k: 1200 }
+    { id: 'ranger', n: 'Ranger', t: 'Start-Turm. Feuerstöße, zwei Ausbaupfade.', c: 0, r: 0, k: 0, bild: 'ranger' },
+    { id: 'sniper', n: 'Scharfschütze', t: 'Neuer Turm: große Reichweite, Phantom- und Schwerkaliber-Pfad.', c: 1, r: 0, k: 1500, req: 'ranger', bild: 'sniper' },
+    { id: 'next', n: 'Nächster Turm', t: 'Folgt in einer späteren Version.', c: 2, r: 0, k: 0, req: 'sniper', bald: true },
+    { id: 'ruhig', n: 'Ruhige Hand', t: 'Scharfschützen: +15 % Reichweite.', c: 2, r: 1, k: 800, req: 'sniper' },
+    { id: 'tarnung', n: 'Maisfeld-Tarnung', t: 'Phantom-Ausbauten 20 % günstiger.', c: 3, r: 1, k: 1800, req: 'ruhig' },
+    { id: 'drill1', n: 'Ranger-Drill I', t: 'Ranger: +10 % Feuerrate.', c: 1, r: 2, k: 400, req: 'ranger' },
+    { id: 'drill2', n: 'Ranger-Drill II', t: 'Ranger: weitere +10 % Feuerrate.', c: 2, r: 2, k: 900, req: 'drill1' },
+    { id: 'goldmag', n: 'Goldmagazin', t: 'Neue Ranger starten mit Panzerbrechend.', c: 3, r: 2, k: 1200, req: 'drill2' },
+    { id: 'kasse', n: 'Kriegskasse', t: '+150 Körner Startgeld.', c: 0, r: 3, k: 500 },
+    { id: 'ernte', n: 'Erntebonus', t: '+10 % Körner pro geschaffter Welle.', c: 1, r: 3, k: 1200, req: 'kasse' },
+    { id: 'bunker', n: 'Strohbunker', t: '+20 Leben zu Spielbeginn.', c: 2, r: 3, k: 600, req: 'ernte' },
+    { id: 'reserve', n: 'Mais-Reserve', t: '+1 Leben nach jeder Welle.', c: 3, r: 3, k: 2000, req: 'bunker' }
   ];
+  const REIHEN = ['Türme', 'Scharfschütze', 'Ranger', 'Allgemein'];
+  const BELOHNUNG = [500, 700, 900, 1100, 1400, 1800, 3000];
+  const HP_KARTE = [1, 1.08, 1.16, 1.24, 1.32, 1.42, 1.55];
+  const SPEICHER = 'mkd-fortschritt-1';
+  const P = (() => { try { const d = JSON.parse(localStorage.getItem(SPEICHER) || 'null'); if (d && d.tech) return d; } catch (e) {} return { vorrat: 0, tech: { ranger: true }, sterne: {} }; })();
+  const sichern = () => { try { localStorage.setItem(SPEICHER, JSON.stringify(P)); } catch (e) {} };
+
   const ZIELE = ['Erster', 'Letzter', 'Stärkster', 'Nächster'];
 
   // ---------- Zustand ----------
   let A = {};             // Bilder + Atlanten
-  let weg = null;         // abgetasteter Weg
+  let wege = [];          // abgetastete Wege der aktuellen Karte
+  let K = null;           // aktuelle Karte (aus karten.json)
   let S;                  // Spielzustand
   const neu = () => ({
-    welle: 0, koerner: 800, leben: 100, tempo: 1, pause: false, laeuft: false, ende: false,
-    tuerme: [], gegner: [], geschosse: [], effekte: [], flaechen: [], spawn: [],
-    wahl: null, platzieren: null, maus: null, tech: { ranger: true }, zeit: 0
+    welle: 0, koerner: 800 + (P.tech.kasse ? 150 : 0), leben: 100 + (P.tech.bunker ? 20 : 0), tempo: 1, pause: false, laeuft: false, ende: false,
+    tuerme: [], gegner: [], geschosse: [], effekte: [], flaechen: [], spawn: [], spawnNr: 0,
+    wahl: null, platzieren: null, maus: null, tech: P.tech, zeit: 0, startLeben: 100 + (P.tech.bunker ? 20 : 0)
   });
 
   // ---------- Laden ----------
@@ -91,19 +104,25 @@
   const json = (src) => fetch(src).then((r) => { if (!r.ok) throw new Error(src); return r.json(); });
 
   async function laden() {
-    const [karte, rangerTop, sniperTop, gegnerImg, effImg, gegnerAtlas, effAtlas, rangerJ, sniperJ, karten] = await Promise.all([
-      bild('bilder/karte_1_westkolbistan.png'), bild('bilder/ranger_draufsicht@2x.png'), bild('bilder/scharfschuetze_draufsicht@2x.png'),
+    const [rangerTop, sniperTop, gegnerImg, effImg, gegnerAtlas, effAtlas, rangerJ, sniperJ, karten] = await Promise.all([
+      bild('bilder/ranger_draufsicht@2x.png'), bild('bilder/scharfschuetze_draufsicht@2x.png'),
       bild('bilder/gegner_spritesheet.png'), bild('bilder/effekte_spritesheet.png'),
       json('daten/gegner_atlas.json'), json('daten/effekte_atlas.json'), json('daten/ranger_draufsicht.json'), json('daten/scharfschuetze_draufsicht.json'), json('daten/karten.json')
     ]);
-    A = { karte, rangerTop, sniperTop, gegnerImg, effImg, gegnerAtlas, effAtlas, ranger: rangerJ, sniper: sniperJ, kartenInfo: karten.karten[0] };
-    weg = wegAbtasten(A.kartenInfo.wege[0]);
+    A = { rangerTop, sniperTop, gegnerImg, effImg, gegnerAtlas, effAtlas, ranger: rangerJ, sniper: sniperJ, karten: karten.karten, bilder: {} };
+  }
+  async function karteLaden(i) {
+    const k = A.karten[i];
+    if (!A.bilder[i]) A.bilder[i] = await bild('bilder/' + k.bild);
+    wege = k.wege.map((w) => wegAbtasten(w, k.eckig));
+    K = k;
   }
 
   // ---------- Weg ----------
-  function wegAbtasten(p) {
+  function wegAbtasten(p, eckig) {
     const pts = [];
     for (let i = 0; i < p.length - 1; i++) {
+      if (eckig) { for (let t = 0; t < 1; t += 0.02) pts.push([p[i][0] + (p[i + 1][0] - p[i][0]) * t, p[i][1] + (p[i + 1][1] - p[i][1]) * t]); continue; }
       const p0 = p[Math.max(0, i - 1)], p1 = p[i], p2 = p[i + 1], p3 = p[Math.min(p.length - 1, i + 2)];
       const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6], c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
       for (let t = 0; t < 1; t += 0.01) {
@@ -116,8 +135,8 @@
     for (let i = 1; i < pts.length; i++) lang.push(lang[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
     return { pts, lang, gesamt: lang[lang.length - 1] };
   }
-  function wegPos(d) {
-    const { pts, lang } = weg;
+  function wegPos(w, d) {
+    const { pts, lang } = wege[w];
     if (d <= 0) return { x: pts[0][0], y: pts[0][1], dx: 1 };
     let lo = 0, hi = lang.length - 1;
     while (hi - lo > 1) { const m = (lo + hi) >> 1; if (lang[m] < d) lo = m; else hi = m; }
@@ -126,7 +145,7 @@
   }
   function abstandZumWeg(x, y) {
     let m = Infinity;
-    for (let i = 0; i < weg.pts.length; i += 2) { const [px, py] = weg.pts[i]; const d = (px - x) ** 2 + (py - y) ** 2; if (d < m) m = d; }
+    for (const weg of wege) for (let i = 0; i < weg.pts.length; i += 2) { const [px, py] = weg.pts[i]; const d = (px - x) ** 2 + (py - y) ** 2; if (d < m) m = d; }
     return Math.sqrt(m);
   }
 
@@ -136,8 +155,8 @@
     const add = (d) => { for (const [k, v] of Object.entries(d)) w[k] = typeof v === 'number' && typeof w[k] === 'number' ? w[k] + v : v; };
     for (let i = 0; i < t.a; i++) add(def.A[i].d);
     for (let i = 0; i < t.b; i++) add(def.B[i].d);
-    if (t.typ === 'ranger') { if (S.tech.drill1) w.reload *= 0.9; if (S.tech.drill2) w.reload *= 0.9; }
-    if (t.typ === 'sniper' && S.tech.ruhig) w.range *= 1.15;
+    if (t.typ === 'ranger') { if (P.tech.drill1) w.reload *= 0.9; if (P.tech.drill2) w.reload *= 0.9; }
+    if (t.typ === 'sniper' && P.tech.ruhig) w.range *= 1.15;
     if (w.dauerfeuer) { w.reload = 0.15; w.burst = 1; }
     w.rangePx = w.range * EINHEIT;
     return w;
@@ -145,7 +164,7 @@
   function ausbauKosten(t, pfad) {
     const def = TUERME[t.typ], stufe = pfad === 'A' ? t.a : t.b;
     let k = def[pfad][stufe].k;
-    if (t.typ === 'sniper' && pfad === 'A' && S.tech.tarnung) k = Math.round(k * 0.8);
+    if (t.typ === 'sniper' && pfad === 'A' && P.tech.tarnung) k = Math.round(k * 0.8);
     return k;
   }
   function turmName(t) {
@@ -156,8 +175,9 @@
   function platzOk(x, y) {
     if (x < 30 || x > W - 30 || y < 30 || y > H - 30) return false;
     if (x < 540 && y < 90) return false;                         // Anzeige oben links
-    if (abstandZumWeg(x, y) < 33 + 22) return false;
-    const z = A.kartenInfo.ziel; if (Math.hypot(x - z[0], y - z[1]) < 70) return false;
+    if (abstandZumWeg(x, y) < K.wegbreite / 2 + 3 + 22) return false;
+    const z = K.ziel; if (Math.hypot(x - z[0], y - z[1]) < 70) return false;
+    for (const e of K.sperren || []) if (((x - e.x) / e.rx) ** 2 + ((y - e.y) / e.ry) ** 2 < 1) return false;
     for (const t of S.tuerme) if (Math.hypot(t.x - x, t.y - y) < 46) return false;
     return true;
   }
@@ -165,7 +185,7 @@
     const def = TUERME[typ];
     if (S.koerner < def.kosten) return;
     S.koerner -= def.kosten;
-    const t = { typ, x, y, a: 0, b: typ === 'ranger' && S.tech.goldmag ? 1 : 0, ziel: 0, winkel: -Math.PI / 2, cd: 0.3, burstRest: 0, burstCd: 0, schussT: 1, granCd: 2, brandCd: 4, leuchtCd: 1, investiert: def.kosten };
+    const t = { typ, x, y, a: 0, b: typ === 'ranger' && P.tech.goldmag ? 1 : 0, ziel: 0, winkel: -Math.PI / 2, cd: 0.3, burstRest: 0, burstCd: 0, schussT: 1, granCd: 2, brandCd: 4, leuchtCd: 1, investiert: def.kosten };
     S.tuerme.push(t);
     S.wahl = t;
   }
@@ -180,12 +200,15 @@
     if (n >= 6) add('panzersoldat', Math.floor((n - 4) * 0.8), 1.1);
     if (n >= 7) add('humvee', Math.floor((n - 5) * 0.5), 1.4);
     if (n >= 9) add('soldat', Math.round(n * 1.5), 0.3);
-    if (n === 10 || n === 15 || n >= 18) add('panzer', n === 10 ? 1 : n === 15 ? 2 : n - 16, 4);
+    if (n >= 10 && n % 5 === 0) add('panzer', n / 5 - 1, 4);
+    if (n >= 18) add('panzer', Math.min(8, Math.floor((n - 14) / 2)), 3);
+    if (n >= 25) add('humvee', Math.floor((n - 20) / 2), 0.9);
     return q;
   }
   function gegnerNeu(typ) {
-    const g = GEGNER[typ], f = 1 + S.welle * 0.06;
-    return { typ, hp: g.hp * f, max: g.hp * f, d: -20, t: Math.random(), brennt: 0, sichtbarBis: 0, x: -60, y: 150, links: false };
+    const g = GEGNER[typ], f = (1 + S.welle * 0.06) * HP_KARTE[K.stufe - 1];
+    const w = S.spawnNr++ % wege.length, p = wegPos(w, 0);
+    return { typ, w, hp: g.hp * f, max: g.hp * f, d: -20, t: Math.random(), brennt: 0, sichtbarBis: 0, x: p.x, y: p.y, links: false };
   }
 
   // ---------- Kampf ----------
@@ -196,7 +219,8 @@
       if (g.hp <= 0 || g.d < 0) continue;
       const dist = Math.hypot(g.x - t.x, g.y - t.y);
       if (dist > w.rangePx || !sichtbar(g, t, w)) continue;
-      const wert = [g.d, -g.d, g.hp, -dist][t.ziel];
+      const fort = g.d / wege[g.w].gesamt;
+      const wert = [fort, -fort, g.hp, -dist][t.ziel];
       if (wert > bestWert) { bestWert = wert; best = g; }
     }
     return best;
@@ -303,9 +327,9 @@
     for (const g of S.gegner) {
       const def = GEGNER[g.typ];
       g.d += def.tempo * dt; g.t += dt;
-      const p = wegPos(g.d); g.x = p.x; g.y = p.y; if (Math.abs(p.dx) > 0.3) g.links = p.dx < 0;
+      const p = wegPos(g.w, g.d); g.x = p.x; g.y = p.y; if (Math.abs(p.dx) > 0.3) g.links = p.dx < 0;
       if (g.brennt > 0) { g.brennt -= dt; schaden(g, 4 * dt, 'feuer'); }
-      if (g.d >= weg.gesamt) { g.hp = 0; g.durch = true; S.leben -= def.schaden; }
+      if (g.d >= wege[g.w].gesamt) { g.hp = 0; g.durch = true; S.leben -= def.schaden; }
     }
     for (const f of S.flaechen) { f.t += dt; for (const g of S.gegner) if (Math.hypot(g.x - f.x, g.y - f.y) < 46) g.brennt = 0.5; }
     S.flaechen = S.flaechen.filter((f) => f.bis > S.zeit);
@@ -318,8 +342,9 @@
     if (S.leben <= 0 && !S.ende) { S.leben = 0; S.ende = true; ende(false); }
     if (S.laeuft && !S.spawn.length && !S.gegner.length) {
       S.laeuft = false;
-      S.koerner += Math.round((150 + S.welle * 25) * (S.tech.ernte ? 1.1 : 1));
-      if (S.welle >= A.kartenInfo.wellen && !S.ende) { S.ende = true; ende(true); }
+      S.koerner += Math.round((150 + S.welle * 25) * (P.tech.ernte ? 1.1 : 1));
+      if (P.tech.reserve) S.leben += 1;
+      if (S.welle >= K.wellen && !S.ende) { S.ende = true; ende(true); }
     }
   }
 
@@ -359,7 +384,7 @@
     if (g.brennt > 0) { const fl = effFrame('brandflaeche', S.zeit, true); frameZeichnen(A.effImg, fl, g.x, g.y - 6, 0.35, 0.35); }
   }
   function zeichnen() {
-    ctx.drawImage(A.karte, 0, 0, W, H);
+    ctx.drawImage(A.bilder[A.karten.indexOf(K)], 0, 0, W, H);
     for (const f of S.flaechen) frameZeichnen(A.effImg, effFrame('brandflaeche', f.t, true), f.x, f.y, 0.9, 0.9);
     const w = S.wahl ? werte(S.wahl) : null;
     if (S.wahl) { ctx.beginPath(); ctx.arc(S.wahl.x, S.wahl.y, w.rangePx, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fill(); ctx.setLineDash([8, 6]); ctx.strokeStyle = '#E8C766'; ctx.lineWidth = 2; ctx.stroke(); ctx.setLineDash([]); }
@@ -398,7 +423,7 @@
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'turmkarte';
       if (!typ) { b.classList.add('gesperrt'); b.disabled = true; b.innerHTML = '<div class="bild" style="display:flex;align-items:center;justify-content:center;font-size:36px;color:#5A2A30;font-weight:700">?</div><span class="name">Bald</span><span class="preis">gesperrt</span>'; box.appendChild(b); continue; }
-      const def = TUERME[typ], frei = !def.tech || S.tech[def.tech];
+      const def = TUERME[typ], frei = !def.tech || P.tech[def.tech];
       if (!frei) b.classList.add('gesperrt');
       else if (S.koerner < def.kosten) b.classList.add('teuer');
       if (S.platzieren === typ) b.classList.add('aktiv');
@@ -406,7 +431,7 @@
       b.innerHTML = `<div class="bild" style="${schraegStil(typ, 0, 0, 112)}"></div><span class="name">${def.name}</span><span class="preis">${frei ? fmt(def.kosten) + ' Körner' : 'Techbaum'}</span>` +
         (frei ? '' : '<span class="schloss"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E8C766" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>');
       b.onclick = () => {
-        if (!frei) { $('hinweis').textContent = 'Der Scharfschütze ist gesperrt. Schalte ihn im Techbaum frei (1.500 Körner).'; return; }
+        if (!frei) { $('hinweis').textContent = 'Der Scharfschütze ist gesperrt. Schalte ihn im Techbaum frei (1.500 Kornvorrat – gibt es für gewonnene Karten und geschaffte Wellen).'; return; }
         S.platzieren = S.platzieren === typ ? null : typ; S.wahl = null;
         $('hinweis').textContent = S.platzieren ? def.info + ' Tippe auf eine freie Stelle neben dem Weg.' : 'Wähle einen Turm.';
         oberflaeche();
@@ -416,13 +441,13 @@
   }
   let letzteLeiste = '';
   function oberflaeche() {
-    $('welle').textContent = S.welle; $('wellenMax').textContent = A.kartenInfo.wellen;
+    $('welle').textContent = S.welle; $('wellenMax').textContent = K.wellen;
     $('koerner').textContent = fmt(S.koerner); $('leben').textContent = Math.max(0, Math.ceil(S.leben));
     $('tempo').textContent = S.tempo + '×'; $('pause').textContent = S.pause ? '▶' : '❚❚';
     const wk = $('welleKnopf');
     wk.disabled = S.laeuft || S.ende;
     wk.textContent = S.laeuft ? 'Welle läuft …' : `▶ Welle ${S.welle + 1} starten`;
-    const schluessel = JSON.stringify([S.platzieren, S.tech, S.koerner >= 250, S.koerner >= 285]);
+    const schluessel = JSON.stringify([S.platzieren, P.tech, S.koerner >= 250, S.koerner >= 285]);
     if (schluessel !== letzteLeiste) { letzteLeiste = schluessel; leisteZeichnen(); }
     panelZeichnen();
   }
@@ -430,7 +455,7 @@
   function panelZeichnen() {
     const p = $('panel'), t = S.wahl;
     if (!t) { p.style.display = 'none'; letztesPanel = ''; return; }
-    const schluessel = JSON.stringify([S.tuerme.indexOf(t), t.a, t.b, t.ziel, Math.floor(S.koerner), S.tech]);
+    const schluessel = JSON.stringify([S.tuerme.indexOf(t), t.a, t.b, t.ziel, Math.floor(S.koerner), P.tech]);
     if (schluessel === letztesPanel) return;
     letztesPanel = schluessel;
     p.style.display = 'flex';
@@ -463,7 +488,7 @@
   $('tempo').onclick = () => { S.tempo = S.tempo === 1 ? 2 : 1; oberflaeche(); };
   $('pause').onclick = () => { S.pause = !S.pause; oberflaeche(); };
   $('welleKnopf').onclick = () => { if (S.laeuft || S.ende) return; S.welle++; S.spawn = welleBauen(S.welle); S.laeuft = true; oberflaeche(); };
-  $('techKnopf').onclick = () => techZeigen();
+  $('techKnopf').onclick = () => techZeigen('spiel');
 
   function feldPunkt(ev) {
     const r = cv.getBoundingClientRect();
@@ -482,41 +507,156 @@
     for (const t of S.tuerme) { const d = Math.hypot(t.x - p.x, t.y - p.y); if (d < best) { best = d; treffer = t; } }
     S.wahl = treffer; oberflaeche();
   });
-  window.__mk = { S: () => S, update: (dt) => update(dt), welle: () => { if (!S.laeuft && !S.ende) { S.welle++; S.spawn = welleBauen(S.welle); S.laeuft = true; } } };
+  window.__mk = { S: () => S, update: (dt) => update(dt), platzOk: (x, y) => platzOk(x, y), abstand: (x, y) => abstandZumWeg(x, y), laden: async (i) => { await karteLaden(i); S = neu(); }, welle: () => { if (!S.laeuft && !S.ende) { S.welle++; S.spawn = welleBauen(S.welle); S.laeuft = true; } } };
   window.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') { S.platzieren = null; S.wahl = null; oberflaeche(); } });
 
   // ---------- Overlays ----------
-  function overlay(html) { $('overlayInhalt').innerHTML = html; $('overlay').style.display = 'flex'; }
+  function overlay(html, voll) { const o = $('overlayInhalt'); o.className = voll ? 'karte voll' : 'karte'; o.innerHTML = html; $('overlay').style.display = 'flex'; }
   function overlayZu() { $('overlay').style.display = 'none'; }
-  function techZeigen() {
-    S.pauseVorTech = S.pause; S.pause = true;
-    const reihen = ['Türme', 'Ranger', 'Scharfschütze', 'Allgemein'];
-    let html = `<div style="display:flex;justify-content:space-between;align-items:center;gap:16px"><div><h1>Techbaum</h1><p style="margin:0">Freischaltungen und Verbesserungen für diesen Lauf. Bezahlt wird mit Körnern.</p></div><div class="chip"><div><small>Körner</small><b style="color:#E8C766">${fmt(S.koerner)}</b></div></div></div><div id="tech">`;
-    for (const r of reihen) for (const n of TECH.filter((x) => x.reihe === r)) {
-      const hat = !!S.tech[n.id], reqOk = !n.req || S.tech[n.req], kann = !hat && reqOk && S.koerner >= n.k;
-      const req = TECH.find((x) => x.id === n.req);
-      html += `<div class="knoten ${hat ? 'gekauft' : reqOk ? 'kaufbar' : ''}"><span class="reihe">${r}</span><b>${n.n}</b><span>${n.t}</span>` +
-        `<button type="button" data-tech="${n.id}" ${kann ? '' : 'disabled'} style="background:${kann ? '#C9A227' : '#2B0509'};color:${kann ? '#1C1416' : hat ? '#E8C766' : '#E7D4D6'}">${hat ? (n.k ? 'Gekauft' : 'Freigeschaltet') : !reqOk ? 'Benötigt: ' + req.n : fmt(n.k) + ' Körner'}</button></div>`;
+  const SCHLOSS = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+  const KORN = '<svg width="22" height="26" viewBox="0 0 22 26" aria-hidden="true"><ellipse cx="11" cy="12" rx="6" ry="10" fill="#E8C766" stroke="#7A5A10" stroke-width="1.4"/><path d="M8 6v13M11 3v18M14 6v13" stroke="#C9A227" stroke-width="1.2"/><path d="M5 25Q4 15 8 9M17 25Q18 15 14 9" stroke="#2E9E4F" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>';
+  const vorratChip = () => `<div class="chip" style="border-color:#C9A227">${KORN}<div><small>Kornvorrat</small><b style="color:#E8C766">${fmt(P.vorrat)}</b></div></div>`;
+
+  // Techbaum wie im Design (Knoten + Verbindungslinien), dauerhaft
+  let techZurueck = null;
+  function techZeigen(zurueck) {
+    if (zurueck) techZurueck = zurueck;
+    if (S && techZurueck === 'spiel') { if (S.pauseVorTech === undefined) S.pauseVorTech = S.pause; S.pause = true; }
+    const NW = 270, NH = 120, X = [60, 380, 700, 1020], Y = [150, 310, 470, 630], byId = {};
+    TECH.forEach((d) => { byId[d.id] = d; });
+    let linien = '', knoten = '', zahl = 0;
+    for (const d of TECH) {
+      if (!d.req) continue;
+      const p = byId[d.req], c = P.tech[p.id] ? '#C9A227' : '#5A2A30';
+      const x1 = X[p.c], y1 = Y[p.r], x2 = X[d.c], y2 = Y[d.r];
+      const seg = (x, y, w, h) => `<div aria-hidden="true" style="position:absolute;left:${x}px;top:${y}px;width:${w}px;height:${h}px;background:${c};border-radius:2px"></div>`;
+      if (p.r === d.r) linien += seg(x1 + NW, y1 + NH / 2 - 2, x2 - x1 - NW, 4);
+      else { const cx = x1 + NW / 2 - 2; linien += seg(cx, y1 + NH, 4, y2 + NH / 2 - y1 - NH) + seg(cx, y2 + NH / 2 - 2, x2 - cx, 4); }
     }
-    html += `</div><button class="gold" type="button" id="techZu" style="width:260px">Zurück zum Spiel</button>`;
-    overlay(html);
+    for (const d of TECH) {
+      const hat = !!P.tech[d.id]; if (hat) zahl++;
+      const reqOk = !d.req || !!P.tech[d.req], frei = !hat && reqOk && !d.bald, kann = frei && P.vorrat >= d.k;
+      let btn = hat ? (d.k ? 'Gekauft' : 'Freigeschaltet') : d.bald ? 'Bald' : !reqOk ? 'Benötigt: ' + byId[d.req].n : kann ? (d.bild ? 'Freischalten · ' : 'Kaufen · ') + fmt(d.k) : fmt(d.k) + ' · zu wenig';
+      const rand = hat ? '#E8C766' : frei ? '#C9A227' : '#5A2A30';
+      const img = d.bild ? `<div style="width:86px;height:96px;flex-shrink:0;border-radius:10px;background:#1A0306;overflow:hidden"><div style="${schraegStil(d.bild, 0, 0, 120)};width:120px;height:120px;margin:-14px 0 0 -18px;opacity:${hat ? 1 : 0.4}"></div></div>` : '';
+      knoten += `<div style="position:absolute;left:${X[d.c]}px;top:${Y[d.r]}px;width:${NW}px;height:${NH}px;box-sizing:border-box;border-radius:14px;border:2px solid ${rand};background:${hat ? '#4A0810' : '#2B0509'};display:flex;gap:10px;padding:10px 12px;opacity:${d.bald ? 0.55 : 1}">${img}
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px"><div style="display:flex;justify-content:space-between;gap:6px"><span style="font-size:15px;font-weight:800">${d.n}</span>${hat ? '<span style="color:#E8C766;font-weight:800" aria-label="gekauft">✓</span>' : !reqOk || d.bald ? `<span style="color:#E7D4D6" aria-label="gesperrt">${SCHLOSS}</span>` : ''}</div>
+        <span style="font-size:12px;line-height:1.35;color:#E7D4D6;flex:1">${d.t}</span>
+        <button type="button" data-tech="${d.id}" ${kann ? '' : 'disabled'} style="height:34px;border-radius:8px;border:none;background:${kann ? '#C9A227' : hat ? '#2B0509' : '#3A0A10'};color:${kann ? '#1C1416' : hat ? '#E8C766' : '#E7D4D6'};font-size:13px;font-weight:800;cursor:${kann ? 'pointer' : 'default'}">${btn}</button></div></div>`;
+    }
+    const labels = REIHEN.map((r, k) => `<div style="position:absolute;left:40px;top:${Y[k] - 24}px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#E8C766">${r}</div>`).join('');
+    overlay(`<div style="position:absolute;left:0;top:0;width:1440px;height:96px;box-sizing:border-box;padding:0 40px;display:flex;align-items:center;justify-content:space-between;background:#2B0509;border-bottom:2px solid #C9A227">
+        <div style="display:flex;align-items:center;gap:18px"><button type="button" id="techZu" class="knopf" aria-label="Zurück" style="width:48px">‹</button>
+          <div><h1 style="margin:0;font-size:34px;line-height:1">Techbaum</h1><span style="font-size:14px;color:#E7D4D6">Türme freischalten und dauerhafte Verbesserungen kaufen – bezahlt mit Kornvorrat aus der Kampagne</span></div></div>
+        <div style="display:flex;align-items:center;gap:14px"><span style="font-size:14px;color:#E7D4D6">${zahl - 1} von ${TECH.length - 2} erforscht</span>${vorratChip()}</div></div>
+      ${labels}${linien}${knoten}
+      <div style="position:absolute;left:1320px;top:150px;width:110px;display:flex;flex-direction:column;gap:10px;font-size:12px;color:#E7D4D6"><span style="font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#E8C766">Legende</span>
+        <span style="display:flex;align-items:center;gap:8px"><span style="width:16px;height:16px;border-radius:4px;border:2px solid #E8C766;background:#4A0810"></span>gekauft</span>
+        <span style="display:flex;align-items:center;gap:8px"><span style="width:16px;height:16px;border-radius:4px;border:2px solid #C9A227;background:#2B0509"></span>kaufbar</span>
+        <span style="display:flex;align-items:center;gap:8px"><span style="width:16px;height:16px;border-radius:4px;border:2px solid #5A2A30;background:#2B0509"></span>gesperrt</span></div>`, true);
     document.querySelectorAll('[data-tech]').forEach((b) => b.onclick = () => {
-      const n = TECH.find((x) => x.id === b.dataset.tech);
-      if (S.tech[n.id] || S.koerner < n.k || (n.req && !S.tech[n.req])) return;
-      S.koerner -= n.k; S.tech[n.id] = true; letzteLeiste = ''; techZeigen(); oberflaeche();
+      const d = byId[b.dataset.tech];
+      if (P.tech[d.id] || P.vorrat < d.k || (d.req && !P.tech[d.req]) || d.bald) return;
+      P.vorrat -= d.k; P.tech[d.id] = true; sichern();
+      if (S && d.id === 'kasse' && techZurueck === 'spiel' && S.welle === 0) S.koerner += 150;
+      if (S && d.id === 'bunker' && techZurueck === 'spiel' && S.welle === 0) S.leben += 20;
+      letzteLeiste = ''; letztesPanel = ''; techZeigen();
     });
-    $('techZu').onclick = () => { S.pause = S.pauseVorTech; overlayZu(); oberflaeche(); };
+    $('techZu').onclick = () => {
+      if (techZurueck === 'spiel') { S.pause = S.pauseVorTech; S.pauseVorTech = undefined; overlayZu(); oberflaeche(); }
+      else kampagne();
+    };
   }
-  function ende(sieg) {
-    overlay(`<h1>${sieg ? 'Westkolbistan ist sicher!' : 'Der Kornspeicher ist gefallen'}</h1><p>${sieg ? `Alle ${A.kartenInfo.wellen} Wellen abgewehrt mit ${Math.ceil(S.leben)} Leben übrig.` : `Du hast bis Welle ${S.welle} durchgehalten.`}</p><div class="knopfreihe" style="display:flex;gap:12px"><button class="gold" type="button" id="nochmal" style="width:260px">Nochmal spielen</button></div>`);
-    $('nochmal').onclick = () => { S = neu(); letzteLeiste = ''; overlayZu(); oberflaeche(); };
+
+  // Kampagne: Karte von Bir Tawil, Fortschritt, Auswahl
+  let kWahl = null;
+  const POLY = [
+    '30,203 508,203 443,350 443,422 443,516', '508,203 555,203 620,358 558,438 443,422 443,350', '555,203 1046,203 1050,242 1007,293 930,380 620,358',
+    '1046,203 1283,203 1085,352 1007,293 1050,242', '1283,203 1355,203 1263,497 1228,433 1181,428 1140,402 1085,352',
+    '620,358 930,380 1007,293 1085,352 1140,402 1181,428 1228,433 1263,497 1243,560 593,630 483,546 558,438', '1140,402 1181,428 1187,452 1172,479 1141,485 1108,472 1099,446 1114,416'
+  ];
+  const PUNKTE = [[300, 318], [532, 326], [800, 282], [1150, 250], [1236, 345], [880, 500], [1143, 448]];
+  const freiKarte = (i) => i === 0 || P.sterne[A.karten[i - 1].id] > 0;
+  function kampagne() {
+    techZurueck = 'kampagne';
+    const L = A.karten, aktuell = L.findIndex((k, i) => freiKarte(i) && !P.sterne[k.id]);
+    if (kWahl === null) kWahl = aktuell >= 0 ? aktuell : L.length - 1;
+    const sx = 1020 / 1400, oy = 175, diffC = { Leicht: '#7CD992', Mittel: '#E8C766', Schwer: '#FF8A1F', Finale: '#FF6B5E' };
+    const zustand = (i) => (P.sterne[L[i].id] ? 'fertig' : freiKarte(i) ? 'offen' : 'zu');
+    const fill = (i) => ({ fertig: '#7A5A10', offen: '#7A0F1A', zu: '#3A0A10' })[zustand(i)];
+    let svg = `<svg width="1020" height="360" viewBox="0 175 1400 494" role="img" aria-label="Kampagnenkarte von Bir Tawil mit den sechs Bundesländern und Maisburg" style="display:block">
+      <defs><pattern id="sperr" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(-35)"><rect width="16" height="16" fill="#3A0A10"/><rect width="6" height="16" fill="#7A0F1A"/></pattern></defs>
+      <rect x="0" y="120" width="1400" height="600" fill="#2B0509"/>`;
+    POLY.slice(0, 6).forEach((pts, i) => { svg += `<polygon points="${pts}" fill="${fill(i)}" stroke="#1A0306" stroke-width="3"/>`; });
+    svg += `<polygon points="443,422 558,438 483,546 443,516" fill="url(#sperr)" stroke="#A3343C" stroke-width="2"/><polygon points="${POLY[6]}" fill="${fill(6)}" stroke="#C9A227" stroke-width="3"/>
+      <polygon points="30,203 1355,203 1243,560 593,630" fill="none" stroke="#C9A227" stroke-width="5" stroke-linejoin="round"/>
+      <polyline points="${PUNKTE.map((p) => p.join(',')).join(' ')}" fill="none" stroke="#E8C766" stroke-width="4" stroke-dasharray="4 12" stroke-linecap="round" opacity="0.8"/>
+      <text x="499" y="490" text-anchor="middle" fill="#E7D4D6" font-size="18" font-weight="700" font-family="Inter,sans-serif">Sperrgebiet</text>
+      <text x="760" y="192" text-anchor="middle" fill="#E7D4D6" font-size="16" font-family="Inter,sans-serif">Ägypten</text><text x="900" y="660" text-anchor="middle" fill="#E7D4D6" font-size="16" font-family="Inter,sans-serif">Sudan</text></svg>`;
+    const marker = L.map((k, i) => { const z = zustand(i), sel = i === kWahl;
+      return `<button type="button" data-karte="${i}" aria-label="Karte ${i + 1}: ${k.land} – ${z === 'zu' ? 'gesperrt' : z === 'fertig' ? 'gewonnen' : 'verfügbar'}" style="position:absolute;left:${Math.round(PUNKTE[i][0] * sx - 24)}px;top:${Math.round((PUNKTE[i][1] - oy) * sx - 24)}px;width:48px;height:48px;border-radius:24px;border:3px solid ${sel ? '#FFFFFF' : z === 'fertig' ? '#7A5A10' : z === 'offen' ? '#E8C766' : '#5A2A30'};background:${z === 'fertig' ? '#C9A227' : z === 'offen' ? '#7A0F1A' : '#2B0509'};color:${z === 'fertig' ? '#1C1416' : '#FFFFFF'};font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;cursor:pointer;box-shadow:${z === 'offen' ? '0 0 0 6px rgba(232,199,102,0.25)' : 'none'}">${z === 'fertig' ? '✓' : i + 1}</button>`; }).join('');
+    const karten = L.map((k, i) => { const z = zustand(i), st = P.sterne[k.id] || 0;
+      return `<button type="button" data-karte="${i}" aria-label="Karte ${i + 1}: ${k.land}, ${k.titel}" style="display:flex;flex-direction:column;padding:0;border-radius:12px;border:2px solid ${i === kWahl ? '#E8C766' : '#5A2A30'};background:#2B0509;color:#fff;overflow:hidden;cursor:pointer;text-align:left">
+        <div style="position:relative;width:100%;aspect-ratio:1140/810;background:#3A0A10"><img src="bilder/vorschau_${k.bild.replace('.png', '.jpg')}" alt="" style="width:100%;height:100%;display:block;opacity:${z === 'zu' ? 0.35 : 1}">${z === 'zu' ? `<span style="position:absolute;left:50%;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:17px;background:#1A0306;color:#E8C766;display:flex;align-items:center;justify-content:center">${SCHLOSS}</span>` : ''}</div>
+        <div style="display:flex;flex-direction:column;gap:2px;padding:8px 9px 10px"><span style="font-size:12px;font-weight:700;color:#E8C766">${i + 1} · ${k.land}</span><span style="font-size:13px;font-weight:700">${k.titel}</span>
+        <span style="font-size:12px;color:#E7D4D6;letter-spacing:.1em">${z === 'fertig' ? '★'.repeat(st) + '☆'.repeat(3 - st) : z === 'offen' ? 'Jetzt spielen' : 'Gesperrt'}</span></div></button>`; }).join('');
+    const k = L[kWahl], z = zustand(kWahl), st = P.sterne[k.id] || 0;
+    const gesamtSterne = Object.values(P.sterne).reduce((a, b) => a + b, 0), gewonnen = Object.keys(P.sterne).length;
+    overlay(`<div style="position:absolute;left:40px;top:28px;display:flex;flex-direction:column;gap:4px"><div style="font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#E8C766">Kampagne · Bir Tawil</div>
+        <h1 style="margin:0;font-size:40px;line-height:1">Verteidige die Bundesländer</h1><span style="font-size:15px;color:#E7D4D6">Von Westkolbistan bis zur Hauptstadt Maisburg – jede gewonnene Karte schaltet die nächste frei.</span></div>
+      <div style="position:absolute;left:720px;top:34px;display:flex;gap:10px;align-items:center">${vorratChip()}<button type="button" class="rand" id="zumTech" style="height:58px;padding:0 18px">Techbaum</button></div>
+      <div style="position:absolute;left:20px;top:140px;width:1020px;height:360px;border-radius:16px;background:#2B0509;border:1px solid #5A2A30;overflow:hidden">${svg}${marker}</div>
+      <div style="position:absolute;left:20px;top:516px;width:1020px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px">${karten}</div>
+      <div style="position:absolute;left:20px;top:770px;width:1020px;display:flex;justify-content:space-between;font-size:12px;color:#E7D4D6"><span>Gewonnen: ${gewonnen} von 7 · Sterne: ${gesamtSterne} von 21</span><span>Das Sperrgebiet ist militärisch und nicht spielbar. Der Anspruch auf Bir Tawil ist völkerrechtlich nicht anerkannt.</span></div>
+      <div style="position:absolute;right:20px;top:28px;width:360px;height:754px;box-sizing:border-box;border-radius:16px;background:#2B0509;border:2px solid #C9A227;display:flex;flex-direction:column;overflow:hidden">
+        <div style="position:relative;width:100%;height:256px;background:#3A0A10"><img src="bilder/vorschau_${k.bild.replace('.png', '.jpg')}" alt="Vorschau ${k.titel}" style="width:100%;height:100%;object-fit:cover;display:block;opacity:${z === 'zu' ? 0.45 : 1}">
+          <span style="position:absolute;left:12px;top:12px;padding:4px 10px;border-radius:8px;background:#1A0306;font-size:12px;font-weight:800;color:${diffC[k.schwierigkeit]}">${k.schwierigkeit}</span></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:12px;padding:18px 20px 20px">
+          <div><span style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#E8C766">Karte ${kWahl + 1} · ${k.land}</span><h2 style="margin:0;font-family:'Space Grotesk',sans-serif;font-size:30px">${k.titel}</h2></div>
+          <p style="margin:0;font-size:14px;line-height:1.5;color:#E7D4D6">${k.text}</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div style="background:#3A0A10;border-radius:10px;padding:10px 12px"><small style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#E7D4D6">Wellen</small><div style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700">${k.wellen}</div></div>
+            <div style="background:#3A0A10;border-radius:10px;padding:10px 12px"><small style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#E7D4D6">Belohnung</small><div style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#E8C766">+${fmt(BELOHNUNG[kWahl])}</div></div></div>
+          <div style="font-size:26px;letter-spacing:.1em;color:#E8C766">${'★'.repeat(st)}<span style="color:#5A2A30">${'★'.repeat(3 - st)}</span> <span style="font-size:13px;letter-spacing:0;color:#E7D4D6">${st ? st + ' von 3 Sternen' : '3 Sterne: kein Leben verlieren'}</span></div>
+          <div style="flex:1"></div>
+          ${z === 'zu' ? `<div style="height:60px;border-radius:14px;border:2px dashed #5A2A30;color:#E7D4D6;display:flex;align-items:center;justify-content:center;gap:10px;font-size:15px;font-weight:700">${SCHLOSS} Erst ${L[kWahl - 1].land} gewinnen</div>`
+            : `<button type="button" class="gold" id="spielen">▶ ${st ? 'Nochmal spielen' : 'Spielen'}</button>`}
+        </div></div>`, true);
+    document.querySelectorAll('[data-karte]').forEach((b) => b.onclick = () => { kWahl = +b.dataset.karte; kampagne(); });
+    $('zumTech').onclick = () => techZeigen('kampagne');
+    if ($('spielen')) $('spielen').onclick = () => spielen(kWahl);
   }
-  function startbild() {
-    overlay(`<h1>Maiskolbistan Militär-Defense</h1><p style="font-size:17px">Karte 1 · <b>Westkolbistan – Grenzfelder</b> · ${A.kartenInfo.wellen} Wellen. Verteidige den Kornspeicher gegen Soldaten, Tarnsoldaten, gepanzerte Soldaten, Humvees und Panzer.</p>
-      <p>So geht's: Rechts einen Turm wählen und neben den Weg setzen. Turm antippen, um ihn auszubauen: Ein Pfad geht bis Stufe 5, der andere bis Stufe 2. Getarnte sieht nur ein Turm mit Tarn-Erkennung (Ranger Tarnblick, Scharfschütze Adlerauge). Gepanzerte brauchen Panzerbrechend, Granaten oder Laser. Den Scharfschützen schaltest du im Techbaum frei. <b>Esc</b> bricht das Platzieren ab.</p>
-      <div style="display:flex;gap:12px"><button class="gold" type="button" id="los" style="width:260px">Spielen</button></div>`);
-    $('los').onclick = () => { overlayZu(); };
+  async function spielen(i) {
+    $('spielen').textContent = 'Lädt …';
+    await karteLaden(i);
+    S = neu(); letzteLeiste = ''; letztesPanel = ''; techZurueck = 'spiel';
+    overlayZu(); oberflaeche();
+    $('hinweis').textContent = `${K.land} – ${K.titel}: ${K.text} Wähle einen Turm und tippe neben den Weg.`;
   }
+  function ende(sieg, aufgegeben) {
+    const geschafft = sieg ? K.wellen : Math.max(0, S.welle - 1);
+    const erstSieg = sieg && !P.sterne[K.id];
+    const sterne = sieg ? (S.leben >= S.startLeben ? 3 : S.leben >= S.startLeben / 2 ? 2 : 1) : 0;
+    const lohn = geschafft * 20 + (sieg ? (erstSieg ? BELOHNUNG[K.stufe - 1] : Math.round(BELOHNUNG[K.stufe - 1] / 4)) : 0);
+    P.vorrat += lohn; if (sieg) P.sterne[K.id] = Math.max(P.sterne[K.id] || 0, sterne); sichern();
+    S.ende = true; S.pause = true;
+    const naechste = A.karten.indexOf(K) + 1;
+    overlay(`<h1>${sieg ? K.land + ' ist sicher!' : aufgegeben ? 'Karte verlassen' : (K.palast ? 'Der Regierungspalast ist gefallen' : 'Der Kornspeicher ist gefallen')}</h1>
+      <p style="font-size:17px">${sieg ? `Alle ${K.wellen} Wellen abgewehrt mit ${Math.ceil(S.leben)} Leben übrig. <span style="color:#E8C766;letter-spacing:.1em">${'★'.repeat(sterne)}${'☆'.repeat(3 - sterne)}</span>` : `${geschafft} von ${K.wellen} Wellen geschafft.`}</p>
+      <p>Kornvorrat für den Techbaum: <b style="color:#E8C766">+${fmt(lohn)}</b> (jetzt ${fmt(P.vorrat)}).${sieg && naechste < A.karten.length && erstSieg ? ` Neue Karte freigeschaltet: <b>${A.karten[naechste].land}</b>.` : ''}</p>
+      <div style="display:flex;gap:12px;margin-top:16px"><button class="gold" type="button" id="zurKampagne" style="width:260px">Zur Kampagne</button><button class="rand" type="button" id="nochmal" style="width:220px">Nochmal spielen</button></div>`);
+    $('zurKampagne').onclick = () => { if (sieg && naechste < A.karten.length) kWahl = naechste; kampagne(); };
+    $('nochmal').onclick = () => { overlayZu(); spielenDirekt(); };
+  }
+  function spielenDirekt() { S = neu(); letzteLeiste = ''; letztesPanel = ''; techZurueck = 'spiel'; overlayZu(); oberflaeche(); }
+  $('heim').onclick = () => {
+    if (!S || S.ende) { kampagne(); return; }
+    const vorPause = S.pause; S.pause = true;
+    overlay(`<h1>Karte verlassen?</h1><p>Die laufende Runde endet. Für geschaffte Wellen bekommst du trotzdem Kornvorrat.</p>
+      <div style="display:flex;gap:12px;margin-top:16px"><button class="gold" type="button" id="jaWeg" style="width:220px">Ja, zur Kampagne</button><button class="rand" type="button" id="neinBleib" style="width:220px">Weiterspielen</button></div>`);
+    $('jaWeg').onclick = () => ende(false, true);
+    $('neinBleib').onclick = () => { S.pause = vorPause; overlayZu(); };
+  };
 
   // ---------- Bühne skalieren ----------
   function skalieren() {
@@ -530,14 +670,14 @@
   let vorher = 0, uiT = 0;
   function schleife(ts) {
     const dt = Math.min(0.05, (ts - vorher) / 1000 || 0); vorher = ts;
-    if (!S.pause) { const n = S.tempo; for (let i = 0; i < n; i++) update(dt); }
-    zeichnen();
+    if (K && !S.pause && !S.ende) { const n = S.tempo; for (let i = 0; i < n; i++) update(dt); }
+    if (K) zeichnen();
     uiT += dt; if (uiT > 0.1) { uiT = 0; oberflaeche(); }
     requestAnimationFrame(schleife);
   }
 
   skalieren();
   S = neu();
-  laden().then(() => { oberflaeche(); startbild(); requestAnimationFrame(schleife); })
+  laden().then(() => karteLaden(0)).then(() => { oberflaeche(); kampagne(); requestAnimationFrame(schleife); })
     .catch((e) => { document.body.insertAdjacentHTML('beforeend', `<p style="position:fixed;left:20px;top:20px;color:#fff;background:#7A0F1A;padding:12px;border-radius:8px">Fehler beim Laden: ${e.message}. Bitte über einen Webserver (z. B. GitHub Pages) öffnen.</p>`); });
 })();

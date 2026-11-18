@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Maiskolbistan Militär-Defense – Westkolbistan</title>
+<title>Maiskolbistan Militär-Defense</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap">
 <style>
@@ -17,7 +17,7 @@ button{font-family:inherit}
 .chip small{display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--leise)}
 .chip b{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700}
 #hud{position:absolute;left:20px;top:18px;display:flex;gap:10px;pointer-events:none}
-#steuer{position:absolute;left:1000px;top:18px;display:flex;gap:8px}
+#steuer{position:absolute;left:940px;top:18px;display:flex;gap:8px}
 .knopf{min-width:56px;height:48px;border-radius:12px;border:1px solid var(--linie);background:rgba(43,5,9,.92);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
 .knopf:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 #leiste{position:absolute;left:1140px;top:0;width:300px;height:810px;background:var(--flaeche);border-left:2px solid var(--gold);display:flex;flex-direction:column;gap:12px;padding:18px 16px}
@@ -50,6 +50,8 @@ button{font-family:inherit}
 .karte{background:var(--flaeche);border:2px solid var(--gold);border-radius:18px;padding:28px 32px;max-width:980px;width:100%}
 .karte h1{margin:0 0 6px;font-family:'Space Grotesk',sans-serif;font-size:40px}
 .karte p{color:var(--leise);line-height:1.5}
+.karte.voll{position:absolute;inset:0;max-width:none;width:1440px;height:810px;border:none;border-radius:0;padding:0;background:var(--dunkel)}
+.karte.voll h1{margin:0}
 #tech{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}
 .knoten{border:2px solid var(--linie);border-radius:14px;padding:12px;background:var(--flaeche2);display:flex;flex-direction:column;gap:6px;min-height:150px}
 .knoten.gekauft{border-color:var(--gold2);background:var(--rot2)}.knoten.kaufbar{border-color:var(--gold)}
@@ -61,7 +63,7 @@ button{font-family:inherit}
 </head>
 <body>
 <div id="buehne">
-  <canvas id="feld" width="1140" height="810" aria-label="Spielfeld Westkolbistan"></canvas>
+  <canvas id="feld" width="1140" height="810" aria-label="Spielfeld"></canvas>
 
   <div id="hud">
     <div class="chip"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E8C766" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 12c3-4 6-4 10 0s7 4 10 0"/><path d="M2 18c3-4 6-4 10 0s7 4 10 0"/><path d="M2 6c3-4 6-4 10 0s7 4 10 0"/></svg><div><small>Welle</small><b id="welle">0</b> <span style="color:#E7D4D6">/ <span id="wellenMax">20</span></span></div></div>
@@ -70,6 +72,7 @@ button{font-family:inherit}
   </div>
 
   <div id="steuer">
+    <button class="knopf" id="heim" type="button" aria-label="Zur Kampagne">⌂</button>
     <button class="knopf" id="tempo" type="button" aria-label="Spieltempo umschalten">1×</button>
     <button class="knopf" id="pause" type="button" aria-label="Pause">❚❚</button>
   </div>
