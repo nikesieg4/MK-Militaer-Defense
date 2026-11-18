@@ -104,8 +104,75 @@
   const ORDEN = [3, 3, 4, 4, 5, 5, 6];   // Verdienstorden beim ersten Sieg je Karte (+1 je neuem Stern; Wiederholung: 1)
   const HP_KARTE = [1, 1.08, 1.16, 1.24, 1.32, 1.42, 1.55];
   const SPEICHER = 'mkd-fortschritt-1';
-  const P = (() => { try { const d = JSON.parse(localStorage.getItem(SPEICHER) || 'null'); if (d && d.tech) return d; } catch (e) {} return { orden: 0, tech: { ranger: true }, sterne: {} }; })();
-  const sichern = () => { try { localStorage.setItem(SPEICHER, JSON.stringify(P)); } catch (e) {} };
+  const SPIEL_ID = 'mk-militaer-defense', STAND_VERSION = 1;
+
+  // ---------- Prüfsumme (HMAC-SHA-256, synchron) ----------
+  // Schützt Spielstände gegen nachträgliches Ändern: Wer die Datei oder den Browser-Speicher bearbeitet,
+  // erzeugt eine falsche Prüfsumme und der Stand wird abgelehnt. (Hinweis: Der Schlüssel steckt zwangsläufig
+  // im Spiel selbst – gegen jemanden, der den Quellcode nachbaut, hilft das nicht, gegen normales Bearbeiten schon.)
+  function sha256(bytes) {
+    const K = [0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da, 0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967, 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85, 0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070, 0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3, 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2];
+    const H = [0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19];
+    const l = bytes.length, n = (((l + 8) >> 6) + 1) * 64, m = new Uint8Array(n);
+    m.set(bytes); m[l] = 0x80;
+    const bits = l * 8; for (let i = 0; i < 4; i++) m[n - 1 - i] = (bits >>> (8 * i)) & 0xff;
+    const w = new Uint32Array(64), r = (x, k) => (x >>> k) | (x << (32 - k));
+    for (let o = 0; o < n; o += 64) {
+      for (let i = 0; i < 16; i++) w[i] = (m[o + 4 * i] << 24) | (m[o + 4 * i + 1] << 16) | (m[o + 4 * i + 2] << 8) | m[o + 4 * i + 3];
+      for (let i = 16; i < 64; i++) { const s0 = r(w[i - 15], 7) ^ r(w[i - 15], 18) ^ (w[i - 15] >>> 3), s1 = r(w[i - 2], 17) ^ r(w[i - 2], 19) ^ (w[i - 2] >>> 10); w[i] = (w[i - 16] + s0 + w[i - 7] + s1) | 0; }
+      let [a, b, c, d, e, f, g, h] = H;
+      for (let i = 0; i < 64; i++) {
+        const t1 = (h + (r(e, 6) ^ r(e, 11) ^ r(e, 25)) + ((e & f) ^ (~e & g)) + K[i] + w[i]) | 0, t2 = ((r(a, 2) ^ r(a, 13) ^ r(a, 22)) + ((a & b) ^ (a & c) ^ (b & c))) | 0;
+        h = g; g = f; f = e; e = (d + t1) | 0; d = c; c = b; b = a; a = (t1 + t2) | 0;
+      }
+      H[0] = (H[0] + a) | 0; H[1] = (H[1] + b) | 0; H[2] = (H[2] + c) | 0; H[3] = (H[3] + d) | 0; H[4] = (H[4] + e) | 0; H[5] = (H[5] + f) | 0; H[6] = (H[6] + g) | 0; H[7] = (H[7] + h) | 0;
+    }
+    const out = new Uint8Array(32); H.forEach((v, i) => { out[4 * i] = v >>> 24; out[4 * i + 1] = (v >>> 16) & 255; out[4 * i + 2] = (v >>> 8) & 255; out[4 * i + 3] = v & 255; });
+    return out;
+  }
+  const SCHLUESSEL = new TextEncoder().encode(['Mais', 'kolbistan', '·Militär-Defense·', 'Korn', 'speicher·2026'].join(''));
+  function pruefsumme(text) {
+    const key = new Uint8Array(64); key.set(SCHLUESSEL.length > 64 ? sha256(SCHLUESSEL) : SCHLUESSEL);
+    const msg = new TextEncoder().encode(text), ip = new Uint8Array(64 + msg.length), op = new Uint8Array(96);
+    for (let i = 0; i < 64; i++) { ip[i] = key[i] ^ 0x36; op[i] = key[i] ^ 0x5c; }
+    ip.set(msg, 64); op.set(sha256(ip), 64);
+    return Array.from(sha256(op), (b) => b.toString(16).padStart(2, '0')).join('');
+  }
+  // Feste Schlüsselreihenfolge, damit dieselben Daten immer dieselbe Prüfsumme ergeben
+  const kanonisch = (v) => Array.isArray(v) ? '[' + v.map(kanonisch).join(',') + ']'
+    : v && typeof v === 'object' ? '{' + Object.keys(v).sort().map((k) => JSON.stringify(k) + ':' + kanonisch(v[k])).join(',') + '}' : JSON.stringify(v);
+  const signieren = (daten, gespeichert) => { const c = { spiel: SPIEL_ID, version: STAND_VERSION, gespeichert, daten }; return { ...c, pruefsumme: pruefsumme(kanonisch(c)) }; };
+  const signaturOk = (o) => o && typeof o === 'object' && typeof o.pruefsumme === 'string' &&
+    o.pruefsumme === pruefsumme(kanonisch({ spiel: o.spiel, version: o.version, gespeichert: o.gespeichert, daten: o.daten }));
+  // Inhalt prüfen: nur bekannte Felder und sinnvolle Werte
+  const TECH_IDS = ['ranger', 'sniper', 'depot', 'ruhig', 'tarnung', 'drill1', 'drill2', 'goldmag', 'kasse', 'ernte', 'bunker', 'reserve'];
+  const KARTEN_IDS = ['westkolbistan', 'paprikistan', 'nordkolbistan', 'maisdosistan', 'ostkolbistan', 'suedkolbistan', 'maisburg'];
+  const ganz = (v, a, b) => Number.isInteger(v) && v >= a && v <= b;
+  function standPruefen(d) {
+    if (!d || typeof d !== 'object' || Array.isArray(d)) return null;
+    if (!ganz(d.orden, 0, 1e6) || !ganz(d.stufe, 1, 1e4) || !(typeof d.xp === 'number' && d.xp >= 0 && d.xp < 1e9)) return null;
+    if (!d.tech || typeof d.tech !== 'object' || !Object.entries(d.tech).every(([k, v]) => TECH_IDS.includes(k) && v === true) || !d.tech.ranger) return null;
+    if (!d.sterne || typeof d.sterne !== 'object' || !Object.entries(d.sterne).every(([k, v]) => KARTEN_IDS.includes(k) && ganz(v, 1, 3))) return null;
+    if (d.rekord != null && (typeof d.rekord !== 'object' || !Object.entries(d.rekord).every(([k, v]) => KARTEN_IDS.includes(k) && ganz(v, 0, 1e5)))) return null;
+    return { orden: d.orden, stufe: d.stufe, xp: d.xp, tech: { ...d.tech }, sterne: { ...d.sterne }, rekord: { ...(d.rekord || {}) } };
+  }
+  const NEUSTAND = () => ({ orden: 0, stufe: 1, xp: 0, tech: { ranger: true }, sterne: {}, rekord: {} });
+  let ladeHinweis = '';
+  const P = (() => {
+    try {
+      const roh = JSON.parse(localStorage.getItem(SPEICHER) || 'null');
+      if (!roh) return NEUSTAND();
+      if (roh.pruefsumme) {                       // signierter Stand
+        if (roh.spiel === SPIEL_ID && signaturOk(roh) && standPruefen(roh.daten)) return standPruefen(roh.daten);
+        localStorage.setItem(SPEICHER + '-verworfen', JSON.stringify(roh));
+        ladeHinweis = 'Der gespeicherte Spielstand wurde verändert und wird nicht akzeptiert. Du startest neu.';
+        return NEUSTAND();
+      }
+      if (roh.tech) return roh;                   // alter, noch unsignierter Stand: einmalig übernehmen (wird beim nächsten Speichern signiert)
+    } catch (e) {}
+    return NEUSTAND();
+  })();
+  const sichern = () => { try { localStorage.setItem(SPEICHER, JSON.stringify(signieren(P, new Date().toISOString()))); } catch (e) {} };
 
   const ZIELE = ['Erster', 'Letzter', 'Stärkster', 'Nächster'];
 
@@ -758,7 +825,7 @@
     const gesamtSterne = Object.values(P.sterne).reduce((a, b) => a + b, 0), gewonnen = Object.keys(P.sterne).length;
     overlay(`<div style="position:absolute;left:40px;top:28px;display:flex;flex-direction:column;gap:4px"><div style="font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#E8C766">Kampagne · Bir Tawil</div>
         <h1 style="margin:0;font-size:34px;line-height:1">Verteidige die Bundesländer</h1><span style="font-size:14px;color:#E7D4D6">Jeder Sieg schaltet die nächste Karte frei.</span></div>
-      <div style="position:absolute;left:560px;top:28px;display:flex;gap:8px;align-items:center">${stufeChip()}${vorratChip()}<button type="button" class="rand" id="zumTech" style="height:58px;padding:0 18px">Techbaum</button></div>
+      <div style="position:absolute;left:520px;top:28px;display:flex;gap:8px;align-items:center">${stufeChip()}${vorratChip()}<button type="button" class="rand" id="zumTech" style="height:58px;padding:0 16px">Techbaum</button><button type="button" class="rand" id="zuEinst" aria-label="Einstellungen" style="height:58px;width:58px;font-size:24px">⚙</button></div>
       <div style="position:absolute;left:20px;top:140px;width:1020px;height:360px;border-radius:16px;background:#2B0509;border:1px solid #5A2A30;overflow:hidden">${svg}${marker}</div>
       <div style="position:absolute;left:20px;top:516px;width:1020px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px">${karten}</div>
       <div style="position:absolute;left:20px;top:770px;width:1020px;display:flex;justify-content:space-between;font-size:12px;color:#E7D4D6"><span>Gewonnen: ${gewonnen} von 7 · Sterne: ${gesamtSterne} von 21</span><span>Das Sperrgebiet ist militärisch und nicht spielbar. Der Anspruch auf Bir Tawil ist völkerrechtlich nicht anerkannt.</span></div>
@@ -779,6 +846,7 @@
         </div></div>`, true);
     document.querySelectorAll('[data-karte]').forEach((b) => b.onclick = () => { kWahl = +b.dataset.karte; kampagne(); });
     $('zumTech').onclick = () => techZeigen('kampagne');
+    $('zuEinst').onclick = () => einstellungen();
     if ($('spielen')) $('spielen').onclick = () => spielen(kWahl);
   }
   async function spielen(i) {
@@ -826,6 +894,63 @@
     $('neinBleib').onclick = () => { S.pause = vorPause; overlayZu(); };
   };
 
+  // ---------- Einstellungen: Spielstand speichern, herunterladen, hochladen, zurücksetzen ----------
+  function einstellungen(meldung, farbe) {
+    const gewonnen = Object.keys(P.sterne).length, sterne = Object.values(P.sterne).reduce((a, b) => a + b, 0);
+    const zeile = (titel, text, knopf, id, gefahr) => `<div style="display:flex;align-items:center;justify-content:space-between;gap:16px;background:#3A0A10;border-radius:12px;padding:14px 16px">
+      <div><b style="font-size:16px">${titel}</b><div class="klein" style="font-size:13px;margin-top:2px">${text}</div></div>
+      <button type="button" id="${id}" class="${gefahr ? 'rand' : 'gold'}" style="height:48px;min-width:200px;font-size:15px;${gefahr ? 'border-color:#A3343C;color:#FF8A7A' : ''}">${knopf}</button></div>`;
+    overlay(`<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px"><div><h1>Einstellungen</h1><p style="margin:0 0 14px">Spielstand: Stufe ${P.stufe} · ${fmt(P.orden)} Verdienstorden · ${gewonnen} von 7 Karten · ${sterne} Sterne</p></div>
+        <button type="button" class="zu" id="einstZu" aria-label="Schließen">✕</button></div>
+      ${meldung ? `<div role="status" style="margin:0 0 12px;padding:10px 14px;border-radius:10px;background:${farbe === 'rot' ? '#4A0810' : '#1E3A24'};border:1px solid ${farbe === 'rot' ? '#FF6B5E' : '#7CD992'};color:#fff;font-weight:700">${meldung}</div>` : ''}
+      <div style="display:flex;flex-direction:column;gap:10px">
+        ${zeile('Im Browser speichern', 'Der Fortschritt wird nach jeder Welle und jedem Kauf automatisch gesichert – hier sofort speichern.', 'Jetzt speichern', 'eSpeichern')}
+        ${zeile('Spielstand herunterladen', 'Datei mit Prüfsumme. Wird die Datei verändert, wird sie beim Hochladen abgelehnt.', 'Herunterladen', 'eRunter')}
+        ${zeile('Spielstand hochladen', 'Eine heruntergeladene Datei laden. Ersetzt den aktuellen Stand (mit Rückfrage).', 'Datei wählen …', 'eHoch')}
+        ${zeile('Alles zurücksetzen', 'Verdienstorden, Techbaum, Stufe, Sterne und Rekorde löschen. Kann nicht rückgängig gemacht werden.', 'Zurücksetzen …', 'eReset', true)}
+      </div>`);
+    $('einstZu').onclick = () => kampagne();
+    $('eSpeichern').onclick = () => { sichern(); einstellungen('Spielstand im Browser gespeichert.'); };
+    $('eRunter').onclick = () => {
+      const jetzt = new Date(), tag = jetzt.toISOString().slice(0, 10);
+      const datei = JSON.stringify(signieren(P, jetzt.toISOString()), null, 1);
+      const url = URL.createObjectURL(new Blob([datei], { type: 'application/json' }));
+      const a = document.createElement('a'); a.href = url; a.download = `militaer-defense-${tag}-stufe-${P.stufe}.json`;
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000);
+      sichern(); einstellungen('Spielstand heruntergeladen.');
+    };
+    $('eHoch').onclick = () => {
+      const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.json,application/json'; inp.style.display = 'none';
+      document.body.appendChild(inp);
+      inp.onchange = () => {
+        const f = inp.files && inp.files[0]; inp.remove(); if (!f) return;
+        if (f.size > 200000) { einstellungen('Datei zu groß – das ist kein Spielstand.', 'rot'); return; }
+        const fr = new FileReader();
+        fr.onload = () => {
+          let o = null; try { o = JSON.parse(fr.result); } catch (e) { o = null; }
+          if (!o || o.spiel !== SPIEL_ID) { einstellungen('Keine Spielstand-Datei von Militär-Defense.', 'rot'); return; }
+          if (!signaturOk(o)) { einstellungen('Datei wurde verändert – die Prüfsumme stimmt nicht. Spielstand nicht übernommen.', 'rot'); return; }
+          const d = standPruefen(o.daten);
+          if (!d) { einstellungen('Spielstand ist beschädigt oder ungültig. Nicht übernommen.', 'rot'); return; }
+          bestaetigen(`Spielstand vom ${new Date(o.gespeichert).toLocaleString('de-DE')} laden?`, `Stufe ${d.stufe} · ${fmt(d.orden)} Verdienstorden · ${Object.keys(d.sterne).length} von 7 Karten. Dein aktueller Stand wird ersetzt.`, 'Laden', () => {
+            for (const k of Object.keys(P)) delete P[k]; Object.assign(P, d); sichern(); kWahl = null; einstellungen('Spielstand geladen.');
+          });
+        };
+        fr.onerror = () => einstellungen('Datei konnte nicht gelesen werden.', 'rot');
+        fr.readAsText(f);
+      };
+      inp.click();
+    };
+    $('eReset').onclick = () => bestaetigen('Wirklich alles zurücksetzen?', 'Verdienstorden, Techbaum, Stufe, Sterne und Freeplay-Rekorde werden gelöscht. Lade vorher deinen Spielstand herunter, wenn du ihn behalten willst.', 'Ja, zurücksetzen', () => {
+      for (const k of Object.keys(P)) delete P[k]; Object.assign(P, NEUSTAND()); sichern(); kWahl = null; einstellungen('Alles zurückgesetzt.');
+    }, true);
+  }
+  function bestaetigen(titel, text, knopf, ok, gefahr) {
+    overlay(`<h1>${titel}</h1><p>${text}</p><div style="display:flex;gap:12px;margin-top:16px">
+      <button type="button" class="gold" id="bJa" style="width:240px;${gefahr ? 'background:#B3261E;color:#fff' : ''}">${knopf}</button><button type="button" class="rand" id="bNein" style="width:200px">Abbrechen</button></div>`);
+    $('bJa').onclick = ok; $('bNein').onclick = () => einstellungen();
+  }
+
   // ---------- Bühne skalieren ----------
   function skalieren() {
     const k = Math.min(window.innerWidth / 1440, window.innerHeight / 810);
@@ -846,6 +971,6 @@
 
   skalieren();
   S = neu();
-  laden().then(() => karteLaden(0)).then(() => { oberflaeche(); kampagne(); requestAnimationFrame(schleife); })
+  laden().then(() => karteLaden(0)).then(() => { oberflaeche(); kampagne(); if (ladeHinweis) toast(ladeHinweis); sichern(); requestAnimationFrame(schleife); })
     .catch((e) => { document.body.insertAdjacentHTML('beforeend', `<p style="position:fixed;left:20px;top:20px;color:#fff;background:#7A0F1A;padding:12px;border-radius:8px">Fehler beim Laden: ${e.message}. Bitte über einen Webserver (z. B. GitHub Pages) öffnen.</p>`); });
 })();

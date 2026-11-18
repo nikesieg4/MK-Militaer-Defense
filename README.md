@@ -62,6 +62,17 @@ Kreuzpfade wirken zusammen: Körner = Versorgung × (1 − Abzug), z. B. 2-2 = 2
 
 Landkreuzer nach Vorbild P. 1000 (verkleinert, neutrale Lackierung). Kommt am Ende von Welle 20 auf Grenzfelder, mit Banner und Boss-Lebensleiste. Leben 1.000 × Wellenfaktor (2.200), kugelfest, Tempo 15, Belohnung 400 Körner; erreicht er das Ziel, ist die Karte verloren. Alle 8 s: steht ein Turm in 340 px Umkreis, hält er 1,8 s an und feuert eine schwere Granate auf den teuersten Turm – Türme im Umkreis 50 px sind 4 s **betäubt** (schießen nicht, Sterne darüber).
 
+## Einstellungen und Spielstand
+
+Weltbildschirm → ⚙ **Einstellungen**:
+
+- **Im Browser speichern** (passiert sonst automatisch nach jeder Welle und jedem Kauf), `localStorage` `mkd-fortschritt-1`.
+- **Herunterladen**: `militaer-defense-<datum>-stufe-<n>.json` = `{ spiel, version, gespeichert, daten, pruefsumme }`.
+- **Hochladen**: Prüfsumme und Inhalt werden geprüft (nur bekannte Felder und Werte); bei Erfolg Rückfrage, dann wird der Stand ersetzt.
+- **Zurücksetzen** (mit Rückfrage).
+
+**Schutz gegen Änderungen:** `pruefsumme` = HMAC-SHA-256 über die Daten (feste Schlüsselreihenfolge). Wird die Datei **oder** der Browser-Speicher verändert, stimmt die Prüfsumme nicht mehr: Datei wird abgelehnt; ein veränderter Browser-Stand wird verworfen (Kopie unter `mkd-fortschritt-1-verworfen`), man startet neu. Alte, noch unsignierte Stände werden einmalig übernommen und dann signiert. Hinweis: Der Schlüssel steckt im Spiel – das schützt gegen normales Bearbeiten, nicht gegen jemanden, der den Quellcode nachbaut.
+
 ## Spielregeln (Kurz)
 
 - Währung im Spiel: **Körner** (nicht Maisdollar).
