@@ -1,0 +1,490 @@
+{
+  "hinweis": "Wege = Listen von Wegpunkten in Pixeln (Karte 1140 × 810). eckig=false: glatt (Catmull-Rom) verbinden. Mehrere Wege = mehrere Eingänge. ziel = Kornspeicher bzw. Palast.",
+  "karten": [
+    {
+      "id": "westkolbistan",
+      "land": "Westkolbistan",
+      "titel": "Grenzfelder",
+      "stufe": 1,
+      "schwierigkeit": "Leicht",
+      "wellen": 20,
+      "text": "Grüne Wiesen und Maisfelder am Rand der Wüste. Langer, gemütlicher Weg – ideal zum Einsteigen.",
+      "bild": "karte_1_westkolbistan.png",
+      "groesse": {
+        "w": 1140,
+        "h": 810
+      },
+      "wegbreite": 60,
+      "eckig": false,
+      "wege": [
+        [
+          [
+            -60,
+            150
+          ],
+          [
+            240,
+            160
+          ],
+          [
+            320,
+            330
+          ],
+          [
+            200,
+            515
+          ],
+          [
+            300,
+            690
+          ],
+          [
+            600,
+            680
+          ],
+          [
+            690,
+            470
+          ],
+          [
+            560,
+            300
+          ],
+          [
+            650,
+            140
+          ],
+          [
+            900,
+            155
+          ],
+          [
+            985,
+            370
+          ],
+          [
+            930,
+            560
+          ],
+          [
+            960,
+            650
+          ]
+        ]
+      ],
+      "ziel": [
+        960,
+        650
+      ],
+      "freischalten": "von Anfang an"
+    },
+    {
+      "id": "paprikistan",
+      "land": "Paprikistan",
+      "titel": "Paprika-Plantage",
+      "stufe": 2,
+      "schwierigkeit": "Leicht",
+      "wellen": 25,
+      "text": "Paprikafelder, Bewässerungskanal und Obstbäume. Erste getarnte Gegner tauchen auf.",
+      "bild": "karte_2_paprikistan.png",
+      "groesse": {
+        "w": 1140,
+        "h": 810
+      },
+      "wegbreite": 58,
+      "eckig": false,
+      "wege": [
+        [
+          [
+            1200,
+            140
+          ],
+          [
+            880,
+            140
+          ],
+          [
+            810,
+            300
+          ],
+          [
+            330,
+            310
+          ],
+          [
+            190,
+            450
+          ],
+          [
+            330,
+            585
+          ],
+          [
+            770,
+            575
+          ],
+          [
+            870,
+            690
+          ],
+          [
+            600,
+            755
+          ],
+          [
+            380,
+            735
+          ],
+          [
+            290,
+            715
+          ]
+        ]
+      ],
+      "ziel": [
+        290,
+        715
+      ],
+      "freischalten": "nach Westkolbistan"
+    },
+    {
+      "id": "nordkolbistan",
+      "land": "Nordkolbistan",
+      "titel": "Felsplateau",
+      "stufe": 3,
+      "schwierigkeit": "Mittel",
+      "wellen": 30,
+      "text": "Ein trockenes Wadi zwischen Tafelbergen. Die Plateaus nehmen viele Bauplätze weg.",
+      "bild": "karte_3_nordkolbistan.png",
+      "groesse": {
+        "w": 1140,
+        "h": 810
+      },
+      "wegbreite": 58,
+      "eckig": false,
+      "wege": [
+        [
+          [
+            -60,
+            620
+          ],
+          [
+            200,
+            610
+          ],
+          [
+            300,
+            420
+          ],
+          [
+            220,
+            230
+          ],
+          [
+            420,
+            120
+          ],
+          [
+            620,
+            220
+          ],
+          [
+            560,
+            420
+          ],
+          [
+            700,
+            610
+          ],
+          [
+            900,
+            570
+          ],
+          [
+            960,
+            370
+          ],
+          [
+            870,
+            220
+          ],
+          [
+            815,
+            170
+          ]
+        ]
+      ],
+      "ziel": [
+        815,
+        170
+      ],
+      "freischalten": "nach Paprikistan"
+    },
+    {
+      "id": "maisdosistan",
+      "land": "Maisdosistan",
+      "titel": "Dosenfabrik",
+      "stufe": 4,
+      "schwierigkeit": "Mittel",
+      "wellen": 30,
+      "text": "Gegner fahren auf Förderbändern durch die Konservenfabrik. Eckige Wege, kurze Sichtlinien.",
+      "bild": "karte_4_maisdosistan.png",
+      "groesse": {
+        "w": 1140,
+        "h": 810
+      },
+      "wegbreite": 56,
+      "eckig": true,
+      "wege": [
+        [
+          [
+            -60,
+            160
+          ],
+          [
+            300,
+            160
+          ],
+          [
+            300,
+            520
+          ],
+          [
+            600,
+            520
+          ],
+          [
+            600,
+            200
+          ],
+          [
+            880,
+            200
+          ],
+          [
+            880,
+            650
+          ],
+          [
+            200,
+            650
+          ],
+          [
+            140,
+            665
+          ]
+        ]
+      ],
+      "ziel": [
+        140,
+        665
+      ],
+      "freischalten": "nach Nordkolbistan"
+    },
+    {
+      "id": "ostkolbistan",
+      "land": "Ostkolbistan",
+      "titel": "Oase am Salzsee",
+      "stufe": 5,
+      "schwierigkeit": "Schwer",
+      "wellen": 35,
+      "text": "Der Weg umrundet die Oase. Das Wasser ist frei, aber nicht bebaubar.",
+      "bild": "karte_5_ostkolbistan.png",
+      "groesse": {
+        "w": 1140,
+        "h": 810
+      },
+      "wegbreite": 58,
+      "eckig": false,
+      "wege": [
+        [
+          [
+            560,
+            -60
+          ],
+          [
+            560,
+            110
+          ],
+          [
+            830,
+            190
+          ],
+          [
+            920,
+            420
+          ],
+          [
+            790,
+            650
+          ],
+          [
+            500,
+            710
+          ],
+          [
+            250,
+            610
+          ],
+          [
+            210,
+            390
+          ],
+          [
+            330,
+            220
+          ],
+          [
+            440,
+            250
+          ]
+        ]
+      ],
+      "ziel": [
+        440,
+        250
+      ],
+      "freischalten": "nach Maisdosistan"
+    },
+    {
+      "id": "suedkolbistan",
+      "land": "Südkolbistan",
+      "titel": "Große Düne",
+      "stufe": 6,
+      "schwierigkeit": "Schwer",
+      "wellen": 40,
+      "text": "Zwei Karawanenwege treffen sich mitten in der Wüste. Gegner kommen von zwei Seiten.",
+      "bild": "karte_6_suedkolbistan.png",
+      "groesse": {
+        "w": 1140,
+        "h": 810
+      },
+      "wegbreite": 54,
+      "eckig": false,
+      "wege": [
+        [
+          [
+            -60,
+            190
+          ],
+          [
+            240,
+            210
+          ],
+          [
+            420,
+            360
+          ],
+          [
+            520,
+            410
+          ],
+          [
+            720,
+            300
+          ],
+          [
+            870,
+            180
+          ],
+          [
+            1010,
+            320
+          ],
+          [
+            930,
+            560
+          ],
+          [
+            700,
+            680
+          ],
+          [
+            560,
+            730
+          ]
+        ],
+        [
+          [
+            -60,
+            630
+          ],
+          [
+            260,
+            610
+          ],
+          [
+            420,
+            460
+          ],
+          [
+            520,
+            410
+          ]
+        ]
+      ],
+      "ziel": [
+        560,
+        730
+      ],
+      "freischalten": "nach Ostkolbistan"
+    },
+    {
+      "id": "maisburg",
+      "land": "Maisburg",
+      "titel": "Hauptstadt",
+      "stufe": 7,
+      "schwierigkeit": "Finale",
+      "wellen": 50,
+      "text": "Straßenkampf vor dem Regierungspalast. Kurzer Weg, starke Gegner – das Finale.",
+      "bild": "karte_7_maisburg.png",
+      "groesse": {
+        "w": 1140,
+        "h": 810
+      },
+      "wegbreite": 58,
+      "eckig": true,
+      "wege": [
+        [
+          [
+            -60,
+            690
+          ],
+          [
+            230,
+            690
+          ],
+          [
+            230,
+            170
+          ],
+          [
+            560,
+            170
+          ],
+          [
+            560,
+            560
+          ],
+          [
+            820,
+            560
+          ],
+          [
+            820,
+            400
+          ],
+          [
+            880,
+            400
+          ]
+        ]
+      ],
+      "ziel": [
+        1010,
+        400
+      ],
+      "freischalten": "nach Südkolbistan"
+    }
+  ]
+}

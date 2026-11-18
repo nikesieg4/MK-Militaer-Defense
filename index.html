@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maiskolbistan Militär-Defense – Westkolbistan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+:root{--rot:#7A0F1A;--rot2:#4A0810;--dunkel:#1A0306;--flaeche:#2B0509;--flaeche2:#3A0A10;--linie:#5A2A30;--gold:#C9A227;--gold2:#E8C766;--text:#FFFFFF;--leise:#E7D4D6}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--dunkel);color:var(--text);font-family:Inter,system-ui,sans-serif;overflow:hidden}
+button{font-family:inherit}
+#buehne{position:absolute;left:50%;top:50%;width:1440px;height:810px;transform-origin:0 0}
+#feld{position:absolute;left:0;top:0;width:1140px;height:810px;display:block;cursor:default}
+.chip{display:flex;align-items:center;gap:10px;background:rgba(43,5,9,.92);border:1px solid var(--linie);border-radius:12px;padding:10px 16px}
+.chip small{display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--leise)}
+.chip b{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700}
+#hud{position:absolute;left:20px;top:18px;display:flex;gap:10px;pointer-events:none}
+#steuer{position:absolute;left:1000px;top:18px;display:flex;gap:8px}
+.knopf{min-width:56px;height:48px;border-radius:12px;border:1px solid var(--linie);background:rgba(43,5,9,.92);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
+.knopf:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+#leiste{position:absolute;left:1140px;top:0;width:300px;height:810px;background:var(--flaeche);border-left:2px solid var(--gold);display:flex;flex-direction:column;gap:12px;padding:18px 16px}
+#leiste h2{margin:0;font-family:'Space Grotesk',sans-serif;font-size:26px}
+#tuerme{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.turmkarte{position:relative;height:150px;border-radius:12px;border:2px solid var(--linie);background:var(--flaeche2);color:#fff;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;overflow:hidden}
+.turmkarte.aktiv{border-color:var(--gold2);background:var(--rot2)}
+.turmkarte .bild{width:112px;height:112px;margin-top:-4px;background-repeat:no-repeat}
+.turmkarte .name{font-size:13px;font-weight:700;margin-top:-6px}
+.turmkarte .preis{font-size:13px;font-weight:700;color:var(--gold2)}
+.turmkarte.gesperrt .bild{opacity:.35}.turmkarte.gesperrt .preis{color:var(--leise)}
+.turmkarte.teuer .preis{color:#FF8A7A}
+.schloss{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:14px;background:var(--dunkel);display:flex;align-items:center;justify-content:center}
+#hinweis{font-size:13px;line-height:1.45;color:var(--leise);background:var(--flaeche2);border-radius:10px;padding:10px 12px;min-height:60px}
+.gold{height:64px;border-radius:14px;border:none;background:var(--gold);color:#1C1416;font-size:19px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px}
+.gold:disabled{opacity:.55;cursor:default}
+.rand{height:52px;border-radius:12px;border:2px solid var(--gold);background:transparent;color:var(--gold2);font-size:16px;font-weight:800;cursor:pointer}
+#panel{position:absolute;top:92px;width:300px;display:none;flex-direction:column;gap:10px;background:rgba(43,5,9,.96);border:2px solid var(--gold);border-radius:16px;padding:14px}
+#panel .kopf{display:flex;gap:12px;align-items:center}
+#panel .pbild{width:84px;height:84px;flex-shrink:0;border-radius:12px;background-color:var(--flaeche2);background-repeat:no-repeat}
+.pfad{display:flex;flex-direction:column;gap:8px;background:var(--flaeche2);border-radius:12px;padding:12px}
+.pfad .zeile{display:flex;justify-content:space-between;align-items:center}
+.pfad .titel{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--leise)}
+.pips{display:flex;gap:4px}.pips span{width:18px;height:8px;border-radius:4px}
+.pfad .naechst{font-size:16px;font-weight:700}
+.pfad button{height:48px;border-radius:10px;border:none;font-size:15px;font-weight:800;cursor:pointer}
+.klein{font-size:11px;line-height:1.4;color:var(--leise)}
+.zu{width:44px;height:44px;flex-shrink:0;align-self:flex-start;border-radius:10px;border:1px solid var(--linie);background:var(--flaeche2);color:#fff;cursor:pointer;font-size:18px}
+#overlay{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(26,3,6,.82)}
+.karte{background:var(--flaeche);border:2px solid var(--gold);border-radius:18px;padding:28px 32px;max-width:980px;width:100%}
+.karte h1{margin:0 0 6px;font-family:'Space Grotesk',sans-serif;font-size:40px}
+.karte p{color:var(--leise);line-height:1.5}
+#tech{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}
+.knoten{border:2px solid var(--linie);border-radius:14px;padding:12px;background:var(--flaeche2);display:flex;flex-direction:column;gap:6px;min-height:150px}
+.knoten.gekauft{border-color:var(--gold2);background:var(--rot2)}.knoten.kaufbar{border-color:var(--gold)}
+.knoten b{font-size:15px}.knoten span{font-size:12px;color:var(--leise);flex:1}
+.knoten button{height:36px;border-radius:8px;border:none;font-weight:800;cursor:pointer}
+.knoten .reihe{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold2)}
+#start .knopfreihe{display:flex;gap:12px;margin-top:16px}
+</style>
+</head>
+<body>
+<div id="buehne">
+  <canvas id="feld" width="1140" height="810" aria-label="Spielfeld Westkolbistan"></canvas>
+
+  <div id="hud">
+    <div class="chip"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E8C766" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 12c3-4 6-4 10 0s7 4 10 0"/><path d="M2 18c3-4 6-4 10 0s7 4 10 0"/><path d="M2 6c3-4 6-4 10 0s7 4 10 0"/></svg><div><small>Welle</small><b id="welle">0</b> <span style="color:#E7D4D6">/ <span id="wellenMax">20</span></span></div></div>
+    <div class="chip"><svg width="22" height="26" viewBox="0 0 22 26" aria-hidden="true"><ellipse cx="11" cy="12" rx="6" ry="10" fill="#E8C766" stroke="#7A5A10" stroke-width="1.4"/><path d="M8 6v13M11 3v18M14 6v13" stroke="#C9A227" stroke-width="1.2"/><path d="M5 25Q4 15 8 9M17 25Q18 15 14 9" stroke="#2E9E4F" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg><div><small>Körner</small><b id="koerner" style="color:#E8C766">0</b></div></div>
+    <div class="chip"><svg width="22" height="22" viewBox="0 0 24 24" fill="#E0361C" stroke="#fff" stroke-width="1.6" aria-hidden="true"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.5-9.5 9-9.5 9z"/></svg><div><small>Leben</small><b id="leben">100</b></div></div>
+  </div>
+
+  <div id="steuer">
+    <button class="knopf" id="tempo" type="button" aria-label="Spieltempo umschalten">1×</button>
+    <button class="knopf" id="pause" type="button" aria-label="Pause">❚❚</button>
+  </div>
+
+  <div id="panel" role="dialog" aria-label="Turm ausbauen">
+    <div class="kopf">
+      <div class="pbild" id="pBild"></div>
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+        <span id="pCode" style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#E8C766"></span>
+        <span id="pName" style="font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;line-height:1.1"></span>
+        <span id="pWerte" class="klein"></span>
+      </div>
+      <button class="zu" id="pZu" type="button" aria-label="Panel schließen">✕</button>
+    </div>
+    <div id="pPfade"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:#3A0A10;border-radius:12px;padding:8px 8px 8px 12px">
+      <span class="klein" style="font-weight:700;letter-spacing:.08em;text-transform:uppercase">Ziel</span>
+      <button type="button" id="pZiel" style="height:40px;padding:0 14px;border-radius:8px;border:1px solid #C9A227;background:transparent;color:#E8C766;font-size:14px;font-weight:800;cursor:pointer"></button>
+    </div>
+    <button type="button" id="pVerkauf" style="height:44px;border-radius:10px;border:1px solid #A3343C;background:transparent;color:#fff;font-size:14px;font-weight:700;cursor:pointer"></button>
+    <span class="klein">Ein Pfad bis Stufe 5, der andere höchstens bis Stufe 2.</span>
+  </div>
+
+  <div id="leiste">
+    <div style="display:flex;justify-content:space-between;align-items:baseline"><h2>Türme</h2><span class="klein">antippen, dann platzieren</span></div>
+    <div id="tuerme"></div>
+    <div id="hinweis">Wähle einen Turm und tippe auf eine freie Stelle neben dem Weg.</div>
+    <div style="flex:1"></div>
+    <button class="rand" id="techKnopf" type="button">Techbaum</button>
+    <button class="gold" id="welleKnopf" type="button">▶ Welle 1 starten</button>
+  </div>
+
+  <div id="overlay"><div class="karte" id="overlayInhalt"></div></div>
+</div>
+<script src="spiel.js"></script>
+</body>
+</html>

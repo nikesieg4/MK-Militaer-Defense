@@ -1,0 +1,258 @@
+{
+  "image": "gegner_spritesheet.png",
+  "size": {
+    "w": 1024,
+    "h": 672
+  },
+  "hinweise": {
+    "richtung": "alle Gegner laufen/fahren nach rechts; nach links: horizontal spiegeln (scaleX = -1). Nicht drehen.",
+    "anker": "Bodenpunkt (Mitte unter den Füßen bzw. Rädern) = Position auf dem Weg",
+    "tarnung": "Tarnsoldat mit globalAlpha 0.45 zeichnen, solange kein Turm mit Tarn-Erkennung in Reichweite ist"
+  },
+  "animationen": {
+    "soldat": {
+      "titel": "Soldat",
+      "bilder": [
+        "soldat_1",
+        "soldat_2",
+        "soldat_3",
+        "soldat_4",
+        "soldat_5",
+        "soldat_6"
+      ],
+      "fps": 10,
+      "schleife": true,
+      "anker": {
+        "x": 62,
+        "y": 112
+      },
+      "info": "normaler Gegner"
+    },
+    "tarnsoldat": {
+      "titel": "Tarnsoldat",
+      "bilder": [
+        "tarnsoldat_1",
+        "tarnsoldat_2",
+        "tarnsoldat_3",
+        "tarnsoldat_4",
+        "tarnsoldat_5",
+        "tarnsoldat_6"
+      ],
+      "fps": 10,
+      "schleife": true,
+      "anker": {
+        "x": 62,
+        "y": 112
+      },
+      "info": "getarnt: nur von Türmen mit Tarn-Erkennung angreifbar; im Spiel halbtransparent zeichnen (Alpha 0,45), bis er entdeckt ist"
+    },
+    "panzersoldat": {
+      "titel": "Gepanzerter Soldat",
+      "bilder": [
+        "panzersoldat_1",
+        "panzersoldat_2",
+        "panzersoldat_3",
+        "panzersoldat_4",
+        "panzersoldat_5",
+        "panzersoldat_6"
+      ],
+      "fps": 7,
+      "schleife": true,
+      "anker": {
+        "x": 64,
+        "y": 112
+      },
+      "info": "kugelfest: braucht Panzerbrechend, Granaten oder Laser"
+    },
+    "humvee": {
+      "titel": "Humvee",
+      "bilder": [
+        "humvee_1",
+        "humvee_2",
+        "humvee_3",
+        "humvee_4"
+      ],
+      "fps": 12,
+      "schleife": true,
+      "anker": {
+        "x": 96,
+        "y": 112
+      },
+      "info": "schnelles Fahrzeug mit Dach-MG"
+    },
+    "panzer": {
+      "titel": "Panzer",
+      "bilder": [
+        "panzer_1",
+        "panzer_2",
+        "panzer_3",
+        "panzer_4"
+      ],
+      "fps": 10,
+      "schleife": true,
+      "anker": {
+        "x": 128,
+        "y": 140
+      },
+      "info": "langsam, sehr viel Leben, kugelfest"
+    }
+  },
+  "frames": {
+    "soldat_1": {
+      "x": 0,
+      "y": 0,
+      "w": 128,
+      "h": 128
+    },
+    "soldat_2": {
+      "x": 128,
+      "y": 0,
+      "w": 128,
+      "h": 128
+    },
+    "soldat_3": {
+      "x": 256,
+      "y": 0,
+      "w": 128,
+      "h": 128
+    },
+    "soldat_4": {
+      "x": 384,
+      "y": 0,
+      "w": 128,
+      "h": 128
+    },
+    "soldat_5": {
+      "x": 512,
+      "y": 0,
+      "w": 128,
+      "h": 128
+    },
+    "soldat_6": {
+      "x": 640,
+      "y": 0,
+      "w": 128,
+      "h": 128
+    },
+    "tarnsoldat_1": {
+      "x": 0,
+      "y": 128,
+      "w": 128,
+      "h": 128
+    },
+    "tarnsoldat_2": {
+      "x": 128,
+      "y": 128,
+      "w": 128,
+      "h": 128
+    },
+    "tarnsoldat_3": {
+      "x": 256,
+      "y": 128,
+      "w": 128,
+      "h": 128
+    },
+    "tarnsoldat_4": {
+      "x": 384,
+      "y": 128,
+      "w": 128,
+      "h": 128
+    },
+    "tarnsoldat_5": {
+      "x": 512,
+      "y": 128,
+      "w": 128,
+      "h": 128
+    },
+    "tarnsoldat_6": {
+      "x": 640,
+      "y": 128,
+      "w": 128,
+      "h": 128
+    },
+    "panzersoldat_1": {
+      "x": 0,
+      "y": 256,
+      "w": 128,
+      "h": 128
+    },
+    "panzersoldat_2": {
+      "x": 128,
+      "y": 256,
+      "w": 128,
+      "h": 128
+    },
+    "panzersoldat_3": {
+      "x": 256,
+      "y": 256,
+      "w": 128,
+      "h": 128
+    },
+    "panzersoldat_4": {
+      "x": 384,
+      "y": 256,
+      "w": 128,
+      "h": 128
+    },
+    "panzersoldat_5": {
+      "x": 512,
+      "y": 256,
+      "w": 128,
+      "h": 128
+    },
+    "panzersoldat_6": {
+      "x": 640,
+      "y": 256,
+      "w": 128,
+      "h": 128
+    },
+    "humvee_1": {
+      "x": 0,
+      "y": 384,
+      "w": 192,
+      "h": 128
+    },
+    "humvee_2": {
+      "x": 192,
+      "y": 384,
+      "w": 192,
+      "h": 128
+    },
+    "humvee_3": {
+      "x": 384,
+      "y": 384,
+      "w": 192,
+      "h": 128
+    },
+    "humvee_4": {
+      "x": 576,
+      "y": 384,
+      "w": 192,
+      "h": 128
+    },
+    "panzer_1": {
+      "x": 0,
+      "y": 512,
+      "w": 256,
+      "h": 160
+    },
+    "panzer_2": {
+      "x": 256,
+      "y": 512,
+      "w": 256,
+      "h": 160
+    },
+    "panzer_3": {
+      "x": 512,
+      "y": 512,
+      "w": 256,
+      "h": 160
+    },
+    "panzer_4": {
+      "x": 768,
+      "y": 512,
+      "w": 256,
+      "h": 160
+    }
+  }
+}
