@@ -53,6 +53,26 @@
         { n: 'Kolbenbrecher', k: 17250, d: { dmg: 120, reload: 0.25, range: 22, pierce: 1, laser: true } }
       ],
       info: 'Scharfschütze: riesige Reichweite, langsame, starke Schüsse. Erkennt Getarnte ab Adlerauge (Phantom 2).'
+    },
+    depot: {
+      name: 'Logistik-Depot', kosten: 400, schraeg: 'bilder/depot.png', tech: 'depot', depot: true,
+      pfade: ['Versorgung', 'Sanität'],
+      basis: { geld: 70, leben: 0, faktor: 1, dmg: 0, reload: 1, burst: 1, range: 0 },
+      A: [
+        { n: 'Mehr Kisten', k: 300, d: { geld: 50 } },
+        { n: 'Lagerhalle', k: 700, d: { geld: 80 } },
+        { n: 'Lkw-Kolonne', k: 1600, d: { geld: 150 } },
+        { n: 'Kornsilo', k: 3800, d: { geld: 300 } },
+        { n: 'Staatsreserve', k: 9500, d: { geld: 850 } }
+      ],
+      B: [
+        { n: 'Sanitätszelt', k: 350, d: { leben: 1, faktor: -0.1 } },
+        { n: 'Feldlazarett', k: 800, d: { leben: 2 } },
+        { n: 'Krankenwagen', k: 1800, d: { leben: 4, faktor: -0.1 } },
+        { n: 'Rettungshubschrauber', k: 4000, d: { leben: 8 } },
+        { n: 'Feldkrankenhaus', k: 9000, d: { leben: 15, faktor: -0.1 } }
+      ],
+      info: 'Logistik-Depot: schießt nicht, bringt zu Beginn jeder Welle Körner. Versorgung = mehr Körner, Sanität = etwas weniger Körner, dafür Leben.'
     }
   };
 
@@ -69,7 +89,7 @@
   const TECH = [
     { id: 'ranger', n: 'Ranger', t: 'Start-Turm. Feuerstöße, zwei Ausbaupfade.', c: 0, r: 0, k: 0, bild: 'ranger' },
     { id: 'sniper', n: 'Scharfschütze', t: 'Neuer Turm: große Reichweite, Phantom- und Schwerkaliber-Pfad.', c: 1, r: 0, k: 3, req: 'ranger', bild: 'sniper' },
-    { id: 'next', n: 'Nächster Turm', t: 'Folgt in einer späteren Version.', c: 2, r: 0, k: 0, req: 'sniper', bald: true },
+    { id: 'depot', n: 'Logistik-Depot', t: 'Wirtschaftsturm: Körner zu Beginn jeder Welle, Sanität auch Leben.', c: 2, r: 0, k: 3, req: 'sniper', bild: 'depot' },
     { id: 'ruhig', n: 'Ruhige Hand', t: 'Scharfschützen: +15 % Reichweite.', c: 2, r: 1, k: 2, req: 'sniper' },
     { id: 'tarnung', n: 'Maisfeld-Tarnung', t: 'Phantom-Ausbauten 20 % günstiger.', c: 3, r: 1, k: 4, req: 'ruhig' },
     { id: 'drill1', n: 'Ranger-Drill I', t: 'Ranger: +10 % Feuerrate.', c: 1, r: 2, k: 2, req: 'ranger' },
@@ -96,7 +116,7 @@
   let S;                  // Spielzustand
   const neu = () => ({
     welle: 0, koerner: 800 + (P.tech.kasse ? 150 : 0), leben: 100 + (P.tech.bunker ? 20 : 0), tempo: 1, pause: false, laeuft: false, ende: false,
-    tuerme: [], gegner: [], geschosse: [], effekte: [], flaechen: [], spawn: [], spawnNr: 0,
+    tuerme: [], gegner: [], geschosse: [], effekte: [], flaechen: [], spawn: [], spawnNr: 0, texte: [],
     wahl: null, platzieren: null, maus: null, tech: P.tech, zeit: 0, startLeben: 100 + (P.tech.bunker ? 20 : 0)
   });
 
@@ -105,12 +125,12 @@
   const json = (src) => fetch(src).then((r) => { if (!r.ok) throw new Error(src); return r.json(); });
 
   async function laden() {
-    const [rangerTop, sniperTop, gegnerImg, effImg, gegnerAtlas, effAtlas, rangerJ, sniperJ, karten] = await Promise.all([
-      bild('bilder/ranger_draufsicht@2x.png'), bild('bilder/scharfschuetze_draufsicht@2x.png'),
+    const [depot, rangerTop, sniperTop, gegnerImg, effImg, gegnerAtlas, effAtlas, rangerJ, sniperJ, karten] = await Promise.all([
+      bild('bilder/depot.png'), bild('bilder/ranger_draufsicht@2x.png'), bild('bilder/scharfschuetze_draufsicht@2x.png'),
       bild('bilder/gegner_spritesheet.png'), bild('bilder/effekte_spritesheet.png'),
       json('daten/gegner_atlas.json'), json('daten/effekte_atlas.json'), json('daten/ranger_draufsicht.json'), json('daten/scharfschuetze_draufsicht.json'), json('daten/karten.json')
     ]);
-    A = { rangerTop, sniperTop, gegnerImg, effImg, gegnerAtlas, effAtlas, ranger: rangerJ, sniper: sniperJ, karten: karten.karten, bilder: {} };
+    A = { depot, rangerTop, sniperTop, gegnerImg, effImg, gegnerAtlas, effAtlas, ranger: rangerJ, sniper: sniperJ, karten: karten.karten, bilder: {} };
     if (typeof P.orden !== 'number') {   // alter Spielstand mit Kornvorrat -> in Orden umrechnen
       let o = 0;
       A.karten.forEach((k, i) => { if (P.sterne[k.id]) o += ORDEN[i] + P.sterne[k.id]; });
@@ -166,6 +186,7 @@
     if (t.typ === 'sniper' && P.tech.ruhig) w.range *= 1.15;
     if (w.dauerfeuer) { w.reload = 0.15; w.burst = 1; }
     w.rangePx = w.range * EINHEIT;
+    if (def.depot) { w.koernerProWelle = Math.round(w.geld * w.faktor); w.depot = true; }
     return w;
   }
   function ausbauKosten(t, pfad) {
@@ -178,6 +199,11 @@
   // Liste der Wertänderungen zwischen zwei Stufen, z. B. "Nachladen 1,75 → 1,65 s"
   function aenderungen(alt, neu) {
     const z = [];
+    if (alt.depot) {
+      if (neu.koernerProWelle !== alt.koernerProWelle) z.push(['Körner pro Welle', fmt(alt.koernerProWelle), fmt(neu.koernerProWelle)]);
+      if (neu.leben !== alt.leben) z.push(['Leben pro Welle', String(alt.leben), String(neu.leben)]);
+      return { zeilen: z, neu: neu.faktor < alt.faktor ? ['Depot bringt insgesamt ' + Math.round((1 - neu.faktor) * 100) + ' % weniger Körner'] : [] };
+    }
     const nach = (w) => (w.dauerfeuer ? 'Dauerfeuer' : zahl(w.reload) + ' s');
     if (neu.dmg !== alt.dmg) z.push(['Schaden', zahl(alt.dmg), zahl(neu.dmg)]);
     if (nach(neu) !== nach(alt)) z.push(['Nachladen', nach(alt), nach(neu)]);
@@ -197,16 +223,17 @@
   }
   function turmName(t) {
     const def = TUERME[t.typ];
-    if (t.a === 0 && t.b === 0) return t.typ === 'ranger' ? 'Grenzranger' : 'Grenzschütze';
+    if (t.a === 0 && t.b === 0) return { ranger: 'Grenzranger', sniper: 'Grenzschütze', depot: 'Feldlager' }[t.typ];
     return t.a >= t.b ? def.A[t.a - 1].n : def.B[t.b - 1].n;
   }
-  function platzOk(x, y) {
+  function platzOk(x, y, typ = S.platzieren) {
+    const gross = typ === 'depot';
     if (x < 30 || x > W - 30 || y < 30 || y > H - 30) return false;
     if (x < 540 && y < 90) return false;                         // Anzeige oben links
-    if (abstandZumWeg(x, y) < K.wegbreite / 2 + 3 + 22) return false;
+    if (abstandZumWeg(x, y) < K.wegbreite / 2 + 3 + (gross ? 48 : 22)) return false;
     const z = K.ziel; if (Math.hypot(x - z[0], y - z[1]) < 70) return false;
     for (const e of K.sperren || []) if (((x - e.x) / e.rx) ** 2 + ((y - e.y) / e.ry) ** 2 < 1) return false;
-    for (const t of S.tuerme) if (Math.hypot(t.x - x, t.y - y) < 46) return false;
+    for (const t of S.tuerme) if (Math.hypot(t.x - x, t.y - y) < (gross || t.typ === 'depot' ? 80 : 46)) return false;
     return true;
   }
   function turmBauen(typ, x, y) {
@@ -287,6 +314,7 @@
   }
 
   function turmUpdate(t, dt) {
+    if (TUERME[t.typ].depot) return;
     const w = werte(t);
     t.schussT += dt;
     if (t.betaeubtBis > S.zeit) { t.burstRest = 0; return; }
@@ -391,6 +419,8 @@
     S.geschosse = S.geschosse.filter((p) => !p.weg);
     S.gegner = S.gegner.filter((g) => g.hp > 0);
     for (const e of S.effekte) e.t += dt;
+    for (const tx of S.texte) tx.t += dt;
+    S.texte = S.texte.filter((tx) => tx.t < 1.8);
     S.effekte = S.effekte.filter((e) => e.t < e.dauer);
     if (S.leben <= 0 && !S.ende) { S.leben = 0; S.ende = true; ende(false); }
     if (S.laeuft && !S.spawn.length && !S.gegner.length) {
@@ -415,6 +445,12 @@
     return A.effAtlas.frames[an.bilder[n]];
   }
   function turmZeichnen(t, alpha = 1) {
+    if (TUERME[t.typ].depot) {
+      const i = KOMBIS.indexOf(t.a + '-' + t.b), k = 150 / 256;
+      ctx.save(); ctx.globalAlpha = alpha;
+      ctx.drawImage(A.depot, (i % 9) * 256, Math.floor(i / 9) * 256, 256, 256, t.x - 128 * k, t.y - 150 * k, 256 * k, 256 * k);
+      ctx.restore(); return;
+    }
     const img = t.typ === 'ranger' ? A.rangerTop : A.sniperTop;
     const row = KOMBIS.indexOf(t.a + '-' + t.b);
     const fr = t.schussT < 0.04 ? 1 : t.schussT < 0.09 ? 2 : 0;
@@ -441,7 +477,7 @@
     ctx.drawImage(A.bilder[A.karten.indexOf(K)], 0, 0, W, H);
     for (const f of S.flaechen) frameZeichnen(A.effImg, effFrame('brandflaeche', f.t, true), f.x, f.y, 0.9, 0.9);
     const w = S.wahl ? werte(S.wahl) : null;
-    if (S.wahl) { ctx.beginPath(); ctx.arc(S.wahl.x, S.wahl.y, w.rangePx, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fill(); ctx.setLineDash([8, 6]); ctx.strokeStyle = '#E8C766'; ctx.lineWidth = 2; ctx.stroke(); ctx.setLineDash([]); }
+    if (S.wahl && w.rangePx > 0) { ctx.beginPath(); ctx.arc(S.wahl.x, S.wahl.y, w.rangePx, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fill(); ctx.setLineDash([8, 6]); ctx.strokeStyle = '#E8C766'; ctx.lineWidth = 2; ctx.stroke(); ctx.setLineDash([]); }
     const dinge = [...S.gegner.map((g) => ({ y: g.y, f: () => gegnerZeichnen(g) })), ...S.tuerme.map((t) => ({ y: t.y + 20, f: () => {
       if (t === S.wahl) { ctx.save(); ctx.shadowColor = '#E8C766'; ctx.shadowBlur = 16; turmZeichnen(t); ctx.restore(); } else turmZeichnen(t);
       if (t.betaeubtBis > S.zeit) frameZeichnen(A.effImg, effFrame('betaeubt', S.zeit, true), t.x, t.y - 46, 1, 1);
@@ -457,6 +493,10 @@
       ctx.save(); ctx.translate(e.x, e.y); ctx.rotate(e.rot); ctx.scale(e.gr, e.gr);
       const ax = e.name === 'muendungsfeuer' ? 3 : fr.w / 2;
       ctx.drawImage(A.effImg, fr.x, fr.y, fr.w, fr.h, -ax, -fr.h / 2, fr.w, fr.h); ctx.restore();
+    }
+    for (const tx of S.texte) {
+      ctx.save(); ctx.globalAlpha = Math.min(1, (1.8 - tx.t) / 0.6); ctx.font = '800 22px "Space Grotesk", sans-serif'; ctx.textAlign = 'center';
+      ctx.lineWidth = 5; ctx.strokeStyle = '#1A0306'; ctx.strokeText(tx.text, tx.x, tx.y - tx.t * 30); ctx.fillStyle = tx.farbe; ctx.fillText(tx.text, tx.x, tx.y - tx.t * 30); ctx.restore();
     }
     const boss = S.gegner.find((g) => GEGNER[g.typ].boss);
     if (boss) {
@@ -476,7 +516,7 @@
       ctx.fillStyle = '#FFFFFF'; ctx.font = '700 44px "Space Grotesk", sans-serif'; ctx.fillText('Die Stahlratte rollt an!', W / 2, 424); ctx.restore(); ctx.textAlign = 'left';
     }
     if (S.platzieren && S.maus) {
-      const ok = platzOk(S.maus.x, S.maus.y), r = werte({ typ: S.platzieren, a: 0, b: 0 }).rangePx;
+      const ok = platzOk(S.maus.x, S.maus.y), r = werte({ typ: S.platzieren, a: 0, b: 0 }).rangePx || 70;
       ctx.beginPath(); ctx.arc(S.maus.x, S.maus.y, r, 0, Math.PI * 2); ctx.fillStyle = ok ? 'rgba(124,217,146,0.18)' : 'rgba(255,80,60,0.22)'; ctx.fill();
       ctx.strokeStyle = ok ? '#7CD992' : '#FF6B5E'; ctx.lineWidth = 2; ctx.stroke();
       turmZeichnen({ typ: S.platzieren, x: S.maus.x, y: S.maus.y, a: 0, b: 0, winkel: -Math.PI / 2, schussT: 1 }, 0.75);
@@ -491,7 +531,7 @@
   function leisteZeichnen() {
     const box = $('tuerme');
     box.innerHTML = '';
-    for (const typ of ['ranger', 'sniper', null, null]) {
+    for (const typ of ['ranger', 'sniper', 'depot', null]) {
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'turmkarte';
       if (!typ) { b.classList.add('gesperrt'); b.disabled = true; b.innerHTML = '<div class="bild" style="display:flex;align-items:center;justify-content:center;font-size:36px;color:#5A2A30;font-weight:700">?</div><span class="name">Bald</span><span class="preis">gesperrt</span>'; box.appendChild(b); continue; }
@@ -503,7 +543,7 @@
       b.innerHTML = `<div class="bild" style="${schraegStil(typ, 0, 0, 112)}"></div><span class="name">${def.name}</span><span class="preis">${frei ? fmt(def.kosten) + ' Körner' : 'Techbaum'}</span>` +
         (frei ? '' : '<span class="schloss"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E8C766" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>');
       b.onclick = () => {
-        if (!frei) { $('hinweis').textContent = 'Der Scharfschütze ist gesperrt. Schalte ihn zwischen den Runden im Techbaum auf dem Weltbildschirm frei (3 Verdienstorden – gibt es für besiegte Karten).'; return; }
+        if (!frei) { $('hinweis').textContent = `${def.name} ist gesperrt. Schalte es zwischen den Runden im Techbaum auf dem Weltbildschirm frei (Verdienstorden gibt es für besiegte Karten).`; return; }
         S.platzieren = S.platzieren === typ ? null : typ; S.wahl = null;
         $('hinweis').textContent = S.platzieren ? def.info + ' Tippe auf eine freie Stelle neben dem Weg.' : 'Wähle einen Turm.';
         oberflaeche();
@@ -519,7 +559,7 @@
     const wk = $('welleKnopf');
     wk.disabled = S.laeuft || S.ende;
     wk.textContent = S.laeuft ? 'Welle läuft …' : `▶ Welle ${S.welle + 1} starten`;
-    const schluessel = JSON.stringify([S.platzieren, P.tech, S.koerner >= 250, S.koerner >= 285]);
+    const schluessel = JSON.stringify([S.platzieren, P.tech, S.koerner >= 250, S.koerner >= 285, S.koerner >= 400]);
     if (schluessel !== letzteLeiste) { letzteLeiste = schluessel; leisteZeichnen(); }
     panelZeichnen();
   }
@@ -536,9 +576,11 @@
     $('pBild').setAttribute('style', schraegStil(t.typ, t.a, t.b, 84));
     $('pCode').textContent = `${def.name} ${t.a}-${t.b}`;
     $('pName').textContent = turmName(t);
-    $('pWerte').textContent = `Schaden ${zahl(w.dmg)} · ${w.dauerfeuer ? 'Dauerfeuer' : 'Nachladen ' + zahl(w.reload) + ' s'} · Reichweite ${zahl(w.range)}`;
+    $('pWerte').textContent = def.depot ? `${fmt(w.koernerProWelle)} Körner${w.leben ? ' und ' + w.leben + ' Leben' : ''} zu Beginn jeder Welle` : `Schaden ${zahl(w.dmg)} · ${w.dauerfeuer ? 'Dauerfeuer' : 'Nachladen ' + zahl(w.reload) + ' s'} · Reichweite ${zahl(w.range)}`;
+    $('pZiel').parentElement.style.display = def.depot ? 'none' : 'flex';
     const pf = $('pPfade'); pf.innerHTML = '';
-    for (const [pfad, titel] of [['A', t.typ === 'ranger' ? 'Präzision' : 'Phantom'], ['B', t.typ === 'ranger' ? 'Sturm' : 'Schwerkaliber']]) {
+    const titel2 = def.pfade || (t.typ === 'ranger' ? ['Präzision', 'Sturm'] : ['Phantom', 'Schwerkaliber']);
+    for (const [pfad, titel] of [['A', titel2[0]], ['B', titel2[1]]]) {
       const stufe = pfad === 'A' ? t.a : t.b, andere = pfad === 'A' ? t.b : t.a, max = andere >= 3 ? 2 : 5;
       const fertig = stufe >= 5, gesperrt = stufe >= max;
       const k = fertig || gesperrt ? 0 : ausbauKosten(t, pfad), kann = !fertig && !gesperrt && S.koerner >= k;
@@ -564,7 +606,19 @@
   $('pZu').onclick = () => { S.wahl = null; oberflaeche(); };
   $('tempo').onclick = () => { S.tempo = S.tempo === 1 ? 2 : 1; oberflaeche(); };
   $('pause').onclick = () => { S.pause = !S.pause; oberflaeche(); };
-  $('welleKnopf').onclick = () => { if (S.laeuft || S.ende) return; S.welle++; S.spawn = welleBauen(S.welle); S.laeuft = true; oberflaeche(); };
+  function welleStarten() {
+    if (S.laeuft || S.ende) return;
+    S.welle++; S.spawn = welleBauen(S.welle); S.laeuft = true;
+    for (const t of S.tuerme) {
+      if (!TUERME[t.typ].depot) continue;
+      const w = werte(t);
+      S.koerner += w.koernerProWelle; S.leben += w.leben;
+      S.texte.push({ x: t.x, y: t.y - 70, text: '+' + fmt(w.koernerProWelle), farbe: '#E8C766', t: 0 });
+      if (w.leben) S.texte.push({ x: t.x, y: t.y - 46, text: '+' + w.leben + ' ♥', farbe: '#FF8A7A', t: 0 });
+    }
+    oberflaeche();
+  }
+  $('welleKnopf').onclick = () => welleStarten();
 
   function feldPunkt(ev) {
     const r = cv.getBoundingClientRect();
@@ -583,7 +637,7 @@
     for (const t of S.tuerme) { const d = Math.hypot(t.x - p.x, t.y - p.y); if (d < best) { best = d; treffer = t; } }
     S.wahl = treffer; oberflaeche();
   });
-  window.__mk = { S: () => S, update: (dt) => update(dt), platzOk: (x, y) => platzOk(x, y), abstand: (x, y) => abstandZumWeg(x, y), laden: async (i) => { await karteLaden(i); S = neu(); }, welle: () => { if (!S.laeuft && !S.ende) { S.welle++; S.spawn = welleBauen(S.welle); S.laeuft = true; } } };
+  window.__mk = { S: () => S, update: (dt) => update(dt), platzOk: (x, y) => platzOk(x, y), abstand: (x, y) => abstandZumWeg(x, y), laden: async (i) => { await karteLaden(i); S = neu(); }, welle: () => welleStarten() };
   window.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') { S.platzieren = null; S.wahl = null; oberflaeche(); } });
 
   // ---------- Overlays ----------
@@ -624,7 +678,7 @@
     overlay(`<div style="position:absolute;left:0;top:0;width:1440px;height:96px;box-sizing:border-box;padding:0 40px;display:flex;align-items:center;justify-content:space-between;background:#2B0509;border-bottom:2px solid #C9A227">
         <div style="display:flex;align-items:center;gap:18px"><button type="button" id="techZu" class="knopf" aria-label="Zurück" style="width:48px">‹</button>
           <div><h1 style="margin:0;font-size:34px;line-height:1">Techbaum</h1><span style="font-size:14px;color:#E7D4D6">Türme freischalten und dauerhafte Verbesserungen kaufen – bezahlt mit Verdienstorden für besiegte Karten</span></div></div>
-        <div style="display:flex;align-items:center;gap:14px"><span style="font-size:14px;color:#E7D4D6">${zahl - 1} von ${TECH.length - 2} erforscht</span>${vorratChip()}</div></div>
+        <div style="display:flex;align-items:center;gap:14px"><span style="font-size:14px;color:#E7D4D6">${zahl - 1} von ${TECH.length - 1} erforscht</span>${vorratChip()}</div></div>
       ${labels}${linien}${knoten}
       <div style="position:absolute;left:1320px;top:150px;width:110px;display:flex;flex-direction:column;gap:10px;font-size:12px;color:#E7D4D6"><span style="font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#E8C766">Legende</span>
         <span style="display:flex;align-items:center;gap:8px"><span style="width:16px;height:16px;border-radius:4px;border:2px solid #E8C766;background:#4A0810"></span>gekauft</span>

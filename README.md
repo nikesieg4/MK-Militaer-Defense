@@ -35,6 +35,21 @@ Grafiken und Generatoren liegen im Repo `nikesieg4/Maiskolbistan-Info` unter `se
 
 Wie im Design: Zeilen Türme / Scharfschütze / Ranger / Allgemein mit Verbindungslinien. **Nur zwischen den Runden** auf dem Weltbildschirm (Kampagne) erreichbar, bezahlt mit Verdienstorden. Ranger (frei) → **Scharfschütze 3** → (nächster Turm: bald); Ruhige Hand 2 → Maisfeld-Tarnung 4; Ranger-Drill I 2 → II 3 → Goldmagazin 4; Kriegskasse 2 (+150 Startkörner) → Erntebonus 3 → Strohbunker 3 (+20 Leben) → Mais-Reserve 5 (+1 Leben je Welle). Alte Spielstände mit Kornvorrat werden einmalig in Orden umgerechnet.
 
+## Logistik-Depot (Wirtschaftsturm)
+
+Kosten 400 Körner, im Techbaum freischalten (3 Verdienstorden, nach Scharfschütze). Schießt nicht, dreht sich nicht. **Zu Beginn jeder Welle** (Klick auf „Welle starten“) bringt es Körner, Sanitäts-Pfad zusätzlich Leben.
+
+| Stufe | Versorgung (Körner/Welle) | Kosten | Sanität (Leben/Welle, Körner-Abzug) | Kosten |
+| --- | --- | --- | --- | --- |
+| 0 Feldlager | 70 | 400 | – | – |
+| 1 | Mehr Kisten: 120 | 300 | Sanitätszelt: 1 Leben, −10 % | 350 |
+| 2 | Lagerhalle: 200 | 700 | Feldlazarett: 3 Leben | 800 |
+| 3 | Lkw-Kolonne: 350 | 1.600 | Krankenwagen: 7 Leben, −20 % | 1.800 |
+| 4 | Kornsilo: 650 | 3.800 | Rettungshubschrauber: 15 Leben | 4.000 |
+| 5 | Staatsreserve: 1.500 | 9.500 | Feldkrankenhaus: 30 Leben, −30 % | 9.000 |
+
+Kreuzpfade wirken zusammen: Körner = Versorgung × (1 − Abzug), z. B. 2-2 = 200 × 0,9 = 180 Körner + 3 Leben. Mindestabstand zum Weg und zu anderen Türmen ist größer als bei Schützen.
+
 ## Boss: Stahlratte (Grenzfelder, Welle 20)
 
 Landkreuzer nach Vorbild P. 1000 (verkleinert, neutrale Lackierung). Kommt am Ende von Welle 20 auf Grenzfelder, mit Banner und Boss-Lebensleiste. Leben 1.000 × Wellenfaktor (2.200), kugelfest, Tempo 15, Belohnung 400 Körner; erreicht er das Ziel, ist die Karte verloren. Alle 8 s: steht ein Turm in 340 px Umkreis, hält er 1,8 s an und feuert eine schwere Granate auf den teuersten Turm – Türme im Umkreis 50 px sind 4 s **betäubt** (schießen nicht, Sterne darüber).
