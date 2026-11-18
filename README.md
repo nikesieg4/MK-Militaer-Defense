@@ -2,7 +2,7 @@
 
 Tower-Defense-Spiel der Republik Maiskolbistan – **Kampagne mit 7 Karten** (6 Bundesländer + Finale Maisburg) und dauerhaftem Techbaum.
 
-Spielen: GitHub Pages aus `main` / Root (`https://nikesieg4.github.io/mk-militaer-defense/`, sobald Pages aktiviert ist).
+Spielen: GitHub Pages aus `main` / Root (`https://nikesieg4.github.io/MK-Militaer-Defense/`).
 
 ## Inhalt
 
