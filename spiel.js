@@ -64,26 +64,26 @@
     panzer: { hp: 180, tempo: 24, lohn: 100, schaden: 20, gr: 0.6, panzer: true }
   };
 
-  // Techbaum wie im Design: Spalte c, Zeile r; dauerhaft, bezahlt mit Kornvorrat
+  // Techbaum wie im Design: Spalte c, Zeile r; dauerhaft, bezahlt mit Verdienstorden (nur zwischen den Runden)
   const TECH = [
     { id: 'ranger', n: 'Ranger', t: 'Start-Turm. Feuerstöße, zwei Ausbaupfade.', c: 0, r: 0, k: 0, bild: 'ranger' },
-    { id: 'sniper', n: 'Scharfschütze', t: 'Neuer Turm: große Reichweite, Phantom- und Schwerkaliber-Pfad.', c: 1, r: 0, k: 1500, req: 'ranger', bild: 'sniper' },
+    { id: 'sniper', n: 'Scharfschütze', t: 'Neuer Turm: große Reichweite, Phantom- und Schwerkaliber-Pfad.', c: 1, r: 0, k: 3, req: 'ranger', bild: 'sniper' },
     { id: 'next', n: 'Nächster Turm', t: 'Folgt in einer späteren Version.', c: 2, r: 0, k: 0, req: 'sniper', bald: true },
-    { id: 'ruhig', n: 'Ruhige Hand', t: 'Scharfschützen: +15 % Reichweite.', c: 2, r: 1, k: 800, req: 'sniper' },
-    { id: 'tarnung', n: 'Maisfeld-Tarnung', t: 'Phantom-Ausbauten 20 % günstiger.', c: 3, r: 1, k: 1800, req: 'ruhig' },
-    { id: 'drill1', n: 'Ranger-Drill I', t: 'Ranger: +10 % Feuerrate.', c: 1, r: 2, k: 400, req: 'ranger' },
-    { id: 'drill2', n: 'Ranger-Drill II', t: 'Ranger: weitere +10 % Feuerrate.', c: 2, r: 2, k: 900, req: 'drill1' },
-    { id: 'goldmag', n: 'Goldmagazin', t: 'Neue Ranger starten mit Panzerbrechend.', c: 3, r: 2, k: 1200, req: 'drill2' },
-    { id: 'kasse', n: 'Kriegskasse', t: '+150 Körner Startgeld.', c: 0, r: 3, k: 500 },
-    { id: 'ernte', n: 'Erntebonus', t: '+10 % Körner pro geschaffter Welle.', c: 1, r: 3, k: 1200, req: 'kasse' },
-    { id: 'bunker', n: 'Strohbunker', t: '+20 Leben zu Spielbeginn.', c: 2, r: 3, k: 600, req: 'ernte' },
-    { id: 'reserve', n: 'Mais-Reserve', t: '+1 Leben nach jeder Welle.', c: 3, r: 3, k: 2000, req: 'bunker' }
+    { id: 'ruhig', n: 'Ruhige Hand', t: 'Scharfschützen: +15 % Reichweite.', c: 2, r: 1, k: 2, req: 'sniper' },
+    { id: 'tarnung', n: 'Maisfeld-Tarnung', t: 'Phantom-Ausbauten 20 % günstiger.', c: 3, r: 1, k: 4, req: 'ruhig' },
+    { id: 'drill1', n: 'Ranger-Drill I', t: 'Ranger: +10 % Feuerrate.', c: 1, r: 2, k: 2, req: 'ranger' },
+    { id: 'drill2', n: 'Ranger-Drill II', t: 'Ranger: weitere +10 % Feuerrate.', c: 2, r: 2, k: 3, req: 'drill1' },
+    { id: 'goldmag', n: 'Goldmagazin', t: 'Neue Ranger starten mit Panzerbrechend.', c: 3, r: 2, k: 4, req: 'drill2' },
+    { id: 'kasse', n: 'Kriegskasse', t: '+150 Körner Startgeld.', c: 0, r: 3, k: 2 },
+    { id: 'ernte', n: 'Erntebonus', t: '+10 % Körner pro geschaffter Welle.', c: 1, r: 3, k: 3, req: 'kasse' },
+    { id: 'bunker', n: 'Strohbunker', t: '+20 Leben zu Spielbeginn.', c: 2, r: 3, k: 3, req: 'ernte' },
+    { id: 'reserve', n: 'Mais-Reserve', t: '+1 Leben nach jeder Welle.', c: 3, r: 3, k: 5, req: 'bunker' }
   ];
   const REIHEN = ['Türme', 'Scharfschütze', 'Ranger', 'Allgemein'];
-  const BELOHNUNG = [500, 700, 900, 1100, 1400, 1800, 3000];
+  const ORDEN = [3, 3, 4, 4, 5, 5, 6];   // Verdienstorden beim ersten Sieg je Karte (+1 je neuem Stern; Wiederholung: 1)
   const HP_KARTE = [1, 1.08, 1.16, 1.24, 1.32, 1.42, 1.55];
   const SPEICHER = 'mkd-fortschritt-1';
-  const P = (() => { try { const d = JSON.parse(localStorage.getItem(SPEICHER) || 'null'); if (d && d.tech) return d; } catch (e) {} return { vorrat: 0, tech: { ranger: true }, sterne: {} }; })();
+  const P = (() => { try { const d = JSON.parse(localStorage.getItem(SPEICHER) || 'null'); if (d && d.tech) return d; } catch (e) {} return { orden: 0, tech: { ranger: true }, sterne: {} }; })();
   const sichern = () => { try { localStorage.setItem(SPEICHER, JSON.stringify(P)); } catch (e) {} };
 
   const ZIELE = ['Erster', 'Letzter', 'Stärkster', 'Nächster'];
@@ -110,6 +110,12 @@
       json('daten/gegner_atlas.json'), json('daten/effekte_atlas.json'), json('daten/ranger_draufsicht.json'), json('daten/scharfschuetze_draufsicht.json'), json('daten/karten.json')
     ]);
     A = { rangerTop, sniperTop, gegnerImg, effImg, gegnerAtlas, effAtlas, ranger: rangerJ, sniper: sniperJ, karten: karten.karten, bilder: {} };
+    if (typeof P.orden !== 'number') {   // alter Spielstand mit Kornvorrat -> in Orden umrechnen
+      let o = 0;
+      A.karten.forEach((k, i) => { if (P.sterne[k.id]) o += ORDEN[i] + P.sterne[k.id]; });
+      for (const t of TECH) if (P.tech[t.id]) o -= t.k;
+      P.orden = Math.max(0, o); delete P.vorrat; sichern();
+    }
   }
   async function karteLaden(i) {
     const k = A.karten[i];
@@ -166,6 +172,27 @@
     let k = def[pfad][stufe].k;
     if (t.typ === 'sniper' && pfad === 'A' && P.tech.tarnung) k = Math.round(k * 0.8);
     return k;
+  }
+  const zahl = (n) => (Math.round(n * 100) / 100).toLocaleString('de-DE');
+  // Liste der Wertänderungen zwischen zwei Stufen, z. B. "Nachladen 1,75 → 1,65 s"
+  function aenderungen(alt, neu) {
+    const z = [];
+    const nach = (w) => (w.dauerfeuer ? 'Dauerfeuer' : zahl(w.reload) + ' s');
+    if (neu.dmg !== alt.dmg) z.push(['Schaden', zahl(alt.dmg), zahl(neu.dmg)]);
+    if (nach(neu) !== nach(alt)) z.push(['Nachladen', nach(alt), nach(neu)]);
+    if (!neu.dauerfeuer && neu.burst !== alt.burst) z.push(['Feuerstoß', alt.burst + ' Schuss', neu.burst + ' Schuss']);
+    if (Math.abs(neu.range - alt.range) > 0.01) z.push(['Reichweite', zahl(alt.range), zahl(neu.range)]);
+    if ((neu.pierce || 0) !== (alt.pierce || 0)) z.push(['Durchschlag', String(alt.pierce || 0), String(neu.pierce || 0)]);
+    const dps = (w) => (w.dmg * (w.dauerfeuer ? 1 : w.burst)) / w.reload;
+    z.push(['Schaden/s', zahl(dps(alt)), zahl(dps(neu))]);
+    const neuF = [];
+    if (neu.tarn && !alt.tarn) neuF.push('erkennt Getarnte');
+    if (neu.panzerbrechend && !alt.panzerbrechend) neuF.push('durchschlägt Panzerung');
+    if (neu.granate && neu.granate !== alt.granate) neuF.push(neu.granate >= 2 ? 'Granate 100 Schaden alle 5 s' : 'Granate 75 Schaden alle 8 s');
+    if (neu.brand && !alt.brand) neuF.push('Brandgranate alle 10 s');
+    if (neu.leuchtkugel && !alt.leuchtkugel) neuF.push('Leuchtkugel deckt Getarnte auf');
+    if (neu.laser && !alt.laser) neuF.push('Laser-Munition (voller Schaden gegen Panzer)');
+    return { zeilen: z, neu: neuF };
   }
   function turmName(t) {
     const def = TUERME[t.typ];
@@ -431,7 +458,7 @@
       b.innerHTML = `<div class="bild" style="${schraegStil(typ, 0, 0, 112)}"></div><span class="name">${def.name}</span><span class="preis">${frei ? fmt(def.kosten) + ' Körner' : 'Techbaum'}</span>` +
         (frei ? '' : '<span class="schloss"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E8C766" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>');
       b.onclick = () => {
-        if (!frei) { $('hinweis').textContent = 'Der Scharfschütze ist gesperrt. Schalte ihn im Techbaum frei (1.500 Kornvorrat – gibt es für gewonnene Karten und geschaffte Wellen).'; return; }
+        if (!frei) { $('hinweis').textContent = 'Der Scharfschütze ist gesperrt. Schalte ihn zwischen den Runden im Techbaum auf dem Weltbildschirm frei (3 Verdienstorden – gibt es für besiegte Karten).'; return; }
         S.platzieren = S.platzieren === typ ? null : typ; S.wahl = null;
         $('hinweis').textContent = S.platzieren ? def.info + ' Tippe auf eine freie Stelle neben dem Weg.' : 'Wähle einen Turm.';
         oberflaeche();
@@ -464,7 +491,7 @@
     $('pBild').setAttribute('style', schraegStil(t.typ, t.a, t.b, 84));
     $('pCode').textContent = `${def.name} ${t.a}-${t.b}`;
     $('pName').textContent = turmName(t);
-    $('pWerte').textContent = `Schaden ${w.dmg} · ${w.dauerfeuer ? 'Dauerfeuer' : 'Nachladen ' + w.reload.toFixed(2) + ' s'} · Reichweite ${Math.round(w.range)}`;
+    $('pWerte').textContent = `Schaden ${zahl(w.dmg)} · ${w.dauerfeuer ? 'Dauerfeuer' : 'Nachladen ' + zahl(w.reload) + ' s'} · Reichweite ${zahl(w.range)}`;
     const pf = $('pPfade'); pf.innerHTML = '';
     for (const [pfad, titel] of [['A', t.typ === 'ranger' ? 'Präzision' : 'Phantom'], ['B', t.typ === 'ranger' ? 'Sturm' : 'Schwerkaliber']]) {
       const stufe = pfad === 'A' ? t.a : t.b, andere = pfad === 'A' ? t.b : t.a, max = andere >= 3 ? 2 : 5;
@@ -472,7 +499,12 @@
       const k = fertig || gesperrt ? 0 : ausbauKosten(t, pfad), kann = !fertig && !gesperrt && S.koerner >= k;
       const d = document.createElement('div'); d.className = 'pfad';
       const pips = [0, 1, 2, 3, 4].map((i) => `<span style="background:${i < stufe ? '#E8C766' : i < max ? '#5A2A30' : '#1A0306'}"></span>`).join('');
-      d.innerHTML = `<div class="zeile"><span class="titel">${titel}</span><div class="pips">${pips}</div></div><span class="naechst">${fertig ? 'Höchste Stufe erreicht' : gesperrt ? 'Gesperrt durch anderen Pfad' : def[pfad][stufe].n}</span>`;
+      let liste = '';
+      if (!fertig && !gesperrt) {
+        const ae = aenderungen(w, werte({ ...t, a: t.a + (pfad === 'A' ? 1 : 0), b: t.b + (pfad === 'B' ? 1 : 0) }));
+        liste = '<div class="aend">' + ae.zeilen.map(([n, x, y]) => `<span>${n} <b>${x} → ${y}</b></span>`).join('') + ae.neu.map((x) => `<span class="neu">+ ${x}</span>`).join('') + '</div>';
+      }
+      d.innerHTML = `<div class="zeile"><span class="titel">${titel}</span><div class="pips">${pips}</div></div><span class="naechst">${fertig ? 'Höchste Stufe erreicht' : gesperrt ? 'Gesperrt durch anderen Pfad' : def[pfad][stufe].n}</span>${liste}`;
       const b = document.createElement('button'); b.type = 'button';
       b.textContent = fertig ? 'Fertig' : gesperrt ? 'Gesperrt' : fmt(k) + ' Körner';
       b.disabled = !kann; b.style.background = kann ? '#C9A227' : '#2B0509'; b.style.color = kann ? '#1C1416' : '#E7D4D6';
@@ -488,7 +520,6 @@
   $('tempo').onclick = () => { S.tempo = S.tempo === 1 ? 2 : 1; oberflaeche(); };
   $('pause').onclick = () => { S.pause = !S.pause; oberflaeche(); };
   $('welleKnopf').onclick = () => { if (S.laeuft || S.ende) return; S.welle++; S.spawn = welleBauen(S.welle); S.laeuft = true; oberflaeche(); };
-  $('techKnopf').onclick = () => techZeigen('spiel');
 
   function feldPunkt(ev) {
     const r = cv.getBoundingClientRect();
@@ -514,14 +545,14 @@
   function overlay(html, voll) { const o = $('overlayInhalt'); o.className = voll ? 'karte voll' : 'karte'; o.innerHTML = html; $('overlay').style.display = 'flex'; }
   function overlayZu() { $('overlay').style.display = 'none'; }
   const SCHLOSS = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
-  const KORN = '<svg width="22" height="26" viewBox="0 0 22 26" aria-hidden="true"><ellipse cx="11" cy="12" rx="6" ry="10" fill="#E8C766" stroke="#7A5A10" stroke-width="1.4"/><path d="M8 6v13M11 3v18M14 6v13" stroke="#C9A227" stroke-width="1.2"/><path d="M5 25Q4 15 8 9M17 25Q18 15 14 9" stroke="#2E9E4F" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>';
-  const vorratChip = () => `<div class="chip" style="border-color:#C9A227">${KORN}<div><small>Kornvorrat</small><b style="color:#E8C766">${fmt(P.vorrat)}</b></div></div>`;
+  const KORN_ALT = '<svg width="22" height="26" viewBox="0 0 22 26" aria-hidden="true"><ellipse cx="11" cy="12" rx="6" ry="10" fill="#E8C766" stroke="#7A5A10" stroke-width="1.4"/><path d="M8 6v13M11 3v18M14 6v13" stroke="#C9A227" stroke-width="1.2"/><path d="M5 25Q4 15 8 9M17 25Q18 15 14 9" stroke="#2E9E4F" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>';
+  const ORDEN_SVG = '<svg width="24" height="28" viewBox="0 0 24 28" aria-hidden="true"><path d="M6 1h5l3 9H9z" fill="#7A0F1A" stroke="#2B0509" stroke-width="1"/><path d="M13 1h5l-3 9h-5z" fill="#A3343C" stroke="#2B0509" stroke-width="1"/><circle cx="12" cy="18" r="8.5" fill="#E8C766" stroke="#7A5A10" stroke-width="1.6"/><circle cx="12" cy="18" r="5.5" fill="none" stroke="#C9A227" stroke-width="1.4"/><path d="M12 14.2l1.2 2.4 2.6.4-1.9 1.8.5 2.6-2.4-1.3-2.4 1.3.5-2.6-1.9-1.8 2.6-.4z" fill="#7A5A10"/></svg>';
+  const vorratChip = () => `<div class="chip" style="border-color:#C9A227">${ORDEN_SVG}<div><small>Verdienstorden</small><b style="color:#E8C766">${fmt(P.orden)}</b></div></div>`;
 
   // Techbaum wie im Design (Knoten + Verbindungslinien), dauerhaft
   let techZurueck = null;
   function techZeigen(zurueck) {
     if (zurueck) techZurueck = zurueck;
-    if (S && techZurueck === 'spiel') { if (S.pauseVorTech === undefined) S.pauseVorTech = S.pause; S.pause = true; }
     const NW = 270, NH = 120, X = [60, 380, 700, 1020], Y = [150, 310, 470, 630], byId = {};
     TECH.forEach((d) => { byId[d.id] = d; });
     let linien = '', knoten = '', zahl = 0;
@@ -535,8 +566,8 @@
     }
     for (const d of TECH) {
       const hat = !!P.tech[d.id]; if (hat) zahl++;
-      const reqOk = !d.req || !!P.tech[d.req], frei = !hat && reqOk && !d.bald, kann = frei && P.vorrat >= d.k;
-      let btn = hat ? (d.k ? 'Gekauft' : 'Freigeschaltet') : d.bald ? 'Bald' : !reqOk ? 'Benötigt: ' + byId[d.req].n : kann ? (d.bild ? 'Freischalten · ' : 'Kaufen · ') + fmt(d.k) : fmt(d.k) + ' · zu wenig';
+      const reqOk = !d.req || !!P.tech[d.req], frei = !hat && reqOk && !d.bald, kann = frei && P.orden >= d.k;
+      let btn = hat ? (d.k ? 'Gekauft' : 'Freigeschaltet') : d.bald ? 'Bald' : !reqOk ? 'Benötigt: ' + byId[d.req].n : kann ? (d.bild ? 'Freischalten · ' : 'Kaufen · ') + d.k + ' Orden' : d.k + ' Orden · zu wenig';
       const rand = hat ? '#E8C766' : frei ? '#C9A227' : '#5A2A30';
       const img = d.bild ? `<div style="width:86px;height:96px;flex-shrink:0;border-radius:10px;background:#1A0306;overflow:hidden"><div style="${schraegStil(d.bild, 0, 0, 120)};width:120px;height:120px;margin:-14px 0 0 -18px;opacity:${hat ? 1 : 0.4}"></div></div>` : '';
       knoten += `<div style="position:absolute;left:${X[d.c]}px;top:${Y[d.r]}px;width:${NW}px;height:${NH}px;box-sizing:border-box;border-radius:14px;border:2px solid ${rand};background:${hat ? '#4A0810' : '#2B0509'};display:flex;gap:10px;padding:10px 12px;opacity:${d.bald ? 0.55 : 1}">${img}
@@ -547,7 +578,7 @@
     const labels = REIHEN.map((r, k) => `<div style="position:absolute;left:40px;top:${Y[k] - 24}px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#E8C766">${r}</div>`).join('');
     overlay(`<div style="position:absolute;left:0;top:0;width:1440px;height:96px;box-sizing:border-box;padding:0 40px;display:flex;align-items:center;justify-content:space-between;background:#2B0509;border-bottom:2px solid #C9A227">
         <div style="display:flex;align-items:center;gap:18px"><button type="button" id="techZu" class="knopf" aria-label="Zurück" style="width:48px">‹</button>
-          <div><h1 style="margin:0;font-size:34px;line-height:1">Techbaum</h1><span style="font-size:14px;color:#E7D4D6">Türme freischalten und dauerhafte Verbesserungen kaufen – bezahlt mit Kornvorrat aus der Kampagne</span></div></div>
+          <div><h1 style="margin:0;font-size:34px;line-height:1">Techbaum</h1><span style="font-size:14px;color:#E7D4D6">Türme freischalten und dauerhafte Verbesserungen kaufen – bezahlt mit Verdienstorden für besiegte Karten</span></div></div>
         <div style="display:flex;align-items:center;gap:14px"><span style="font-size:14px;color:#E7D4D6">${zahl - 1} von ${TECH.length - 2} erforscht</span>${vorratChip()}</div></div>
       ${labels}${linien}${knoten}
       <div style="position:absolute;left:1320px;top:150px;width:110px;display:flex;flex-direction:column;gap:10px;font-size:12px;color:#E7D4D6"><span style="font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#E8C766">Legende</span>
@@ -556,15 +587,12 @@
         <span style="display:flex;align-items:center;gap:8px"><span style="width:16px;height:16px;border-radius:4px;border:2px solid #5A2A30;background:#2B0509"></span>gesperrt</span></div>`, true);
     document.querySelectorAll('[data-tech]').forEach((b) => b.onclick = () => {
       const d = byId[b.dataset.tech];
-      if (P.tech[d.id] || P.vorrat < d.k || (d.req && !P.tech[d.req]) || d.bald) return;
-      P.vorrat -= d.k; P.tech[d.id] = true; sichern();
-      if (S && d.id === 'kasse' && techZurueck === 'spiel' && S.welle === 0) S.koerner += 150;
-      if (S && d.id === 'bunker' && techZurueck === 'spiel' && S.welle === 0) S.leben += 20;
+      if (P.tech[d.id] || P.orden < d.k || (d.req && !P.tech[d.req]) || d.bald) return;
+      P.orden -= d.k; P.tech[d.id] = true; sichern();
       letzteLeiste = ''; letztesPanel = ''; techZeigen();
     });
     $('techZu').onclick = () => {
-      if (techZurueck === 'spiel') { S.pause = S.pauseVorTech; S.pauseVorTech = undefined; overlayZu(); oberflaeche(); }
-      else kampagne();
+      kampagne();
     };
   }
 
@@ -616,7 +644,7 @@
           <p style="margin:0;font-size:14px;line-height:1.5;color:#E7D4D6">${k.text}</p>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
             <div style="background:#3A0A10;border-radius:10px;padding:10px 12px"><small style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#E7D4D6">Wellen</small><div style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700">${k.wellen}</div></div>
-            <div style="background:#3A0A10;border-radius:10px;padding:10px 12px"><small style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#E7D4D6">Belohnung</small><div style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#E8C766">+${fmt(BELOHNUNG[kWahl])}</div></div></div>
+            <div style="background:#3A0A10;border-radius:10px;padding:10px 12px"><small style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#E7D4D6">Belohnung</small><div style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#E8C766">+${st ? 1 : ORDEN[kWahl]} Orden</div></div></div>
           <div style="font-size:26px;letter-spacing:.1em;color:#E8C766">${'★'.repeat(st)}<span style="color:#5A2A30">${'★'.repeat(3 - st)}</span> <span style="font-size:13px;letter-spacing:0;color:#E7D4D6">${st ? st + ' von 3 Sternen' : '3 Sterne: kein Leben verlieren'}</span></div>
           <div style="flex:1"></div>
           ${z === 'zu' ? `<div style="height:60px;border-radius:14px;border:2px dashed #5A2A30;color:#E7D4D6;display:flex;align-items:center;justify-content:center;gap:10px;font-size:15px;font-weight:700">${SCHLOSS} Erst ${L[kWahl - 1].land} gewinnen</div>`
@@ -637,13 +665,14 @@
     const geschafft = sieg ? K.wellen : Math.max(0, S.welle - 1);
     const erstSieg = sieg && !P.sterne[K.id];
     const sterne = sieg ? (S.leben >= S.startLeben ? 3 : S.leben >= S.startLeben / 2 ? 2 : 1) : 0;
-    const lohn = geschafft * 20 + (sieg ? (erstSieg ? BELOHNUNG[K.stufe - 1] : Math.round(BELOHNUNG[K.stufe - 1] / 4)) : 0);
-    P.vorrat += lohn; if (sieg) P.sterne[K.id] = Math.max(P.sterne[K.id] || 0, sterne); sichern();
+    const alteSterne = P.sterne[K.id] || 0;
+    const lohn = sieg ? (erstSieg ? ORDEN[K.stufe - 1] : 1) + Math.max(0, sterne - alteSterne) : 0;
+    P.orden += lohn; if (sieg) P.sterne[K.id] = Math.max(alteSterne, sterne); sichern();
     S.ende = true; S.pause = true;
     const naechste = A.karten.indexOf(K) + 1;
     overlay(`<h1>${sieg ? K.land + ' ist sicher!' : aufgegeben ? 'Karte verlassen' : (K.palast ? 'Der Regierungspalast ist gefallen' : 'Der Kornspeicher ist gefallen')}</h1>
       <p style="font-size:17px">${sieg ? `Alle ${K.wellen} Wellen abgewehrt mit ${Math.ceil(S.leben)} Leben übrig. <span style="color:#E8C766;letter-spacing:.1em">${'★'.repeat(sterne)}${'☆'.repeat(3 - sterne)}</span>` : `${geschafft} von ${K.wellen} Wellen geschafft.`}</p>
-      <p>Kornvorrat für den Techbaum: <b style="color:#E8C766">+${fmt(lohn)}</b> (jetzt ${fmt(P.vorrat)}).${sieg && naechste < A.karten.length && erstSieg ? ` Neue Karte freigeschaltet: <b>${A.karten[naechste].land}</b>.` : ''}</p>
+      <p>${sieg ? `Verdienstorden für den Techbaum: <b style="color:#E8C766">+${lohn}</b> (jetzt ${fmt(P.orden)}). Ausgeben kannst du sie auf dem Weltbildschirm.` : 'Verdienstorden gibt es nur für besiegte Karten.'}${sieg && naechste < A.karten.length && erstSieg ? ` Neue Karte freigeschaltet: <b>${A.karten[naechste].land}</b>.` : ''}</p>
       <div style="display:flex;gap:12px;margin-top:16px"><button class="gold" type="button" id="zurKampagne" style="width:260px">Zur Kampagne</button><button class="rand" type="button" id="nochmal" style="width:220px">Nochmal spielen</button></div>`);
     $('zurKampagne').onclick = () => { if (sieg && naechste < A.karten.length) kWahl = naechste; kampagne(); };
     $('nochmal').onclick = () => { overlayZu(); spielenDirekt(); };
@@ -652,7 +681,7 @@
   $('heim').onclick = () => {
     if (!S || S.ende) { kampagne(); return; }
     const vorPause = S.pause; S.pause = true;
-    overlay(`<h1>Karte verlassen?</h1><p>Die laufende Runde endet. Für geschaffte Wellen bekommst du trotzdem Kornvorrat.</p>
+    overlay(`<h1>Karte verlassen?</h1><p>Die laufende Runde endet. Verdienstorden gibt es nur, wenn du die Karte besiegst.</p>
       <div style="display:flex;gap:12px;margin-top:16px"><button class="gold" type="button" id="jaWeg" style="width:220px">Ja, zur Kampagne</button><button class="rand" type="button" id="neinBleib" style="width:220px">Weiterspielen</button></div>`);
     $('jaWeg').onclick = () => ende(false, true);
     $('neinBleib').onclick = () => { S.pause = vorPause; overlayZu(); };

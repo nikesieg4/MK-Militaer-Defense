@@ -35,7 +35,7 @@ button{font-family:inherit}
 .gold{height:64px;border-radius:14px;border:none;background:var(--gold);color:#1C1416;font-size:19px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px}
 .gold:disabled{opacity:.55;cursor:default}
 .rand{height:52px;border-radius:12px;border:2px solid var(--gold);background:transparent;color:var(--gold2);font-size:16px;font-weight:800;cursor:pointer}
-#panel{position:absolute;top:92px;width:300px;display:none;flex-direction:column;gap:10px;background:rgba(43,5,9,.96);border:2px solid var(--gold);border-radius:16px;padding:14px}
+#panel{position:absolute;top:84px;max-height:716px;overflow-y:auto;width:300px;display:none;flex-direction:column;gap:10px;background:rgba(43,5,9,.96);border:2px solid var(--gold);border-radius:16px;padding:14px}
 #panel .kopf{display:flex;gap:12px;align-items:center}
 #panel .pbild{width:84px;height:84px;flex-shrink:0;border-radius:12px;background-color:var(--flaeche2);background-repeat:no-repeat}
 .pfad{display:flex;flex-direction:column;gap:8px;background:var(--flaeche2);border-radius:12px;padding:12px}
@@ -45,6 +45,7 @@ button{font-family:inherit}
 .pfad .naechst{font-size:16px;font-weight:700}
 .pfad button{height:48px;border-radius:10px;border:none;font-size:15px;font-weight:800;cursor:pointer}
 .klein{font-size:11px;line-height:1.4;color:var(--leise)}
+.aend{display:flex;flex-direction:column;gap:2px;font-size:12px;color:var(--leise)}.aend b{color:#fff;font-weight:700}.aend .neu{color:#7CD992;font-weight:700}
 .zu{width:44px;height:44px;flex-shrink:0;align-self:flex-start;border-radius:10px;border:1px solid var(--linie);background:var(--flaeche2);color:#fff;cursor:pointer;font-size:18px}
 #overlay{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(26,3,6,.82)}
 .karte{background:var(--flaeche);border:2px solid var(--gold);border-radius:18px;padding:28px 32px;max-width:980px;width:100%}
@@ -101,7 +102,7 @@ button{font-family:inherit}
     <div id="tuerme"></div>
     <div id="hinweis">Wähle einen Turm und tippe auf eine freie Stelle neben dem Weg.</div>
     <div style="flex:1"></div>
-    <button class="rand" id="techKnopf" type="button">Techbaum</button>
+    <div class="klein" style="text-align:center">Techbaum nur zwischen den Runden – auf dem Weltbildschirm (⌂).</div>
     <button class="gold" id="welleKnopf" type="button">▶ Welle 1 starten</button>
   </div>
 
