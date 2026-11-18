@@ -723,7 +723,7 @@
     const p = feldPunkt(ev); S.maus = p;
     if (S.platzieren) {
       if (platzOk(p.x, p.y) && S.koerner >= TUERME[S.platzieren].kosten) { turmBauen(S.platzieren, p.x, p.y); S.platzieren = null; $('hinweis').textContent = 'Turm gebaut. Tippe ihn an, um ihn auszubauen.'; }
-      else $('hinweis').textContent = S.koerner < TUERME[S.platzieren].kosten ? 'Zu wenig Körner.' : 'Hier kann nicht gebaut werden (zu nah am Weg, am Speicher oder an einem anderen Turm).';
+      else $('hinweis').textContent = S.koerner < TUERME[S.platzieren].kosten ? 'Zu wenig Körner.' : 'Hier kann nicht gebaut werden (zu nah am Weg, auf Wasser, Felsen oder an einem anderen Turm).';
       oberflaeche(); return;
     }
     let treffer = null, best = 34;
