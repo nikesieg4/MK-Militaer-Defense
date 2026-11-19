@@ -1,6 +1,7 @@
 // Maiskolbistan Militär-Defense – Testkarte 1 (Westkolbistan)
 // Reines JavaScript, kein Bau-Schritt. Grafiken aus dem Maiskolbistan-Info-Repo (seiten/td-ranger-sprites).
 'use strict';
+const VERSION = '2026-11-19-2';   // bei jedem Update hochzählen (auch in index.html)
 
 (() => {
   const W = 1140, H = 810, MITTE = 570;
@@ -323,8 +324,10 @@
   });
 
   // ---------- Laden ----------
-  const bild = (src) => new Promise((ok, fehler) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => fehler(new Error(src)); i.src = src; });
-  const json = (src) => fetch(src).then((r) => { if (!r.ok) throw new Error(src); return r.json(); });
+  // Version an alle Dateien hängen, damit der Browser nach einem Update nicht die alten aus dem Zwischenspeicher nimmt
+  const V = (src) => src + '?v=' + VERSION;
+  const bild = (src) => new Promise((ok, fehler) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => fehler(new Error(src)); i.src = V(src); });
+  const json = (src) => fetch(V(src)).then((r) => { if (!r.ok) throw new Error(src); return r.json(); });
 
   async function laden() {
     const [fahrTop, fahrJ, fabrikImg] = await Promise.all([bild('bilder/fahrzeug_draufsicht@2x.png'), json('daten/fahrzeug_draufsicht.json'), bild('bilder/fabrik@2x.png')]);
@@ -1026,7 +1029,7 @@
   // ---------- Oberfläche ----------
   function schraegStil(typ, a, b, groesse) {
     const i = KOMBIS.indexOf(a + '-' + b), k = groesse / 256;
-    return `background-image:url(${TUERME[typ].schraeg});background-size:${2304 * k}px ${768 * k}px;background-position:-${(i % 9) * groesse}px -${Math.floor(i / 9) * groesse}px`;
+    return `background-image:url(${TUERME[typ].schraeg}?v=${VERSION});background-size:${2304 * k}px ${768 * k}px;background-position:-${(i % 9) * groesse}px -${Math.floor(i / 9) * groesse}px`;
   }
   function leisteZeichnen() {
     const box = $('tuerme');
@@ -1238,7 +1241,7 @@
       return `<button type="button" data-karte="${i}" aria-label="Karte ${i + 1}: ${k.land} – ${z === 'zu' ? 'gesperrt' : z === 'fertig' ? 'gewonnen' : 'verfügbar'}" style="position:absolute;left:${Math.round(PUNKTE[i][0] * sx - 24)}px;top:${Math.round((PUNKTE[i][1] - oy) * sx - 24)}px;width:48px;height:48px;border-radius:24px;border:3px solid ${sel ? '#FFFFFF' : z === 'fertig' ? '#7A5A10' : z === 'offen' ? '#E8C766' : '#5A2A30'};background:${z === 'fertig' ? '#C9A227' : z === 'offen' ? '#7A0F1A' : '#2B0509'};color:${z === 'fertig' ? '#1C1416' : '#FFFFFF'};font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;cursor:pointer;box-shadow:${z === 'offen' ? '0 0 0 6px rgba(232,199,102,0.25)' : 'none'}">${z === 'fertig' ? '✓' : i + 1}</button>`; }).join('');
     const karten = L.map((k, i) => { const z = zustand(i), st = P.sterne[k.id] || 0;
       return `<button type="button" data-karte="${i}" aria-label="Karte ${i + 1}: ${k.land}, ${k.titel}" style="display:flex;flex-direction:column;padding:0;border-radius:12px;border:2px solid ${i === kWahl ? '#E8C766' : '#5A2A30'};background:#2B0509;color:#fff;overflow:hidden;cursor:pointer;text-align:left">
-        <div style="position:relative;width:100%;aspect-ratio:1140/810;background:#3A0A10"><img src="bilder/vorschau_${k.bild.replace('.png', '.jpg')}" alt="" style="width:100%;height:100%;display:block;opacity:${z === 'zu' ? 0.35 : 1}">${z === 'zu' ? `<span style="position:absolute;left:50%;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:17px;background:#1A0306;color:#E8C766;display:flex;align-items:center;justify-content:center">${SCHLOSS}</span>` : ''}</div>
+        <div style="position:relative;width:100%;aspect-ratio:1140/810;background:#3A0A10"><img src="${V('bilder/vorschau_' + k.bild.replace('.png', '.jpg'))}" alt="" style="width:100%;height:100%;display:block;opacity:${z === 'zu' ? 0.35 : 1}">${z === 'zu' ? `<span style="position:absolute;left:50%;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:17px;background:#1A0306;color:#E8C766;display:flex;align-items:center;justify-content:center">${SCHLOSS}</span>` : ''}</div>
         <div style="display:flex;flex-direction:column;gap:2px;padding:8px 9px 10px"><span style="font-size:12px;font-weight:700;color:#E8C766">${i + 1} · ${k.land}</span><span style="font-size:13px;font-weight:700">${k.titel}</span>
         <span style="font-size:12px;color:#E7D4D6;letter-spacing:.1em">${P.laeufe && P.laeufe[k.id] ? '▶ Welle ' + (P.laeufe[k.id].welle + 1) : z === 'fertig' ? '★'.repeat(st) + '☆'.repeat(3 - st) : z === 'offen' ? 'Jetzt spielen' : 'Gesperrt'}</span></div></button>`; }).join('');
     const k = L[kWahl], z = zustand(kWahl), st = P.sterne[k.id] || 0;
@@ -1250,7 +1253,7 @@
       <div style="position:absolute;left:20px;top:516px;width:1020px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px">${karten}</div>
       <div style="position:absolute;left:20px;top:770px;width:1020px;display:flex;justify-content:space-between;font-size:12px;color:#E7D4D6"><span>Gewonnen: ${gewonnen} von 7 · Sterne: ${gesamtSterne} von 21</span><span>Das Sperrgebiet ist militärisch und nicht spielbar. Der Anspruch auf Bir Tawil ist völkerrechtlich nicht anerkannt.</span></div>
       <div style="position:absolute;right:20px;top:28px;width:360px;height:754px;box-sizing:border-box;border-radius:16px;background:#2B0509;border:2px solid #C9A227;display:flex;flex-direction:column;overflow:hidden">
-        <div style="position:relative;width:100%;height:256px;background:#3A0A10"><img src="bilder/vorschau_${k.bild.replace('.png', '.jpg')}" alt="Vorschau ${k.titel}" style="width:100%;height:100%;object-fit:cover;display:block;opacity:${z === 'zu' ? 0.45 : 1}">
+        <div style="position:relative;width:100%;height:256px;background:#3A0A10"><img src="${V('bilder/vorschau_' + k.bild.replace('.png', '.jpg'))}" alt="Vorschau ${k.titel}" style="width:100%;height:100%;object-fit:cover;display:block;opacity:${z === 'zu' ? 0.45 : 1}">
           <span style="position:absolute;left:12px;top:12px;padding:4px 10px;border-radius:8px;background:#1A0306;font-size:12px;font-weight:800;color:${diffC[k.schwierigkeit]}">${k.schwierigkeit}</span></div>
         <div style="flex:1;display:flex;flex-direction:column;gap:12px;padding:18px 20px 20px">
           <div><span style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#E8C766">Karte ${kWahl + 1} · ${k.land}</span><h2 style="margin:0;font-family:'Space Grotesk',sans-serif;font-size:30px">${k.titel}</h2></div>
