@@ -135,7 +135,7 @@ Anzeige im Spiel: Rauch-, Lawinen- und Sandsturmwolken, eingefrorene Türme (bla
 
 ## Grafikstil (Umstellung läuft)
 
-Der **Ranger** ist im neuen, detaillierteren Stil gezeichnet (nach Fotovorlagen): vorgelehnter Anschlag, Plattenträger, Helm mit Headset, Gewehr in M4-Bauart, Stofftextur und Tarnmuster, Licht von oben links. Stufen: Präzision 1 Laservisier (Strahl) · 2 Elite (Zielfernrohr, goldene Winkel) · 3 Nachtsichtgerät · 4 schweres Gewehr (langer Lauf, Zweibein) · 5 leichtes MG mit Patronenkasten. Sturm 1 Goldspitzen-Munition · 2 Waffenlicht · 3 Schulter-, Hals- und Leistenschutz · 4 Granatwerfer und Handgranaten · 5 Sturmhaube mit Visier. Die übrigen Türme folgen nacheinander.
+Der **Ranger** ist im neuen, detaillierteren Stil gezeichnet (nach Fotovorlagen): vorgelehnter Anschlag, Plattenträger, Helm mit Headset, Gewehr in M4-Bauart, Stofftextur und Tarnmuster, Licht von oben links. Stufen: Präzision 1 Laservisier (Strahl) · 2 Elite (Zielfernrohr, goldene Winkel) · 3 Nachtsichtgerät · 4 schweres Gewehr (langer Lauf, Zweibein) · 5 leichtes MG mit Patronenkasten. Sturm 1 Goldspitzen-Munition · 2 Waffenlicht · 3 Schulter-, Hals- und Leistenschutz · 4 Granatwerfer und Handgranaten · 5 Sturmhaube mit Visier. Der **Scharfschütze** ist ebenfalls umgestellt (kniender Anschlag, Ellbogen auf dem Knie, Gewehr in M110-Bauart): Phantom 1 Buschhut + Tarnschminke · 2 Wärmebild-Vorsatz · 3 Schalldämpfer · 4 Ghillie-Kapuze und Tarnstreifen · 5 voller Ghillie mit Maisblättern; Schwerkaliber 1 längerer Lauf · 2 .50-Gewehr mit Mündungsbremse · 3 Helm und Panzerung · 4 Leuchtpistole · 5 Laser-Gewehr. Die übrigen Türme folgen nacheinander.
 
 ## Turm-Paket 1 (nach TDX-Wiki)
 
