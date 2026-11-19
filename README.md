@@ -133,6 +133,10 @@ Das Felsplateau ist verschneit (Tannen, vereiste Tümpel, Schnee-Plateaus) und h
 
 Anzeige im Spiel: Rauch-, Lawinen- und Sandsturmwolken, eingefrorene Türme (blau), verlangsamte Türme (weißer Ring), gestörte Türme (rotes Zickzack), Schildblase um Schildroboter, abgetauchte Bosse halb durchsichtig.
 
+## Grafikstil (Umstellung läuft)
+
+Der **Ranger** ist im neuen, detaillierteren Stil gezeichnet (nach Fotovorlagen): vorgelehnter Anschlag, Plattenträger, Helm mit Headset, Gewehr in M4-Bauart, Stofftextur und Tarnmuster, Licht von oben links. Stufen: Präzision 1 Laservisier (Strahl) · 2 Elite (Zielfernrohr, goldene Winkel) · 3 Nachtsichtgerät · 4 schweres Gewehr (langer Lauf, Zweibein) · 5 leichtes MG mit Patronenkasten. Sturm 1 Goldspitzen-Munition · 2 Waffenlicht · 3 Schulter-, Hals- und Leistenschutz · 4 Granatwerfer und Handgranaten · 5 Sturmhaube mit Visier. Die übrigen Türme folgen nacheinander.
+
 ## Turm-Paket 1 (nach TDX-Wiki)
 
 Werte und Ausbaupfade aus dem TDX-Wiki (Quelltexte im Info-Repo unter `seiten/td-ranger-sprites/tdx-quellen/`), Körnerpreise ×0,5. Reichweite und Explosionsradius in TDX-Einheiten (1 Einheit = 14 px). Die Turmleiste scrollt jetzt (11 Türme).
