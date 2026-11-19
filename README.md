@@ -37,6 +37,7 @@ Die Wege führen aus der Karte hinaus (kein Kornspeicher mehr); Ostkolbistan end
 ## Fortsetzen und Auto
 
 - **Fortsetzen:** Zu Beginn jeder Welle (und nach jeder Welle, jedem Bau, Ausbau, Verkauf zwischen den Wellen) wird der Stand der Runde gespeichert: Welle, Körner, Leben, Türme, Freeplay. ⌂ → „Ja, zur Kampagne“ sichert die Runde; auf der Karte erscheint **„Fortsetzen · Welle N“** (dazu „Neu starten“ mit Rückfrage). Wer mitten in einer Welle geht, startet diese Welle neu. Ein Sieg oder eine Niederlage löscht den gespeicherten Lauf. Gespeichert wird im signierten Spielstand (`laeufe`, je Karte einer).
+- **Tempo:** Knopf neben Auto schaltet 1× → 2× → 4× → 6× → 10× → 1× (ab 4× gold). Das Spiel rechnet dabei mehrere kleine Schritte pro Bild, damit nichts übersprungen wird.
 - **Auto:** Knopf oben rechts. Ist er an, startet die nächste Welle 1,2 s nach dem Ende der vorigen von selbst.
 
 ## Freeplay

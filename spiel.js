@@ -1058,7 +1058,7 @@
     $('pfadeKnopf').style.display = pfadTyp ? 'block' : 'none'; $('leisteTipp').style.display = pfadTyp ? 'none' : 'inline';
     $('welle').textContent = S.welle; $('wellenMax').textContent = S.sandbox ? '∞' : S.freeplay ? '∞ Freeplay' : K.wellen;
     $('koerner').textContent = isFinite(S.koerner) ? fmt(S.koerner) : '∞'; $('leben').textContent = isFinite(S.leben) ? Math.max(0, Math.ceil(S.leben)) : '∞';
-    $('tempo').textContent = S.tempo + '×'; $('pause').textContent = S.pause ? '▶' : '❚❚';
+    $('tempo').textContent = S.tempo + '×'; $('tempo').style.color = S.tempo > 2 ? '#E8C766' : ''; $('pause').textContent = S.pause ? '▶' : '❚❚';
     const wk = $('welleKnopf');
     wk.disabled = S.laeuft || S.ende;
     wk.textContent = S.laeuft ? 'Welle läuft …' : `▶ Welle ${S.welle + 1} starten`;
@@ -1108,7 +1108,8 @@
   $('pVerkauf').onclick = () => { const t = S.wahl; if (!t) return; S.koerner += Math.round(t.investiert * 0.7); S.tuerme = S.tuerme.filter((x) => x !== t); S.wahl = null; if (!S.laeuft) laufSichern(); oberflaeche(); };
   $('pZu').onclick = () => { S.wahl = null; oberflaeche(); };
   $('auto').onclick = () => { if (!S) return; S.auto = !S.auto; S.autoT = 0; oberflaeche(); };
-  $('tempo').onclick = () => { S.tempo = S.tempo === 1 ? 2 : 1; oberflaeche(); };
+  const TEMPI = [1, 2, 4, 6, 10];
+  $('tempo').onclick = () => { S.tempo = TEMPI[(TEMPI.indexOf(S.tempo) + 1) % TEMPI.length]; oberflaeche(); };
   $('pause').onclick = () => { S.pause = !S.pause; oberflaeche(); };
   // Laufender Durchgang: Stand zwischen den Wellen (Türme, Körner, Leben) – zum Fortsetzen
   function laufStand() {
