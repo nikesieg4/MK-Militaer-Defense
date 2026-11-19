@@ -122,6 +122,10 @@
     panzersoldat: { hp: 12, tempo: 34, lohn: 14, schaden: 2, gr: 0.62, panzer: true },
     humvee: { hp: 30, tempo: 100, lohn: 20, schaden: 5, gr: 0.6 },
     panzer: { hp: 180, tempo: 24, lohn: 100, schaden: 20, gr: 0.6, panzer: true },
+    kamikaze: { hp: 2, tempo: 135, lohn: 6, schaden: 15, gr: 0.6, name: 'Kamikaze' },
+    sanitaeter: { hp: 8, tempo: 46, lohn: 12, schaden: 2, gr: 0.6, heiler: true, name: 'Sanitäter' },
+    motorrad: { hp: 10, tempo: 150, lohn: 12, schaden: 4, gr: 0.55, name: 'Motorrad' },
+    schuetzenpanzer: { hp: 90, tempo: 40, lohn: 50, schaden: 12, gr: 0.6, panzer: true, absetzen: 4, name: 'Schützenpanzer' },
     ratte: { hp: 1000, tempo: 15, lohn: 400, schaden: 1000, gr: 0.55, panzer: true, boss: true, name: 'Stahlratte' }
   };
 
@@ -130,19 +134,19 @@
     { id: 'ranger', n: 'Ranger', t: 'Start-Turm. Feuerstöße, zwei Ausbaupfade.', c: 0, r: 0, k: 0, bild: 'ranger' },
     { id: 'sniper', n: 'Scharfschütze', t: 'Große Reichweite, Tarn- und Schwerkaliber-Pfad.', c: 1, r: 0, k: 3, req: 'ranger', bild: 'sniper' },
     { id: 'depot', n: 'Logistik-Depot', t: 'Körner zu Beginn jeder Welle, Sanität auch Leben.', c: 2, r: 0, k: 3, req: 'sniper', bild: 'depot' },
-    { id: 'juggernaut', n: 'Juggernaut', t: 'Minigun-Turm mit enormem Dauerfeuer.', c: 3, r: 0, k: 5, req: 'depot', bild: 'juggernaut' },
-    { id: 'railgun', n: 'Railgunner', t: 'Laser-Schienenkanone gegen Bosse und Panzer.', c: 4, r: 0, k: 6, req: 'juggernaut', bild: 'railgun' },
+    { id: 'juggernaut', n: 'Juggernaut', t: 'Minigun-Turm mit enormem Dauerfeuer.', c: 1, r: 2, k: 5, req: 'ranger', bild: 'juggernaut' },
+    { id: 'railgun', n: 'Railgunner', t: 'Laser-Schienenkanone gegen Bosse und Panzer.', c: 2, r: 2, k: 6, req: 'juggernaut', bild: 'railgun' },
     { id: 'ruhig', n: 'Ruhige Hand', t: 'Scharfschützen: +15 % Reichweite.', c: 2, r: 1, k: 2, req: 'sniper' },
     { id: 'tarnung', n: 'Maisfeld-Tarnung', t: 'Phantom-Ausbauten 20 % günstiger.', c: 3, r: 1, k: 4, req: 'ruhig' },
-    { id: 'drill1', n: 'Ranger-Drill I', t: 'Ranger: +10 % Feuerrate.', c: 1, r: 2, k: 2, req: 'ranger' },
-    { id: 'drill2', n: 'Ranger-Drill II', t: 'Ranger: weitere +10 % Feuerrate.', c: 2, r: 2, k: 3, req: 'drill1' },
-    { id: 'goldmag', n: 'Goldmagazin', t: 'Neue Ranger starten mit Panzerbrechend.', c: 3, r: 2, k: 4, req: 'drill2' },
-    { id: 'kasse', n: 'Kriegskasse', t: '+150 Körner Startgeld.', c: 0, r: 3, k: 2 },
-    { id: 'ernte', n: 'Erntebonus', t: '+10 % Körner pro geschaffter Welle.', c: 1, r: 3, k: 3, req: 'kasse' },
-    { id: 'bunker', n: 'Strohbunker', t: '+20 Leben zu Spielbeginn.', c: 2, r: 3, k: 3, req: 'ernte' },
-    { id: 'reserve', n: 'Mais-Reserve', t: '+1 Leben nach jeder Welle.', c: 3, r: 3, k: 5, req: 'bunker' }
+    { id: 'drill1', n: 'Ranger-Drill I', t: 'Ranger: +10 % Feuerrate.', c: 1, r: 3, k: 2, req: 'ranger' },
+    { id: 'drill2', n: 'Ranger-Drill II', t: 'Ranger: weitere +10 % Feuerrate.', c: 2, r: 3, k: 3, req: 'drill1' },
+    { id: 'goldmag', n: 'Goldmagazin', t: 'Neue Ranger starten mit Panzerbrechend.', c: 3, r: 3, k: 4, req: 'drill2' },
+    { id: 'kasse', n: 'Kriegskasse', t: '+150 Körner Startgeld.', c: 0, r: 4, k: 2 },
+    { id: 'ernte', n: 'Erntebonus', t: '+10 % Körner pro geschaffter Welle.', c: 1, r: 4, k: 3, req: 'kasse' },
+    { id: 'bunker', n: 'Strohbunker', t: '+20 Leben zu Spielbeginn.', c: 2, r: 4, k: 3, req: 'ernte' },
+    { id: 'reserve', n: 'Mais-Reserve', t: '+1 Leben nach jeder Welle.', c: 3, r: 4, k: 5, req: 'bunker' }
   ];
-  const REIHEN = ['Türme', 'Scharfschütze', 'Ranger', 'Allgemein'];
+  const REIHEN = ['Zweig Präzision & Logistik', 'Scharfschütze', 'Zweig Schwere Waffen', 'Ranger', 'Allgemein'];
   const ORDEN = [3, 3, 4, 4, 5, 5, 6];   // Verdienstorden beim ersten Sieg je Karte (+1 je neuem Stern; Wiederholung: 1)
   const HP_KARTE = [1, 1.08, 1.16, 1.24, 1.32, 1.42, 1.55];
   const SPEICHER = 'mkd-fortschritt-1';
@@ -237,7 +241,7 @@
   let S;                  // Spielzustand
   const neu = () => ({
     welle: 0, koerner: 800 + (P.tech.kasse ? 150 : 0), leben: 100 + (P.tech.bunker ? 20 : 0), tempo: 1, pause: false, laeuft: false, ende: false,
-    tuerme: [], gegner: [], geschosse: [], effekte: [], flaechen: [], spawn: [], spawnNr: 0, texte: [], strahlen: [],
+    tuerme: [], gegner: [], geschosse: [], effekte: [], flaechen: [], spawn: [], spawnNr: 0, texte: [], strahlen: [], neu: [],
     wahl: null, platzieren: null, maus: null, tech: P.tech, zeit: 0, startLeben: 100 + (P.tech.bunker ? 20 : 0)
   });
 
@@ -396,23 +400,32 @@
 
   // ---------- Gegner und Wellen ----------
   function welleBauen(n) {
-    const q = [];
+    // Mengen wachsen bis zu einer Obergrenze, danach steigt vor allem das Leben der Gegner
+    const q = [], m = (g) => Math.min(n, g);
     let t = 0;
-    const add = (typ, anzahl, abstand) => { for (let i = 0; i < anzahl; i++) { q.push({ t, typ }); t += abstand; } t += 1.2; };
-    add('soldat', 5 + Math.round(n * 1.6), Math.max(0.35, 0.9 - n * 0.025));
-    if (n >= 4) add('tarnsoldat', Math.floor((n - 2) * 1.1), 0.8);
-    if (n >= 6) add('panzersoldat', Math.floor((n - 4) * 0.8), 1.1);
-    if (n >= 7) add('humvee', Math.floor((n - 5) * 0.5), 1.4);
-    if (n >= 9) add('soldat', Math.round(n * 1.5), 0.3);
-    if (n >= 10 && n % 5 === 0) add('panzer', n / 5 - 1, 4);
+    const add = (typ, anzahl, abstand) => { for (let i = 0; i < anzahl; i++) { q.push({ t, typ }); t += abstand; } if (anzahl > 0) t += 1.2; };
+    add('soldat', 5 + Math.round(m(40) * 1.6), Math.max(0.3, 0.9 - n * 0.025));
+    if (n >= 6) add('kamikaze', Math.floor((m(50) - 4) * 0.45), 0.55);
+    if (n >= 4) add('tarnsoldat', Math.floor((m(45) - 2) * 1.1), 0.8);
+    if (n >= 8) add('sanitaeter', 1 + Math.floor(m(60) / 8), 2);
+    if (n >= 6) add('panzersoldat', Math.floor((m(45) - 4) * 0.8), 1.1);
+    if (n >= 7) add('humvee', Math.floor((m(50) - 5) * 0.5), 1.4);
+    if (n >= 12) add('motorrad', Math.floor((m(60) - 9) * 0.6), 0.6);
+    if (n >= 9) add('soldat', Math.round(m(40) * 1.5), 0.3);
+    if (n >= 15) add('schuetzenpanzer', 1 + Math.floor((m(70) - 15) / 5), 3);
+    if (n >= 10 && n % 5 === 0) add('panzer', Math.min(10, n / 5 - 1), 4);
     if (n >= 18) add('panzer', Math.min(8, Math.floor((n - 14) / 2)), 3);
-    if (n >= 25) add('humvee', Math.floor((n - 20) / 2), 0.9);
-    if (K.id === 'westkolbistan' && n === K.wellen) { t += 4; add('ratte', 1, 0); }
+    if (n >= 25) add('humvee', Math.min(20, Math.floor((n - 20) / 2)), 0.9);
+    if (n >= 30 && n % 3 === 0) add('kamikaze', Math.min(30, Math.floor(n / 3)), 0.25);   // Kamikaze-Ansturm
+    if (n % 20 === 0) { t += 4; add('ratte', 1, 0); }   // Boss jede 20. Welle
     return q;
   }
   function gegnerNeu(typ) {
-    const g = GEGNER[typ], f = (1 + S.welle * 0.06) * HP_KARTE[K.stufe - 1] * (S.welle > K.wellen ? Math.pow(1.1, S.welle - K.wellen) : 1);
+    const g = GEGNER[typ], f = (1 + S.welle * 0.06 + Math.max(0, S.welle - 50) * 0.04) * HP_KARTE[K.stufe - 1] * (S.welle > K.wellen ? Math.pow(1.1, S.welle - K.wellen) : 1);
     const w = S.spawnNr++ % wege.length, p = wegPos(w, 0);
+    const NEU_INFO = { kamikaze: 'Kamikaze! Sehr schnell und wenig Leben – kommt er durch, kostet er 15 Leben.', sanitaeter: 'Sanitäter: heilt alle 2,5 s Gegner in der Nähe – zuerst ausschalten.', motorrad: 'Motorräder sind die schnellsten Gegner.', schuetzenpanzer: 'Schützenpanzer: gepanzert, setzt beim Zerstören 4 Soldaten ab.' };
+    S.gesehen = S.gesehen || {};
+    if (NEU_INFO[typ] && !S.gesehen[typ]) { S.gesehen[typ] = true; $('hinweis').textContent = NEU_INFO[typ]; }
     if (g.boss) { S.bannerBis = S.zeit + 4; $('hinweis').textContent = 'Achtung: Die Stahlratte rollt an! Sie hält an und betäubt Türme mit ihren Geschützen. Panzerbrechende Munition, Granaten und Laser helfen.'; }
     return { typ, w, hp: g.hp * f, max: g.hp * f, d: -20, t: Math.random(), brennt: 0, sichtbarBis: 0, x: p.x, y: p.y, links: false, schussCd: 6, stopp: 0, feuerT: 99, geschossen: true };
   }
@@ -436,7 +449,12 @@
     let m = menge;
     if (GEGNER[g.typ].panzer && art === 'kugel' && !(w && (w.panzerbrechend || w.laser))) m *= 0.35;
     g.hp -= m;
-    if (g.hp <= 0) { S.koerner += GEGNER[g.typ].lohn; erfahrung(GEGNER[g.typ].lohn); effekt('explosion', g.x, g.y - 20, 0, g.typ === 'ratte' ? 1.8 : g.typ === 'panzer' || g.typ === 'humvee' ? 0.9 : 0.35); }
+    if (g.hp <= 0) {
+      const def = GEGNER[g.typ];
+      S.koerner += def.lohn; erfahrung(def.lohn);
+      effekt('explosion', g.x, g.y - 20, 0, g.typ === 'ratte' ? 1.8 : def.panzer && g.typ !== 'panzersoldat' || g.typ === 'humvee' ? 0.9 : g.typ === 'kamikaze' ? 0.7 : g.typ === 'motorrad' ? 0.6 : 0.35);
+      if (def.absetzen && !g.durch) for (let i = 0; i < def.absetzen; i++) { const n = gegnerNeu('soldat'); n.w = g.w; n.d = Math.max(0, g.d - i * 14); S.neu.push(n); }
+    }
   }
   function muendung(t) {
     const code = t.a + '-' + t.b, info = A[t.typ].frames[code].bilder[0].muendung;
@@ -564,8 +582,17 @@
       for (const sp of S.spawn) sp.t -= dt;
       while (S.spawn.length && S.spawn[0].t <= 0) S.gegner.push(gegnerNeu(S.spawn.shift().typ));
     }
+    S.neu = [];
     for (const g of S.gegner) {
       const def = GEGNER[g.typ];
+      if (def.heiler && g.d > 0) {
+        g.heilCd = (g.heilCd ?? 1.5) - dt;
+        if (g.heilCd <= 0) {
+          g.heilCd = 2.5; let geheilt = false;
+          for (const o of S.gegner) if (o !== g && o.hp > 0 && o.hp < o.max && !GEGNER[o.typ].boss && Math.hypot(o.x - g.x, o.y - g.y) < 100) { o.hp = Math.min(o.max, o.hp + o.max * 0.2); geheilt = true; }
+          if (geheilt) S.texte.push({ x: g.x, y: g.y - 70, text: '+', farbe: '#7CD992', t: 0 });
+        }
+      }
       if (def.boss) {
         g.feuerT += dt; g.schussCd -= dt;
         if (g.stopp > 0) {
@@ -588,6 +615,7 @@
     for (const p of S.geschosse) geschossUpdate(p, dt);
     S.geschosse = S.geschosse.filter((p) => !p.weg);
     S.gegner = S.gegner.filter((g) => g.hp > 0);
+    if (S.neu.length) S.gegner.push(...S.neu);
     for (const e of S.effekte) e.t += dt;
     for (const tx of S.texte) tx.t += dt;
     for (const st of S.strahlen) st.t += dt;
@@ -653,7 +681,7 @@
     frameZeichnen(A.gegnerImg, f, g.x, g.y, (g.links ? -1 : 1) * def.gr, def.gr, an.anker.x, an.anker.y);
     ctx.restore();
     if (g.hp < g.max && !def.boss) {
-      const bw = g.typ === 'panzer' ? 70 : 36, y = g.y - f.h * def.gr * 0.85;
+      const bw = g.typ === 'panzer' ? 70 : g.typ === 'schuetzenpanzer' ? 60 : g.typ === 'humvee' || g.typ === 'motorrad' ? 44 : 36, y = g.y - f.h * def.gr * 0.85;
       ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fillRect(g.x - bw / 2 - 1, y - 1, bw + 2, 6);
       ctx.fillStyle = g.hp / g.max > 0.4 ? '#7CD992' : '#FF6B5E'; ctx.fillRect(g.x - bw / 2, y, bw * Math.max(0, g.hp / g.max), 4);
     }
@@ -858,7 +886,7 @@
   let techZurueck = null;
   function techZeigen(zurueck) {
     if (zurueck) techZurueck = zurueck;
-    const NW = 250, NH = 120, X = [40, 315, 590, 865, 1140], Y = [150, 310, 470, 630], byId = {};
+    const NW = 250, NH = 108, X = [40, 315, 590, 865, 1140], Y = [128, 266, 404, 542, 680], byId = {};
     TECH.forEach((d) => { byId[d.id] = d; });
     let linien = '', knoten = '', zahl = 0;
     for (const d of TECH) {
@@ -872,21 +900,21 @@
     for (const d of TECH) {
       const hat = !!P.tech[d.id]; if (hat) zahl++;
       const reqOk = !d.req || !!P.tech[d.req], frei = !hat && reqOk && !d.bald, kann = frei && P.orden >= d.k;
-      let btn = hat ? (d.k ? 'Gekauft' : 'Freigeschaltet') : d.bald ? 'Bald' : !reqOk ? 'Benötigt: ' + byId[d.req].n : kann ? (d.bild ? 'Freischalten · ' : 'Kaufen · ') + d.k + ' Orden' : d.k + ' Orden · zu wenig';
+      let btn = hat ? (d.k ? 'Gekauft' : 'Freigeschaltet') : d.bald ? 'Bald' : !reqOk ? 'Benötigt: ' + byId[d.req].n : kann ? (d.bild ? 'Freischalten · ' : 'Kaufen · ') + d.k + (d.bild ? '' : ' Orden') : d.k + ' Orden · zu wenig';
       const rand = hat ? '#E8C766' : frei ? '#C9A227' : '#5A2A30';
-      const img = d.bild ? `<div style="width:72px;height:96px;flex-shrink:0;border-radius:10px;background:#1A0306;overflow:hidden"><div style="${schraegStil(d.bild, 0, 0, 120)};width:120px;height:120px;margin:-14px 0 0 -24px;opacity:${hat ? 1 : 0.4}"></div></div>` : '';
-      knoten += `<div style="position:absolute;left:${X[d.c]}px;top:${Y[d.r]}px;width:${NW}px;height:${NH}px;box-sizing:border-box;border-radius:14px;border:2px solid ${rand};background:${hat ? '#4A0810' : '#2B0509'};display:flex;gap:10px;padding:10px 12px;opacity:${d.bald ? 0.55 : 1}">${img}
+      const img = d.bild ? `<div style="width:72px;height:84px;flex-shrink:0;border-radius:10px;background:#1A0306;overflow:hidden"><div style="${schraegStil(d.bild, 0, 0, 120)};width:120px;height:120px;margin:-20px 0 0 -24px;opacity:${hat ? 1 : 0.4}"></div></div>` : '';
+      knoten += `<div style="position:absolute;left:${X[d.c]}px;top:${Y[d.r]}px;width:${NW}px;height:${NH}px;box-sizing:border-box;border-radius:14px;border:2px solid ${rand};background:${hat ? '#4A0810' : '#2B0509'};display:flex;gap:10px;padding:8px 12px;opacity:${d.bald ? 0.55 : 1}">${img}
         <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px"><div style="display:flex;justify-content:space-between;gap:6px"><span style="font-size:${d.bild ? 14 : 15}px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.n}</span>${hat ? '<span style="color:#E8C766;font-weight:800" aria-label="gekauft">✓</span>' : !reqOk || d.bald ? `<span style="color:#E7D4D6" aria-label="gesperrt">${SCHLOSS}</span>` : ''}</div>
         <span style="font-size:${d.bild ? 11 : 12}px;line-height:1.3;color:#E7D4D6;flex:1;min-height:0;overflow:hidden">${d.t}</span>
         <button type="button" data-tech="${d.id}" ${kann ? '' : 'disabled'} style="height:34px;flex-shrink:0;border-radius:8px;border:none;background:${kann ? '#C9A227' : hat ? '#2B0509' : '#3A0A10'};color:${kann ? '#1C1416' : hat ? '#E8C766' : '#E7D4D6'};font-size:13px;font-weight:800;cursor:${kann ? 'pointer' : 'default'}">${btn}</button></div></div>`;
     }
-    const labels = REIHEN.map((r, k) => `<div style="position:absolute;left:40px;top:${Y[k] - 24}px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#E8C766">${r}</div>`).join('');
+    const labels = REIHEN.map((r, k) => `<div style="position:absolute;left:${X[Math.min(...TECH.filter((d) => d.r === k).map((d) => d.c))]}px;top:${Y[k] - 22}px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#E8C766">${r}</div>`).join('');
     overlay(`<div style="position:absolute;left:0;top:0;width:1440px;height:96px;box-sizing:border-box;padding:0 40px;display:flex;align-items:center;justify-content:space-between;background:#2B0509;border-bottom:2px solid #C9A227">
         <div style="display:flex;align-items:center;gap:18px"><button type="button" id="techZu" class="knopf" aria-label="Zurück" style="width:48px">‹</button>
           <div><h1 style="margin:0;font-size:34px;line-height:1">Techbaum</h1><span style="font-size:14px;color:#E7D4D6">Türme freischalten und dauerhafte Verbesserungen kaufen – bezahlt mit Verdienstorden für besiegte Karten</span></div></div>
         <div style="display:flex;align-items:center;gap:14px"><span style="font-size:14px;color:#E7D4D6">${zahl - 1} von ${TECH.length - 1} erforscht</span>${vorratChip()}</div></div>
       ${labels}${linien}${knoten}
-      <div style="position:absolute;left:1140px;top:310px;width:250px;display:flex;flex-direction:column;gap:10px;font-size:12px;color:#E7D4D6"><span style="font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#E8C766">Legende</span>
+      <div style="position:absolute;left:1140px;top:266px;width:250px;display:flex;flex-direction:column;gap:10px;font-size:12px;color:#E7D4D6"><span style="font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#E8C766">Legende</span>
         <span style="display:flex;align-items:center;gap:8px"><span style="width:16px;height:16px;border-radius:4px;border:2px solid #E8C766;background:#4A0810"></span>gekauft</span>
         <span style="display:flex;align-items:center;gap:8px"><span style="width:16px;height:16px;border-radius:4px;border:2px solid #C9A227;background:#2B0509"></span>kaufbar</span>
         <span style="display:flex;align-items:center;gap:8px"><span style="width:16px;height:16px;border-radius:4px;border:2px solid #5A2A30;background:#2B0509"></span>gesperrt</span></div>`, true);

@@ -2,7 +2,7 @@
   "image": "gegner_spritesheet.png",
   "size": {
     "w": 1728,
-    "h": 1120
+    "h": 1648
   },
   "hinweise": {
     "richtung": "alle Gegner laufen/fahren nach rechts; nach links: horizontal spiegeln (scaleX = -1). Nicht drehen.",
@@ -95,6 +95,74 @@
         "y": 140
       },
       "info": "langsam, sehr viel Leben, kugelfest"
+    },
+    "kamikaze": {
+      "titel": "Kamikaze",
+      "bilder": [
+        "kamikaze_1",
+        "kamikaze_2",
+        "kamikaze_3",
+        "kamikaze_4",
+        "kamikaze_5",
+        "kamikaze_6"
+      ],
+      "fps": 14,
+      "schleife": true,
+      "anker": {
+        "x": 62,
+        "y": 112
+      },
+      "info": "sehr schnell, wenig Leben, großer Schaden am Ziel"
+    },
+    "sanitaeter": {
+      "titel": "Sanitäter",
+      "bilder": [
+        "sanitaeter_1",
+        "sanitaeter_2",
+        "sanitaeter_3",
+        "sanitaeter_4",
+        "sanitaeter_5",
+        "sanitaeter_6"
+      ],
+      "fps": 10,
+      "schleife": true,
+      "anker": {
+        "x": 62,
+        "y": 112
+      },
+      "info": "heilt Gegner in der Nähe"
+    },
+    "motorrad": {
+      "titel": "Motorrad",
+      "bilder": [
+        "motorrad_1",
+        "motorrad_2",
+        "motorrad_3",
+        "motorrad_4"
+      ],
+      "fps": 14,
+      "schleife": true,
+      "anker": {
+        "x": 80,
+        "y": 112
+      },
+      "info": "sehr schnelles Fahrzeug"
+    },
+    "schuetzenpanzer": {
+      "titel": "Schützenpanzer",
+      "bilder": [
+        "schuetzenpanzer_1",
+        "schuetzenpanzer_2",
+        "schuetzenpanzer_3",
+        "schuetzenpanzer_4"
+      ],
+      "fps": 10,
+      "schleife": true,
+      "anker": {
+        "x": 112,
+        "y": 132
+      },
+      "info": "gepanzert; setzt beim Zerstören Soldaten ab"
     },
     "ratte": {
       "titel": "Boss: Stahlratte (Fahrt)",
@@ -285,45 +353,165 @@
       "w": 256,
       "h": 160
     },
-    "ratte_1": {
+    "kamikaze_1": {
       "x": 0,
       "y": 672,
+      "w": 128,
+      "h": 128
+    },
+    "kamikaze_2": {
+      "x": 128,
+      "y": 672,
+      "w": 128,
+      "h": 128
+    },
+    "kamikaze_3": {
+      "x": 256,
+      "y": 672,
+      "w": 128,
+      "h": 128
+    },
+    "kamikaze_4": {
+      "x": 384,
+      "y": 672,
+      "w": 128,
+      "h": 128
+    },
+    "kamikaze_5": {
+      "x": 512,
+      "y": 672,
+      "w": 128,
+      "h": 128
+    },
+    "kamikaze_6": {
+      "x": 640,
+      "y": 672,
+      "w": 128,
+      "h": 128
+    },
+    "sanitaeter_1": {
+      "x": 0,
+      "y": 800,
+      "w": 128,
+      "h": 128
+    },
+    "sanitaeter_2": {
+      "x": 128,
+      "y": 800,
+      "w": 128,
+      "h": 128
+    },
+    "sanitaeter_3": {
+      "x": 256,
+      "y": 800,
+      "w": 128,
+      "h": 128
+    },
+    "sanitaeter_4": {
+      "x": 384,
+      "y": 800,
+      "w": 128,
+      "h": 128
+    },
+    "sanitaeter_5": {
+      "x": 512,
+      "y": 800,
+      "w": 128,
+      "h": 128
+    },
+    "sanitaeter_6": {
+      "x": 640,
+      "y": 800,
+      "w": 128,
+      "h": 128
+    },
+    "motorrad_1": {
+      "x": 0,
+      "y": 928,
+      "w": 160,
+      "h": 128
+    },
+    "motorrad_2": {
+      "x": 160,
+      "y": 928,
+      "w": 160,
+      "h": 128
+    },
+    "motorrad_3": {
+      "x": 320,
+      "y": 928,
+      "w": 160,
+      "h": 128
+    },
+    "motorrad_4": {
+      "x": 480,
+      "y": 928,
+      "w": 160,
+      "h": 128
+    },
+    "schuetzenpanzer_1": {
+      "x": 0,
+      "y": 1056,
+      "w": 224,
+      "h": 144
+    },
+    "schuetzenpanzer_2": {
+      "x": 224,
+      "y": 1056,
+      "w": 224,
+      "h": 144
+    },
+    "schuetzenpanzer_3": {
+      "x": 448,
+      "y": 1056,
+      "w": 224,
+      "h": 144
+    },
+    "schuetzenpanzer_4": {
+      "x": 672,
+      "y": 1056,
+      "w": 224,
+      "h": 144
+    },
+    "ratte_1": {
+      "x": 0,
+      "y": 1200,
       "w": 432,
       "h": 224
     },
     "ratte_2": {
       "x": 432,
-      "y": 672,
+      "y": 1200,
       "w": 432,
       "h": 224
     },
     "ratte_3": {
       "x": 864,
-      "y": 672,
+      "y": 1200,
       "w": 432,
       "h": 224
     },
     "ratte_4": {
       "x": 1296,
-      "y": 672,
+      "y": 1200,
       "w": 432,
       "h": 224
     },
     "ratte_feuer_1": {
       "x": 0,
-      "y": 896,
+      "y": 1424,
       "w": 432,
       "h": 224
     },
     "ratte_feuer_2": {
       "x": 432,
-      "y": 896,
+      "y": 1424,
       "w": 432,
       "h": 224
     },
     "ratte_feuer_3": {
       "x": 864,
-      "y": 896,
+      "y": 1424,
       "w": 432,
       "h": 224
     }

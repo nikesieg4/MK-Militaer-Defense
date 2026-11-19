@@ -22,13 +22,14 @@ Die Wege führen aus der Karte hinaus (kein Kornspeicher mehr); Ostkolbistan end
 | Nr. | Bundesland | Karte | Wellen | Leben der Gegner | Verdienstorden (erster Sieg) |
 | --- | --- | --- | --- | --- | --- |
 | 1 | Westkolbistan | Grenzfelder | 20 | ×1,00 | 3 |
-| 2 | Paprikistan | Paprika-Plantage | 25 | ×1,08 | 3 |
-| 3 | Nordkolbistan | Felsplateau (Plateaus nicht bebaubar) | 30 | ×1,16 | 4 |
-| 4 | Maisdosistan | Dosenfabrik (eckige Förderbänder, Maschinen gesperrt) | 30 | ×1,24 | 4 |
-| 5 | Ostkolbistan | Oase am Salzsee (See nicht bebaubar) | 35 | ×1,32 | 5 |
-| 6 | Südkolbistan | Große Düne (2 Eingänge) | 40 | ×1,42 | 5 |
-| 7 | Maisburg | Hauptstadt (Ziel: Regierungspalast) | 50 | ×1,55 | 6 |
+| 2 | Paprikistan | Paprika-Plantage | 40 | ×1,08 | 3 |
+| 3 | Nordkolbistan | Felsplateau (Plateaus nicht bebaubar) | 60 | ×1,16 | 4 |
+| 4 | Maisdosistan | Dosenfabrik (eckige Förderbänder, Maschinen gesperrt) | 80 | ×1,24 | 4 |
+| 5 | Ostkolbistan | Oase am Salzsee (See nicht bebaubar) | 100 | ×1,32 | 5 |
+| 6 | Südkolbistan | Große Düne (2 Eingänge) | 120 | ×1,42 | 5 |
+| 7 | Maisburg | Hauptstadt (Ziel: Regierungspalast) | 140 | ×1,55 | 6 |
 
+- **Jede Karte hat 20 Wellen mehr als die vorige** (20, 40 … 140).
 - Nächste Karte wird nach einem Sieg freigeschaltet. Sterne: 3 = kein Leben verloren, 2 = mindestens die Hälfte, 1 = gewonnen.
 - **Zweite Währung: Verdienstorden** (dauerhaft, nur für den Techbaum): für besiegte Karten, Stufenaufstiege und alle 20 Freeplay-Wellen – erster Sieg 3–6 Orden, jeder Wiederholungssieg 1 Orden, dazu +1 je neu erreichtem Stern. Niederlage/Aufgeben: 0.
 - Fortschritt im Browser gespeichert (`localStorage` `mkd-fortschritt-1`).
@@ -48,7 +49,7 @@ Erfahrung (EP): jeder Abschuss = Körner-Belohnung des Gegners, jede geschaffte 
 
 ## Techbaum (dauerhaft)
 
-Wie im Design: Zeilen Türme / Scharfschütze / Ranger / Allgemein mit Verbindungslinien. **Nur zwischen den Runden** auf dem Weltbildschirm (Kampagne) erreichbar, bezahlt mit Verdienstorden. Ranger (frei) → **Scharfschütze 3** → **Logistik-Depot 3** → **Juggernaut 5** → **Railgunner 6**; Ruhige Hand 2 → Maisfeld-Tarnung 4; Ranger-Drill I 2 → II 3 → Goldmagazin 4; Kriegskasse 2 (+150 Startkörner) → Erntebonus 3 → Strohbunker 3 (+20 Leben) → Mais-Reserve 5 (+1 Leben je Welle). Alte Spielstände mit Kornvorrat werden einmalig in Orden umgerechnet.
+Verzweigt ab dem Ranger, mit Verbindungslinien. **Nur zwischen den Runden** auf dem Weltbildschirm (Kampagne) erreichbar, bezahlt mit Verdienstorden. Ranger (frei) → Zweig *Präzision & Logistik*: **Scharfschütze 3** → **Logistik-Depot 3**; Zweig *Schwere Waffen*: **Juggernaut 5** → **Railgunner 6**; Ruhige Hand 2 → Maisfeld-Tarnung 4; Ranger-Drill I 2 → II 3 → Goldmagazin 4; Kriegskasse 2 (+150 Startkörner) → Erntebonus 3 → Strohbunker 3 (+20 Leben) → Mais-Reserve 5 (+1 Leben je Welle). Alte Spielstände mit Kornvorrat werden einmalig in Orden umgerechnet.
 
 ## Logistik-Depot (Wirtschaftsturm)
 
@@ -64,6 +65,23 @@ Kosten 400 Körner, im Techbaum freischalten (3 Verdienstorden, nach Scharfschü
 | 5 | Staatsreserve: 1.500 | 9.500 | Feldkrankenhaus: 30 Leben, −30 % | 9.000 |
 
 Kreuzpfade wirken zusammen: Körner = Versorgung × (1 − Abzug), z. B. 2-2 = 200 × 0,9 = 180 Körner + 3 Leben. Mindestabstand zum Weg und zu anderen Türmen ist größer als bei Schützen.
+
+## Gegner
+
+| Gegner | Leben | Tempo | Lohn | Schaden am Ziel | Besonderheit | ab Welle |
+| --- | --- | --- | --- | --- | --- | --- |
+| Soldat | 3 | 52 | 5 | 1 | – | 1 |
+| Tarnsoldat | 3 | 66 | 7 | 1 | getarnt | 4 |
+| Kamikaze | 2 | 135 | 6 | 15 | sehr schnell; ab Welle 30 jede 3. Welle Kamikaze-Ansturm | 7 |
+| Gepanzerter Soldat | 12 | 34 | 14 | 2 | gepanzert | 6 |
+| Humvee | 30 | 100 | 20 | 5 | – | 7 |
+| Sanitäter | 8 | 46 | 12 | 2 | heilt alle 2,5 s Gegner im Umkreis 100 px um 20 % (nicht den Boss) | 8 |
+| Motorrad | 10 | 150 | 12 | 4 | schnellstes Fahrzeug | 12 |
+| Schützenpanzer | 90 | 40 | 50 | 12 | gepanzert, setzt beim Zerstören 4 Soldaten ab | 15 |
+| Panzer | 180 | 24 | 100 | 20 | gepanzert | 10 |
+| Stahlratte (Boss) | 1.000 | 15 | 400 | Niederlage | betäubt Türme | jede 20. Welle |
+
+Leben × (1 + 0,06 × Welle + 0,04 × Wellen über 50) × Kartenfaktor. Die Mengen wachsen bis etwa Welle 40–70 und bleiben dann gleich, danach steigt nur noch das Leben. Beim ersten Auftauchen eines neuen Gegners erklärt ihn der Hinweis rechts.
 
 ## Juggernaut und Railgunner (nach TDX)
 
@@ -83,9 +101,9 @@ Zielzeit = so lange muss ein Ziel anvisiert sein, bevor der erste Schuss fällt.
 
 Wie in BTD6: Sobald ein Turm im Laden oder auf der Karte angetippt ist, erscheint rechts oben über der Turmauswahl „ⓘ Ausbaupfade“. Er zeigt beide Pfade mit Bild, Name, Preis und kurzer Wirkung jeder Stufe (pausiert das Spiel).
 
-## Boss: Stahlratte (Grenzfelder, Welle 20)
+## Boss: Stahlratte (jede 20. Welle)
 
-Landkreuzer nach Vorbild P. 1000 (verkleinert, neutrale Lackierung). Kommt am Ende von Welle 20 auf Grenzfelder, mit Banner und Boss-Lebensleiste. Leben 1.000 × Wellenfaktor (2.200), kugelfest, Tempo 15, Belohnung 400 Körner; erreicht er das Ziel, ist die Karte verloren. Alle 8 s: steht ein Turm in 340 px Umkreis, hält er 1,8 s an und feuert eine schwere Granate auf den teuersten Turm – Türme im Umkreis 50 px sind 4 s **betäubt** (schießen nicht, Sterne darüber).
+Landkreuzer nach Vorbild P. 1000 (verkleinert, neutrale Lackierung). Kommt am Ende jeder 20. Welle (auf allen Karten), mit Banner und Boss-Lebensleiste. Leben 1.000 × Wellenfaktor (2.200), kugelfest, Tempo 15, Belohnung 400 Körner; erreicht er das Ziel, ist die Karte verloren. Alle 8 s: steht ein Turm in 340 px Umkreis, hält er 1,8 s an und feuert eine schwere Granate auf den teuersten Turm – Türme im Umkreis 50 px sind 4 s **betäubt** (schießen nicht, Sterne darüber).
 
 ## Einstellungen und Spielstand
 

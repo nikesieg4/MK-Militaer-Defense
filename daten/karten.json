@@ -90,7 +90,7 @@
       "titel": "Paprika-Plantage",
       "stufe": 2,
       "schwierigkeit": "Leicht",
-      "wellen": 25,
+      "wellen": 40,
       "text": "Paprikafelder, Bewässerungskanal und Obstbäume. Erste getarnte Gegner tauchen auf.",
       "bild": "karte_2_paprikistan.png",
       "groesse": {
@@ -169,7 +169,7 @@
       "titel": "Felsplateau",
       "stufe": 3,
       "schwierigkeit": "Mittel",
-      "wellen": 30,
+      "wellen": 60,
       "text": "Ein trockenes Wadi zwischen Tafelbergen. Die Plateaus nehmen viele Bauplätze weg.",
       "bild": "karte_3_nordkolbistan.png",
       "groesse": {
@@ -285,7 +285,7 @@
       "titel": "Dosenfabrik",
       "stufe": 4,
       "schwierigkeit": "Mittel",
-      "wellen": 30,
+      "wellen": 80,
       "text": "Gegner fahren auf Förderbändern durch die Konservenfabrik. Eckige Wege, kurze Sichtlinien.",
       "bild": "karte_4_maisdosistan.png",
       "groesse": {
@@ -373,7 +373,7 @@
       "titel": "Oase am Salzsee",
       "stufe": 5,
       "schwierigkeit": "Schwer",
-      "wellen": 35,
+      "wellen": 100,
       "text": "Der Weg umrundet die Oase und endet im Salzsee. Das Wasser ist nicht bebaubar.",
       "bild": "karte_5_ostkolbistan.png",
       "groesse": {
@@ -451,7 +451,7 @@
       "titel": "Große Düne",
       "stufe": 6,
       "schwierigkeit": "Schwer",
-      "wellen": 40,
+      "wellen": 120,
       "text": "Zwei Karawanenwege treffen sich mitten in der Wüste. Gegner kommen von zwei Seiten.",
       "bild": "karte_6_suedkolbistan.png",
       "groesse": {
@@ -547,7 +547,7 @@
       "titel": "Hauptstadt",
       "stufe": 7,
       "schwierigkeit": "Finale",
-      "wellen": 50,
+      "wellen": 140,
       "text": "Straßenkampf vor dem Regierungspalast. Kurzer Weg, starke Gegner – das Finale.",
       "bild": "karte_7_maisburg.png",
       "groesse": {
