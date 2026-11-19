@@ -182,6 +182,11 @@
     pluenderer: { hp: 9, tempo: 58, lohn: 12, schaden: 1, gr: 0.6, stehlen: 0.1, name: 'Plünderer', info: 'Plünderer: kommt er durch, stiehlt er 10 % deiner Körner (höchstens 500).' },
     raeuberhauptmann: { hp: 650, tempo: 30, lohn: 170, schaden: 40, gr: 0.6, panzer: true, boss: true, mini: true, fahrzeug: true, name: 'Räuberhauptmann', hinweis: 'Der Räuberhauptmann fährt ein gepanzertes Halbkettenfahrzeug.' },
     sandsturmkhan: { hp: 3800, tempo: 12, lohn: 900, schaden: 1000, gr: 0.55, boss: true, fahrzeug: true, name: 'Sandsturm-Khan', faehig: { sandsturm: { cd: 12, dauer: 6 } }, hinweis: 'Der Sandsturm-Khan ruft Sandstürme: Alle Türme haben 6 s lang 30 % weniger Reichweite.' },
+    // Getarnte Einheiten je Genre (ersetzen den Tarnsoldaten)
+    buschgeist: { hp: 3, tempo: 66, lohn: 7, schaden: 1, gr: 0.6, tarn: true, name: 'Buschgeist', info: 'Buschgeist: im Dschungel getarnt – nur Türme mit Tarn-Erkennung sehen ihn.' },
+    schneetarner: { hp: 3, tempo: 66, lohn: 7, schaden: 1, gr: 0.6, tarn: true, name: 'Schneetarner', info: 'Schneetarner: im Schnee getarnt – nur Türme mit Tarn-Erkennung sehen ihn.' },
+    tarnroboter: { hp: 5, tempo: 60, lohn: 8, schaden: 1, gr: 0.6, tarn: true, roboter: true, name: 'Tarnroboter', info: 'Tarnroboter: unsichtbar durch sein Tarnfeld – nur Türme mit Tarn-Erkennung sehen ihn.' },
+    sandgeist: { hp: 3, tempo: 66, lohn: 7, schaden: 1, gr: 0.6, tarn: true, name: 'Sandgeist', info: 'Sandgeist: im Sand getarnt – nur Türme mit Tarn-Erkennung sehen ihn.' },
     // Maisburg
     kolbenfresser: { hp: 5000, tempo: 13, lohn: 1500, schaden: 1000, gr: 0.55, panzer: true, boss: true, betaeuben: true, fahrzeug: true, name: 'Kolbenfresser', faehig: { rauch: { cd: 14, r: 220, dauer: 5 }, bauen: { cd: 9, typ: 'kampfroboter', n: 2 }, lawine: { cd: 16, r: 260, dauer: 5 }, abtauchen: { cd: 13, dauer: 3 }, sandsturm: { cd: 18, dauer: 6 } }, hinweis: 'Der Kolbenfresser kann alles: Türme betäuben, Rauch, Roboter bauen, Lawinen, abtauchen und Sandsturm.' }
   };
@@ -207,11 +212,11 @@
   // Genre je Karte: Genre-Gegner ersetzen die normalen größtenteils (85 %); Maisburg mischt alle Genres
   const GENRE = { paprikistan: 'dschungel', nordkolbistan: 'winter', maisdosistan: 'fabrik', ostkolbistan: 'marine', suedkolbistan: 'wueste', maisburg: 'alle' };
   const ERSATZ = {
-    dschungel: { soldat: 'buschkaempfer', kamikaze: 'machetenlaeufer', humvee: 'pickup', motorrad: 'pickup', sanitaeter: 'rauchwerfer' },
-    winter: { soldat: 'gebirgsjaeger', kamikaze: 'skijaeger', humvee: 'schneemobil', motorrad: 'schneemobil', sanitaeter: 'eisgranatier' },
-    fabrik: { soldat: 'kampfroboter', panzersoldat: 'kampfroboter', kamikaze: 'spinnenroboter', motorrad: 'spinnenroboter', humvee: 'kampfroboter', sanitaeter: 'schildroboter', schuetzenpanzer: 'mech', panzer: 'mech' },
+    dschungel: { tarnsoldat: 'buschgeist', soldat: 'buschkaempfer', kamikaze: 'machetenlaeufer', humvee: 'pickup', motorrad: 'pickup', sanitaeter: 'rauchwerfer' },
+    winter: { tarnsoldat: 'schneetarner', soldat: 'gebirgsjaeger', kamikaze: 'skijaeger', humvee: 'schneemobil', motorrad: 'schneemobil', sanitaeter: 'eisgranatier' },
+    fabrik: { tarnsoldat: 'tarnroboter', soldat: 'kampfroboter', panzersoldat: 'kampfroboter', kamikaze: 'spinnenroboter', motorrad: 'spinnenroboter', humvee: 'kampfroboter', sanitaeter: 'schildroboter', schuetzenpanzer: 'mech', panzer: 'mech' },
     marine: { soldat: 'marinesoldat', tarnsoldat: 'kampftaucher', schuetzenpanzer: 'amphibienfahrzeug', humvee: 'amphibienfahrzeug', sanitaeter: 'funker' },
-    wueste: { soldat: 'raeuber', humvee: 'buggy', motorrad: 'kamelreiter', panzersoldat: 'kamelreiter', sanitaeter: 'pluenderer' }
+    wueste: { tarnsoldat: 'sandgeist', soldat: 'raeuber', humvee: 'buggy', motorrad: 'kamelreiter', panzersoldat: 'kamelreiter', sanitaeter: 'pluenderer' }
   };
   const BOSSE = {
     westkolbistan: { ende: 'ratte' }, paprikistan: { ende: 'dschungelkoenig', mini: ['kommandant'] }, nordkolbistan: { ende: 'lawinenbrecher', mini: ['pistenraupe'] },
@@ -901,6 +906,22 @@
     }
     if (g.brennt > 0) { const fl = effFrame('brandflaeche', S.zeit, true); frameZeichnen(A.effImg, fl, g.x, g.y - 6, 0.35, 0.35); }
   }
+  // Schneefall auf dem Felsplateau: 3 Ebenen (nah = groß und schnell), leichter Wind
+  const FLOCKEN = Array.from({ length: 170 }, (_, i) => {
+    const r = (n) => { const x = Math.sin(i * 127.1 + n * 311.7) * 43758.5453; return x - Math.floor(x); };
+    const ebene = i % 3;
+    return { x: r(1) * W, y: r(2) * H, gr: [1.2, 2, 3][ebene] + r(3) * 0.8, tempo: [28, 46, 70][ebene] + r(4) * 14, wackel: 6 + r(5) * 10, ph: r(6) * 6.28, a: [0.55, 0.75, 0.9][ebene] };
+  });
+  function schneeZeichnen() {
+    const z = performance.now() / 1000;
+    ctx.save(); ctx.fillStyle = '#FFFFFF';
+    for (const fl of FLOCKEN) {
+      const y = (fl.y + z * fl.tempo) % (H + 20) - 10;
+      const x = ((fl.x + z * fl.tempo * 0.35 + Math.sin(z * 0.9 + fl.ph) * fl.wackel) % (W + 20) + W + 20) % (W + 20) - 10;
+      ctx.globalAlpha = fl.a; ctx.beginPath(); ctx.arc(x, y, fl.gr, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+  }
   function zeichnen() {
     ctx.drawImage(A.bilder[A.karten.indexOf(K)], 0, 0, W, H);
     for (const f of S.flaechen) frameZeichnen(A.effImg, effFrame('brandflaeche', f.t, true), f.x, f.y, 0.9, 0.9);
@@ -922,6 +943,7 @@
       if (t.langsamBis > S.zeit) { ctx.strokeStyle = 'rgba(232,244,255,0.9)'; ctx.setLineDash([4, 4]); ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(t.x, t.y, 30, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]); }
       if (t.gestoert) { ctx.strokeStyle = '#FF6B5E'; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.moveTo(t.x - 10, t.y - 44); ctx.lineTo(t.x - 4, t.y - 52); ctx.lineTo(t.x + 2, t.y - 44); ctx.lineTo(t.x + 8, t.y - 52); ctx.stroke(); }
     }
+    if (K.id === 'nordkolbistan') schneeZeichnen();
     if (S.sandBis > S.zeit) { ctx.fillStyle = `rgba(216,192,138,${Math.min(0.3, (S.sandBis - S.zeit) * 0.3)})`; ctx.fillRect(0, 0, W, H); }
     for (const p of S.geschosse) {
       const an = A.effAtlas.animationen[p.art], fr = A.effAtlas.frames[an.bilder[0]];
