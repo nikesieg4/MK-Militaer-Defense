@@ -954,6 +954,10 @@
       if (t.betaeubtBis > S.zeit) frameZeichnen(A.effImg, effFrame('betaeubt', S.zeit, true), t.x, t.y - 46, 1, 1);
     } }))];
     for (const v of S.fahrzeuge) dinge.push({ y: v.y, f: () => {
+      if (v.a >= 5 && !v.stand) {   // Keiler: Schlegelwalze wirbelt Erde und Staub auf
+        const z = S.zeit * 9, c = Math.cos(v.winkel), sn = Math.sin(v.winkel);
+        for (let k = 0; k < 4; k++) { const q = (z + k * 1.7) % 4 / 4, seit = (k % 2 ? 1 : -1) * (6 + k * 5), dx = 44 + q * 14, x = v.x + c * dx - sn * seit, y = v.y + sn * dx + c * seit; ctx.fillStyle = `rgba(184,154,104,${(1 - q) * 0.55})`; ctx.beginPath(); ctx.arc(x, y, 5 + q * 9, 0, Math.PI * 2); ctx.fill(); }
+      }
       fahrzeugBild(v.code, v.x, v.y, v.winkel, v.tw ?? v.winkel, v.schussT < 0.06 ? 1 : v.schussT < 0.14 ? 2 : 0, 96);
       const bw = 40, y = v.y - 34, k = Math.max(0, v.kraft / v.max);
       ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fillRect(v.x - bw / 2 - 1, y - 1, bw + 2, 6);
