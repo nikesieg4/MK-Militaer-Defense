@@ -2,7 +2,7 @@
   "image": "gegner_spritesheet.png",
   "size": {
     "w": 1728,
-    "h": 1648
+    "h": 6592
   },
   "hinweise": {
     "richtung": "alle Gegner laufen/fahren nach rechts; nach links: horizontal spiegeln (scaleX = -1). Nicht drehen.",
@@ -194,6 +194,553 @@
         "y": 206
       },
       "info": "Schuss-Animation, einmal abspielen, Mündung bei (380, 62)"
+    },
+    "buschkaempfer": {
+      "titel": "Buschkämpfer",
+      "bilder": [
+        "buschkaempfer_1",
+        "buschkaempfer_2",
+        "buschkaempfer_3",
+        "buschkaempfer_4",
+        "buschkaempfer_5",
+        "buschkaempfer_6"
+      ],
+      "fps": 10,
+      "schleife": true,
+      "anker": {
+        "x": 62,
+        "y": 112
+      },
+      "info": "Dschungel: Grundgegner"
+    },
+    "machetenlaeufer": {
+      "titel": "Machetenläufer",
+      "bilder": [
+        "machetenlaeufer_1",
+        "machetenlaeufer_2",
+        "machetenlaeufer_3",
+        "machetenlaeufer_4",
+        "machetenlaeufer_5",
+        "machetenlaeufer_6"
+      ],
+      "fps": 14,
+      "schleife": true,
+      "anker": {
+        "x": 62,
+        "y": 112
+      },
+      "info": "Dschungel: schnell, wenig Leben"
+    },
+    "rauchwerfer": {
+      "titel": "Rauchwerfer",
+      "bilder": [
+        "rauchwerfer_1",
+        "rauchwerfer_2",
+        "rauchwerfer_3",
+        "rauchwerfer_4",
+        "rauchwerfer_5",
+        "rauchwerfer_6"
+      ],
+      "fps": 10,
+      "schleife": true,
+      "anker": {
+        "x": 62,
+        "y": 112
+      },
+      "info": "Dschungel-Spezial: Rauch tarnt Gegner in der Nähe"
+    },
+    "pickup": {
+      "titel": "Pickup mit MG",
+      "bilder": [
+        "pickup_1",
+        "pickup_2",
+        "pickup_3",
+        "pickup_4"
+      ],
+      "fps": 12,
+      "schleife": true,
+      "anker": {
+        "x": 96,
+        "y": 112
+      },
+      "info": "Dschungel: Fahrzeug"
+    },
+    "kommandant": {
+      "titel": "Guerilla-Kommandant",
+      "bilder": [
+        "kommandant_1",
+        "kommandant_2",
+        "kommandant_3",
+        "kommandant_4",
+        "kommandant_5",
+        "kommandant_6"
+      ],
+      "fps": 10,
+      "schleife": true,
+      "anker": {
+        "x": 62,
+        "y": 112
+      },
+      "info": "Mini-Boss Dschungel: Kampfruf macht Gegner schneller"
+    },
+    "dschungelkoenig": {
+      "titel": "Dschungelkönig",
+      "bilder": [
+        "dschungelkoenig_1",
+        "dschungelkoenig_2",
+        "dschungelkoenig_3",
+        "dschungelkoenig_4"
+      ],
+      "fps": 8,
+      "schleife": true,
+      "anker": {
+        "x": 210,
+        "y": 210
+      },
+      "info": "Endboss Paprikistan: Rauch tarnt alle Gegner im Umkreis"
+    },
+    "gebirgsjaeger": {
+      "titel": "Gebirgsjäger",
+      "bilder": [
+        "gebirgsjaeger_1",
+        "gebirgsjaeger_2",
+        "gebirgsjaeger_3",
+        "gebirgsjaeger_4",
+        "gebirgsjaeger_5",
+        "gebirgsjaeger_6"
+      ],
+      "fps": 10,
+      "schleife": true,
+      "anker": {
+        "x": 62,
+        "y": 112
+      },
+      "info": "Winter: Grundgegner"
+    },
+    "skijaeger": {
+      "titel": "Skijäger",
+      "bilder": [
+        "skijaeger_1",
+        "skijaeger_2",
+        "skijaeger_3",
+        "skijaeger_4",
+        "skijaeger_5",
+        "skijaeger_6"
+      ],
+      "fps": 8,
+      "schleife": true,
+      "anker": {
+        "x": 62,
+        "y": 112
+      },
+      "info": "Winter: sehr schnell"
+    },
+    "eisgranatier": {
+      "titel": "Eisgranatier",
+      "bilder": [
+        "eisgranatier_1",
+        "eisgranatier_2",
+        "eisgranatier_3",
+        "eisgranatier_4",
+        "eisgranatier_5",
+        "eisgranatier_6"
+      ],
+      "fps": 10,
+      "schleife": true,
+      "anker": {
+        "x": 62,
+        "y": 112
+      },
+      "info": "Winter-Spezial: friert Türme ein"
+    },
+    "schneemobil": {
+      "titel": "Schneemobil",
+      "bilder": [
+        "schneemobil_1",
+        "schneemobil_2",
+        "schneemobil_3",
+        "schneemobil_4"
+      ],
+      "fps": 12,
+      "schleife": true,
+      "anker": {
+        "x": 80,
+        "y": 112
+      },
+      "info": "Winter: schnelles Fahrzeug"
+    },
+    "pistenraupe": {
+      "titel": "Pistenraupe",
+      "bilder": [
+        "pistenraupe_1",
+        "pistenraupe_2",
+        "pistenraupe_3",
+        "pistenraupe_4"
+      ],
+      "fps": 10,
+      "schleife": true,
+      "anker": {
+        "x": 128,
+        "y": 140
+      },
+      "info": "Mini-Boss Winter: gepanzert"
+    },
+    "lawinenbrecher": {
+      "titel": "Lawinenbrecher",
+      "bilder": [
+        "lawinenbrecher_1",
+        "lawinenbrecher_2",
+        "lawinenbrecher_3",
+        "lawinenbrecher_4"
+      ],
+      "fps": 8,
+      "schleife": true,
+      "anker": {
+        "x": 200,
+        "y": 210
+      },
+      "info": "Endboss Nordkolbistan: Lawine verlangsamt Türme"
+    },
+    "kampfroboter": {
+      "titel": "Kampfroboter",
+      "bilder": [
+        "kampfroboter_1",
+        "kampfroboter_2",
+        "kampfroboter_3",
+        "kampfroboter_4",
+        "kampfroboter_5",
+        "kampfroboter_6"
+      ],
+      "fps": 8,
+      "schleife": true,
+      "anker": {
+        "x": 62,
+        "y": 112
+      },
+      "info": "Fabrik: Grundgegner"
+    },
+    "spinnenroboter": {
+      "titel": "Spinnenroboter",
+      "bilder": [
+        "spinnenroboter_1",
+        "spinnenroboter_2",
+        "spinnenroboter_3",
+        "spinnenroboter_4",
+        "spinnenroboter_5",
+        "spinnenroboter_6"
+      ],
+      "fps": 16,
+      "schleife": true,
+      "anker": {
+        "x": 62,
+        "y": 112
+      },
+      "info": "Fabrik: schnell, wenig Leben"
+    },
+    "schildroboter": {
+      "titel": "Schildroboter",
+      "bilder": [
+        "schildroboter_1",
+        "schildroboter_2",
+        "schildroboter_3",
+        "schildroboter_4",
+        "schildroboter_5",
+        "schildroboter_6"
+      ],
+      "fps": 8,
+      "schleife": true,
+      "anker": {
+        "x": 62,
+        "y": 112
+      },
+      "info": "Fabrik-Spezial: Schild halbiert Schaden an Gegnern in der Nähe"
+    },
+    "mech": {
+      "titel": "Schwerer Mech",
+      "bilder": [
+        "mech_1",
+        "mech_2",
+        "mech_3",
+        "mech_4",
+        "mech_5",
+        "mech_6"
+      ],
+      "fps": 6,
+      "schleife": true,
+      "anker": {
+        "x": 96,
+        "y": 150
+      },
+      "info": "Fabrik: gepanzert, zerfällt in Spinnenroboter"
+    },
+    "werkmeister": {
+      "titel": "Werkmeister",
+      "bilder": [
+        "werkmeister_1",
+        "werkmeister_2",
+        "werkmeister_3",
+        "werkmeister_4",
+        "werkmeister_5",
+        "werkmeister_6"
+      ],
+      "fps": 8,
+      "schleife": true,
+      "anker": {
+        "x": 80,
+        "y": 146
+      },
+      "info": "Mini-Boss Fabrik: repariert Roboter"
+    },
+    "schrottkoloss": {
+      "titel": "Schrottkoloss",
+      "bilder": [
+        "schrottkoloss_1",
+        "schrottkoloss_2",
+        "schrottkoloss_3",
+        "schrottkoloss_4"
+      ],
+      "fps": 5,
+      "schleife": true,
+      "anker": {
+        "x": 212,
+        "y": 212
+      },
+      "info": "Endboss Maisdosistan: baut unterwegs Roboter"
+    },
+    "marinesoldat": {
+      "titel": "Marinesoldat",
+      "bilder": [
+        "marinesoldat_1",
+        "marinesoldat_2",
+        "marinesoldat_3",
+        "marinesoldat_4",
+        "marinesoldat_5",
+        "marinesoldat_6"
+      ],
+      "fps": 10,
+      "schleife": true,
+      "anker": {
+        "x": 62,
+        "y": 112
+      },
+      "info": "Marine: Grundgegner"
+    },
+    "kampftaucher": {
+      "titel": "Kampftaucher",
+      "bilder": [
+        "kampftaucher_1",
+        "kampftaucher_2",
+        "kampftaucher_3",
+        "kampftaucher_4",
+        "kampftaucher_5",
+        "kampftaucher_6"
+      ],
+      "fps": 10,
+      "schleife": true,
+      "anker": {
+        "x": 62,
+        "y": 112
+      },
+      "info": "Marine: getarnt"
+    },
+    "funker": {
+      "titel": "Funker",
+      "bilder": [
+        "funker_1",
+        "funker_2",
+        "funker_3",
+        "funker_4",
+        "funker_5",
+        "funker_6"
+      ],
+      "fps": 10,
+      "schleife": true,
+      "anker": {
+        "x": 62,
+        "y": 112
+      },
+      "info": "Marine-Spezial: Störsender senkt Reichweite von Türmen"
+    },
+    "amphibienfahrzeug": {
+      "titel": "Amphibienfahrzeug",
+      "bilder": [
+        "amphibienfahrzeug_1",
+        "amphibienfahrzeug_2",
+        "amphibienfahrzeug_3",
+        "amphibienfahrzeug_4"
+      ],
+      "fps": 10,
+      "schleife": true,
+      "anker": {
+        "x": 112,
+        "y": 132
+      },
+      "info": "Marine: gepanzertes Fahrzeug"
+    },
+    "hovercraft": {
+      "titel": "Hovercraft",
+      "bilder": [
+        "hovercraft_1",
+        "hovercraft_2",
+        "hovercraft_3",
+        "hovercraft_4"
+      ],
+      "fps": 8,
+      "schleife": true,
+      "anker": {
+        "x": 128,
+        "y": 142
+      },
+      "info": "Mini-Boss Marine: schnell"
+    },
+    "seeschlange": {
+      "titel": "Seeschlange",
+      "bilder": [
+        "seeschlange_1",
+        "seeschlange_2",
+        "seeschlange_3",
+        "seeschlange_4"
+      ],
+      "fps": 8,
+      "schleife": true,
+      "anker": {
+        "x": 216,
+        "y": 206
+      },
+      "info": "Endboss Ostkolbistan: taucht ab (kurz unangreifbar)"
+    },
+    "raeuber": {
+      "titel": "Wüstenräuber",
+      "bilder": [
+        "raeuber_1",
+        "raeuber_2",
+        "raeuber_3",
+        "raeuber_4",
+        "raeuber_5",
+        "raeuber_6"
+      ],
+      "fps": 12,
+      "schleife": true,
+      "anker": {
+        "x": 62,
+        "y": 112
+      },
+      "info": "Wüste: Grundgegner"
+    },
+    "kamelreiter": {
+      "titel": "Kamelreiter",
+      "bilder": [
+        "kamelreiter_1",
+        "kamelreiter_2",
+        "kamelreiter_3",
+        "kamelreiter_4",
+        "kamelreiter_5",
+        "kamelreiter_6"
+      ],
+      "fps": 10,
+      "schleife": true,
+      "anker": {
+        "x": 80,
+        "y": 112
+      },
+      "info": "Wüste: schnell, viel Leben"
+    },
+    "buggy": {
+      "titel": "Buggy",
+      "bilder": [
+        "buggy_1",
+        "buggy_2",
+        "buggy_3",
+        "buggy_4"
+      ],
+      "fps": 14,
+      "schleife": true,
+      "anker": {
+        "x": 80,
+        "y": 112
+      },
+      "info": "Wüste: sehr schnelles Fahrzeug"
+    },
+    "pluenderer": {
+      "titel": "Plünderer",
+      "bilder": [
+        "pluenderer_1",
+        "pluenderer_2",
+        "pluenderer_3",
+        "pluenderer_4",
+        "pluenderer_5",
+        "pluenderer_6"
+      ],
+      "fps": 10,
+      "schleife": true,
+      "anker": {
+        "x": 62,
+        "y": 112
+      },
+      "info": "Wüste-Spezial: stiehlt Körner, wenn er durchkommt"
+    },
+    "raeuberhauptmann": {
+      "titel": "Räuberhauptmann",
+      "bilder": [
+        "raeuberhauptmann_1",
+        "raeuberhauptmann_2",
+        "raeuberhauptmann_3",
+        "raeuberhauptmann_4"
+      ],
+      "fps": 10,
+      "schleife": true,
+      "anker": {
+        "x": 128,
+        "y": 140
+      },
+      "info": "Mini-Boss Wüste: gepanzertes Halbkettenfahrzeug"
+    },
+    "sandsturmkhan": {
+      "titel": "Sandsturm-Khan",
+      "bilder": [
+        "sandsturmkhan_1",
+        "sandsturmkhan_2",
+        "sandsturmkhan_3",
+        "sandsturmkhan_4"
+      ],
+      "fps": 6,
+      "schleife": true,
+      "anker": {
+        "x": 212,
+        "y": 208
+      },
+      "info": "Endboss Südkolbistan: Sandsturm senkt Reichweite aller Türme"
+    },
+    "kolbenfresser": {
+      "titel": "Kolbenfresser",
+      "bilder": [
+        "kolbenfresser_1",
+        "kolbenfresser_2",
+        "kolbenfresser_3",
+        "kolbenfresser_4"
+      ],
+      "fps": 8,
+      "schleife": true,
+      "anker": {
+        "x": 192,
+        "y": 206
+      },
+      "info": "Endboss Maisburg: alle Boss-Fähigkeiten"
+    },
+    "kolbenfresser_feuer": {
+      "titel": "Kolbenfresser (Schuss)",
+      "bilder": [
+        "kolbenfresser_feuer_1",
+        "kolbenfresser_feuer_2",
+        "kolbenfresser_feuer_3"
+      ],
+      "fps": 8,
+      "schleife": true,
+      "anker": {
+        "x": 192,
+        "y": 206
+      },
+      "info": "Schuss-Animation"
     }
   },
   "frames": {
@@ -512,6 +1059,984 @@
     "ratte_feuer_3": {
       "x": 864,
       "y": 1424,
+      "w": 432,
+      "h": 224
+    },
+    "buschkaempfer_1": {
+      "x": 0,
+      "y": 1648,
+      "w": 128,
+      "h": 128
+    },
+    "buschkaempfer_2": {
+      "x": 128,
+      "y": 1648,
+      "w": 128,
+      "h": 128
+    },
+    "buschkaempfer_3": {
+      "x": 256,
+      "y": 1648,
+      "w": 128,
+      "h": 128
+    },
+    "buschkaempfer_4": {
+      "x": 384,
+      "y": 1648,
+      "w": 128,
+      "h": 128
+    },
+    "buschkaempfer_5": {
+      "x": 512,
+      "y": 1648,
+      "w": 128,
+      "h": 128
+    },
+    "buschkaempfer_6": {
+      "x": 640,
+      "y": 1648,
+      "w": 128,
+      "h": 128
+    },
+    "machetenlaeufer_1": {
+      "x": 0,
+      "y": 1776,
+      "w": 128,
+      "h": 128
+    },
+    "machetenlaeufer_2": {
+      "x": 128,
+      "y": 1776,
+      "w": 128,
+      "h": 128
+    },
+    "machetenlaeufer_3": {
+      "x": 256,
+      "y": 1776,
+      "w": 128,
+      "h": 128
+    },
+    "machetenlaeufer_4": {
+      "x": 384,
+      "y": 1776,
+      "w": 128,
+      "h": 128
+    },
+    "machetenlaeufer_5": {
+      "x": 512,
+      "y": 1776,
+      "w": 128,
+      "h": 128
+    },
+    "machetenlaeufer_6": {
+      "x": 640,
+      "y": 1776,
+      "w": 128,
+      "h": 128
+    },
+    "rauchwerfer_1": {
+      "x": 0,
+      "y": 1904,
+      "w": 128,
+      "h": 128
+    },
+    "rauchwerfer_2": {
+      "x": 128,
+      "y": 1904,
+      "w": 128,
+      "h": 128
+    },
+    "rauchwerfer_3": {
+      "x": 256,
+      "y": 1904,
+      "w": 128,
+      "h": 128
+    },
+    "rauchwerfer_4": {
+      "x": 384,
+      "y": 1904,
+      "w": 128,
+      "h": 128
+    },
+    "rauchwerfer_5": {
+      "x": 512,
+      "y": 1904,
+      "w": 128,
+      "h": 128
+    },
+    "rauchwerfer_6": {
+      "x": 640,
+      "y": 1904,
+      "w": 128,
+      "h": 128
+    },
+    "pickup_1": {
+      "x": 0,
+      "y": 2032,
+      "w": 192,
+      "h": 128
+    },
+    "pickup_2": {
+      "x": 192,
+      "y": 2032,
+      "w": 192,
+      "h": 128
+    },
+    "pickup_3": {
+      "x": 384,
+      "y": 2032,
+      "w": 192,
+      "h": 128
+    },
+    "pickup_4": {
+      "x": 576,
+      "y": 2032,
+      "w": 192,
+      "h": 128
+    },
+    "kommandant_1": {
+      "x": 0,
+      "y": 2160,
+      "w": 128,
+      "h": 128
+    },
+    "kommandant_2": {
+      "x": 128,
+      "y": 2160,
+      "w": 128,
+      "h": 128
+    },
+    "kommandant_3": {
+      "x": 256,
+      "y": 2160,
+      "w": 128,
+      "h": 128
+    },
+    "kommandant_4": {
+      "x": 384,
+      "y": 2160,
+      "w": 128,
+      "h": 128
+    },
+    "kommandant_5": {
+      "x": 512,
+      "y": 2160,
+      "w": 128,
+      "h": 128
+    },
+    "kommandant_6": {
+      "x": 640,
+      "y": 2160,
+      "w": 128,
+      "h": 128
+    },
+    "dschungelkoenig_1": {
+      "x": 0,
+      "y": 2288,
+      "w": 432,
+      "h": 224
+    },
+    "dschungelkoenig_2": {
+      "x": 432,
+      "y": 2288,
+      "w": 432,
+      "h": 224
+    },
+    "dschungelkoenig_3": {
+      "x": 864,
+      "y": 2288,
+      "w": 432,
+      "h": 224
+    },
+    "dschungelkoenig_4": {
+      "x": 1296,
+      "y": 2288,
+      "w": 432,
+      "h": 224
+    },
+    "gebirgsjaeger_1": {
+      "x": 0,
+      "y": 2512,
+      "w": 128,
+      "h": 128
+    },
+    "gebirgsjaeger_2": {
+      "x": 128,
+      "y": 2512,
+      "w": 128,
+      "h": 128
+    },
+    "gebirgsjaeger_3": {
+      "x": 256,
+      "y": 2512,
+      "w": 128,
+      "h": 128
+    },
+    "gebirgsjaeger_4": {
+      "x": 384,
+      "y": 2512,
+      "w": 128,
+      "h": 128
+    },
+    "gebirgsjaeger_5": {
+      "x": 512,
+      "y": 2512,
+      "w": 128,
+      "h": 128
+    },
+    "gebirgsjaeger_6": {
+      "x": 640,
+      "y": 2512,
+      "w": 128,
+      "h": 128
+    },
+    "skijaeger_1": {
+      "x": 0,
+      "y": 2640,
+      "w": 128,
+      "h": 128
+    },
+    "skijaeger_2": {
+      "x": 128,
+      "y": 2640,
+      "w": 128,
+      "h": 128
+    },
+    "skijaeger_3": {
+      "x": 256,
+      "y": 2640,
+      "w": 128,
+      "h": 128
+    },
+    "skijaeger_4": {
+      "x": 384,
+      "y": 2640,
+      "w": 128,
+      "h": 128
+    },
+    "skijaeger_5": {
+      "x": 512,
+      "y": 2640,
+      "w": 128,
+      "h": 128
+    },
+    "skijaeger_6": {
+      "x": 640,
+      "y": 2640,
+      "w": 128,
+      "h": 128
+    },
+    "eisgranatier_1": {
+      "x": 0,
+      "y": 2768,
+      "w": 128,
+      "h": 128
+    },
+    "eisgranatier_2": {
+      "x": 128,
+      "y": 2768,
+      "w": 128,
+      "h": 128
+    },
+    "eisgranatier_3": {
+      "x": 256,
+      "y": 2768,
+      "w": 128,
+      "h": 128
+    },
+    "eisgranatier_4": {
+      "x": 384,
+      "y": 2768,
+      "w": 128,
+      "h": 128
+    },
+    "eisgranatier_5": {
+      "x": 512,
+      "y": 2768,
+      "w": 128,
+      "h": 128
+    },
+    "eisgranatier_6": {
+      "x": 640,
+      "y": 2768,
+      "w": 128,
+      "h": 128
+    },
+    "schneemobil_1": {
+      "x": 0,
+      "y": 2896,
+      "w": 160,
+      "h": 128
+    },
+    "schneemobil_2": {
+      "x": 160,
+      "y": 2896,
+      "w": 160,
+      "h": 128
+    },
+    "schneemobil_3": {
+      "x": 320,
+      "y": 2896,
+      "w": 160,
+      "h": 128
+    },
+    "schneemobil_4": {
+      "x": 480,
+      "y": 2896,
+      "w": 160,
+      "h": 128
+    },
+    "pistenraupe_1": {
+      "x": 0,
+      "y": 3024,
+      "w": 256,
+      "h": 160
+    },
+    "pistenraupe_2": {
+      "x": 256,
+      "y": 3024,
+      "w": 256,
+      "h": 160
+    },
+    "pistenraupe_3": {
+      "x": 512,
+      "y": 3024,
+      "w": 256,
+      "h": 160
+    },
+    "pistenraupe_4": {
+      "x": 768,
+      "y": 3024,
+      "w": 256,
+      "h": 160
+    },
+    "lawinenbrecher_1": {
+      "x": 0,
+      "y": 3184,
+      "w": 432,
+      "h": 224
+    },
+    "lawinenbrecher_2": {
+      "x": 432,
+      "y": 3184,
+      "w": 432,
+      "h": 224
+    },
+    "lawinenbrecher_3": {
+      "x": 864,
+      "y": 3184,
+      "w": 432,
+      "h": 224
+    },
+    "lawinenbrecher_4": {
+      "x": 1296,
+      "y": 3184,
+      "w": 432,
+      "h": 224
+    },
+    "kampfroboter_1": {
+      "x": 0,
+      "y": 3408,
+      "w": 128,
+      "h": 128
+    },
+    "kampfroboter_2": {
+      "x": 128,
+      "y": 3408,
+      "w": 128,
+      "h": 128
+    },
+    "kampfroboter_3": {
+      "x": 256,
+      "y": 3408,
+      "w": 128,
+      "h": 128
+    },
+    "kampfroboter_4": {
+      "x": 384,
+      "y": 3408,
+      "w": 128,
+      "h": 128
+    },
+    "kampfroboter_5": {
+      "x": 512,
+      "y": 3408,
+      "w": 128,
+      "h": 128
+    },
+    "kampfroboter_6": {
+      "x": 640,
+      "y": 3408,
+      "w": 128,
+      "h": 128
+    },
+    "spinnenroboter_1": {
+      "x": 0,
+      "y": 3536,
+      "w": 128,
+      "h": 128
+    },
+    "spinnenroboter_2": {
+      "x": 128,
+      "y": 3536,
+      "w": 128,
+      "h": 128
+    },
+    "spinnenroboter_3": {
+      "x": 256,
+      "y": 3536,
+      "w": 128,
+      "h": 128
+    },
+    "spinnenroboter_4": {
+      "x": 384,
+      "y": 3536,
+      "w": 128,
+      "h": 128
+    },
+    "spinnenroboter_5": {
+      "x": 512,
+      "y": 3536,
+      "w": 128,
+      "h": 128
+    },
+    "spinnenroboter_6": {
+      "x": 640,
+      "y": 3536,
+      "w": 128,
+      "h": 128
+    },
+    "schildroboter_1": {
+      "x": 0,
+      "y": 3664,
+      "w": 128,
+      "h": 128
+    },
+    "schildroboter_2": {
+      "x": 128,
+      "y": 3664,
+      "w": 128,
+      "h": 128
+    },
+    "schildroboter_3": {
+      "x": 256,
+      "y": 3664,
+      "w": 128,
+      "h": 128
+    },
+    "schildroboter_4": {
+      "x": 384,
+      "y": 3664,
+      "w": 128,
+      "h": 128
+    },
+    "schildroboter_5": {
+      "x": 512,
+      "y": 3664,
+      "w": 128,
+      "h": 128
+    },
+    "schildroboter_6": {
+      "x": 640,
+      "y": 3664,
+      "w": 128,
+      "h": 128
+    },
+    "mech_1": {
+      "x": 0,
+      "y": 3792,
+      "w": 192,
+      "h": 160
+    },
+    "mech_2": {
+      "x": 192,
+      "y": 3792,
+      "w": 192,
+      "h": 160
+    },
+    "mech_3": {
+      "x": 384,
+      "y": 3792,
+      "w": 192,
+      "h": 160
+    },
+    "mech_4": {
+      "x": 576,
+      "y": 3792,
+      "w": 192,
+      "h": 160
+    },
+    "mech_5": {
+      "x": 768,
+      "y": 3792,
+      "w": 192,
+      "h": 160
+    },
+    "mech_6": {
+      "x": 960,
+      "y": 3792,
+      "w": 192,
+      "h": 160
+    },
+    "werkmeister_1": {
+      "x": 0,
+      "y": 3952,
+      "w": 160,
+      "h": 160
+    },
+    "werkmeister_2": {
+      "x": 160,
+      "y": 3952,
+      "w": 160,
+      "h": 160
+    },
+    "werkmeister_3": {
+      "x": 320,
+      "y": 3952,
+      "w": 160,
+      "h": 160
+    },
+    "werkmeister_4": {
+      "x": 480,
+      "y": 3952,
+      "w": 160,
+      "h": 160
+    },
+    "werkmeister_5": {
+      "x": 640,
+      "y": 3952,
+      "w": 160,
+      "h": 160
+    },
+    "werkmeister_6": {
+      "x": 800,
+      "y": 3952,
+      "w": 160,
+      "h": 160
+    },
+    "schrottkoloss_1": {
+      "x": 0,
+      "y": 4112,
+      "w": 432,
+      "h": 224
+    },
+    "schrottkoloss_2": {
+      "x": 432,
+      "y": 4112,
+      "w": 432,
+      "h": 224
+    },
+    "schrottkoloss_3": {
+      "x": 864,
+      "y": 4112,
+      "w": 432,
+      "h": 224
+    },
+    "schrottkoloss_4": {
+      "x": 1296,
+      "y": 4112,
+      "w": 432,
+      "h": 224
+    },
+    "marinesoldat_1": {
+      "x": 0,
+      "y": 4336,
+      "w": 128,
+      "h": 128
+    },
+    "marinesoldat_2": {
+      "x": 128,
+      "y": 4336,
+      "w": 128,
+      "h": 128
+    },
+    "marinesoldat_3": {
+      "x": 256,
+      "y": 4336,
+      "w": 128,
+      "h": 128
+    },
+    "marinesoldat_4": {
+      "x": 384,
+      "y": 4336,
+      "w": 128,
+      "h": 128
+    },
+    "marinesoldat_5": {
+      "x": 512,
+      "y": 4336,
+      "w": 128,
+      "h": 128
+    },
+    "marinesoldat_6": {
+      "x": 640,
+      "y": 4336,
+      "w": 128,
+      "h": 128
+    },
+    "kampftaucher_1": {
+      "x": 0,
+      "y": 4464,
+      "w": 128,
+      "h": 128
+    },
+    "kampftaucher_2": {
+      "x": 128,
+      "y": 4464,
+      "w": 128,
+      "h": 128
+    },
+    "kampftaucher_3": {
+      "x": 256,
+      "y": 4464,
+      "w": 128,
+      "h": 128
+    },
+    "kampftaucher_4": {
+      "x": 384,
+      "y": 4464,
+      "w": 128,
+      "h": 128
+    },
+    "kampftaucher_5": {
+      "x": 512,
+      "y": 4464,
+      "w": 128,
+      "h": 128
+    },
+    "kampftaucher_6": {
+      "x": 640,
+      "y": 4464,
+      "w": 128,
+      "h": 128
+    },
+    "funker_1": {
+      "x": 0,
+      "y": 4592,
+      "w": 128,
+      "h": 128
+    },
+    "funker_2": {
+      "x": 128,
+      "y": 4592,
+      "w": 128,
+      "h": 128
+    },
+    "funker_3": {
+      "x": 256,
+      "y": 4592,
+      "w": 128,
+      "h": 128
+    },
+    "funker_4": {
+      "x": 384,
+      "y": 4592,
+      "w": 128,
+      "h": 128
+    },
+    "funker_5": {
+      "x": 512,
+      "y": 4592,
+      "w": 128,
+      "h": 128
+    },
+    "funker_6": {
+      "x": 640,
+      "y": 4592,
+      "w": 128,
+      "h": 128
+    },
+    "amphibienfahrzeug_1": {
+      "x": 0,
+      "y": 4720,
+      "w": 224,
+      "h": 144
+    },
+    "amphibienfahrzeug_2": {
+      "x": 224,
+      "y": 4720,
+      "w": 224,
+      "h": 144
+    },
+    "amphibienfahrzeug_3": {
+      "x": 448,
+      "y": 4720,
+      "w": 224,
+      "h": 144
+    },
+    "amphibienfahrzeug_4": {
+      "x": 672,
+      "y": 4720,
+      "w": 224,
+      "h": 144
+    },
+    "hovercraft_1": {
+      "x": 0,
+      "y": 4864,
+      "w": 256,
+      "h": 160
+    },
+    "hovercraft_2": {
+      "x": 256,
+      "y": 4864,
+      "w": 256,
+      "h": 160
+    },
+    "hovercraft_3": {
+      "x": 512,
+      "y": 4864,
+      "w": 256,
+      "h": 160
+    },
+    "hovercraft_4": {
+      "x": 768,
+      "y": 4864,
+      "w": 256,
+      "h": 160
+    },
+    "seeschlange_1": {
+      "x": 0,
+      "y": 5024,
+      "w": 432,
+      "h": 224
+    },
+    "seeschlange_2": {
+      "x": 432,
+      "y": 5024,
+      "w": 432,
+      "h": 224
+    },
+    "seeschlange_3": {
+      "x": 864,
+      "y": 5024,
+      "w": 432,
+      "h": 224
+    },
+    "seeschlange_4": {
+      "x": 1296,
+      "y": 5024,
+      "w": 432,
+      "h": 224
+    },
+    "raeuber_1": {
+      "x": 0,
+      "y": 5248,
+      "w": 128,
+      "h": 128
+    },
+    "raeuber_2": {
+      "x": 128,
+      "y": 5248,
+      "w": 128,
+      "h": 128
+    },
+    "raeuber_3": {
+      "x": 256,
+      "y": 5248,
+      "w": 128,
+      "h": 128
+    },
+    "raeuber_4": {
+      "x": 384,
+      "y": 5248,
+      "w": 128,
+      "h": 128
+    },
+    "raeuber_5": {
+      "x": 512,
+      "y": 5248,
+      "w": 128,
+      "h": 128
+    },
+    "raeuber_6": {
+      "x": 640,
+      "y": 5248,
+      "w": 128,
+      "h": 128
+    },
+    "kamelreiter_1": {
+      "x": 0,
+      "y": 5376,
+      "w": 160,
+      "h": 128
+    },
+    "kamelreiter_2": {
+      "x": 160,
+      "y": 5376,
+      "w": 160,
+      "h": 128
+    },
+    "kamelreiter_3": {
+      "x": 320,
+      "y": 5376,
+      "w": 160,
+      "h": 128
+    },
+    "kamelreiter_4": {
+      "x": 480,
+      "y": 5376,
+      "w": 160,
+      "h": 128
+    },
+    "kamelreiter_5": {
+      "x": 640,
+      "y": 5376,
+      "w": 160,
+      "h": 128
+    },
+    "kamelreiter_6": {
+      "x": 800,
+      "y": 5376,
+      "w": 160,
+      "h": 128
+    },
+    "buggy_1": {
+      "x": 0,
+      "y": 5504,
+      "w": 160,
+      "h": 128
+    },
+    "buggy_2": {
+      "x": 160,
+      "y": 5504,
+      "w": 160,
+      "h": 128
+    },
+    "buggy_3": {
+      "x": 320,
+      "y": 5504,
+      "w": 160,
+      "h": 128
+    },
+    "buggy_4": {
+      "x": 480,
+      "y": 5504,
+      "w": 160,
+      "h": 128
+    },
+    "pluenderer_1": {
+      "x": 0,
+      "y": 5632,
+      "w": 128,
+      "h": 128
+    },
+    "pluenderer_2": {
+      "x": 128,
+      "y": 5632,
+      "w": 128,
+      "h": 128
+    },
+    "pluenderer_3": {
+      "x": 256,
+      "y": 5632,
+      "w": 128,
+      "h": 128
+    },
+    "pluenderer_4": {
+      "x": 384,
+      "y": 5632,
+      "w": 128,
+      "h": 128
+    },
+    "pluenderer_5": {
+      "x": 512,
+      "y": 5632,
+      "w": 128,
+      "h": 128
+    },
+    "pluenderer_6": {
+      "x": 640,
+      "y": 5632,
+      "w": 128,
+      "h": 128
+    },
+    "raeuberhauptmann_1": {
+      "x": 0,
+      "y": 5760,
+      "w": 256,
+      "h": 160
+    },
+    "raeuberhauptmann_2": {
+      "x": 256,
+      "y": 5760,
+      "w": 256,
+      "h": 160
+    },
+    "raeuberhauptmann_3": {
+      "x": 512,
+      "y": 5760,
+      "w": 256,
+      "h": 160
+    },
+    "raeuberhauptmann_4": {
+      "x": 768,
+      "y": 5760,
+      "w": 256,
+      "h": 160
+    },
+    "sandsturmkhan_1": {
+      "x": 0,
+      "y": 5920,
+      "w": 432,
+      "h": 224
+    },
+    "sandsturmkhan_2": {
+      "x": 432,
+      "y": 5920,
+      "w": 432,
+      "h": 224
+    },
+    "sandsturmkhan_3": {
+      "x": 864,
+      "y": 5920,
+      "w": 432,
+      "h": 224
+    },
+    "sandsturmkhan_4": {
+      "x": 1296,
+      "y": 5920,
+      "w": 432,
+      "h": 224
+    },
+    "kolbenfresser_1": {
+      "x": 0,
+      "y": 6144,
+      "w": 432,
+      "h": 224
+    },
+    "kolbenfresser_2": {
+      "x": 432,
+      "y": 6144,
+      "w": 432,
+      "h": 224
+    },
+    "kolbenfresser_3": {
+      "x": 864,
+      "y": 6144,
+      "w": 432,
+      "h": 224
+    },
+    "kolbenfresser_4": {
+      "x": 1296,
+      "y": 6144,
+      "w": 432,
+      "h": 224
+    },
+    "kolbenfresser_feuer_1": {
+      "x": 0,
+      "y": 6368,
+      "w": 432,
+      "h": 224
+    },
+    "kolbenfresser_feuer_2": {
+      "x": 432,
+      "y": 6368,
+      "w": 432,
+      "h": 224
+    },
+    "kolbenfresser_feuer_3": {
+      "x": 864,
+      "y": 6368,
       "w": 432,
       "h": 224
     }

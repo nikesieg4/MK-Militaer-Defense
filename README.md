@@ -79,9 +79,27 @@ Kreuzpfade wirken zusammen: Körner = Versorgung × (1 − Abzug), z. B. 2-2 = 2
 | Motorrad | 10 | 150 | 12 | 4 | schnellstes Fahrzeug | 12 |
 | Schützenpanzer | 90 | 40 | 50 | 12 | gepanzert, setzt beim Zerstören 4 Soldaten ab | 15 |
 | Panzer | 180 | 24 | 100 | 20 | gepanzert | 10 |
-| Stahlratte (Boss) | 1.000 | 15 | 400 | Niederlage | betäubt Türme | nur Grenzfelder, Welle 20 |
+| Stahlratte (Boss) | 1.000 | 15 | 400 | Niederlage | betäubt Türme | Grenzfelder, Welle 20 |
+
+Genre-Gegner und Bosse der anderen Karten: siehe unten.
 
 Leben × (1 + 0,06 × Welle + 0,04 × Wellen über 50) × Kartenfaktor. Die Mengen wachsen bis etwa Welle 40–70 und bleiben dann gleich, danach steigt nur noch das Leben. Beim ersten Auftauchen eines neuen Gegners erklärt ihn der Hinweis rechts.
+
+## Genres und Bosse je Karte
+
+Jede Karte hat ein Genre. Dessen Gegner ersetzen etwa 85 % der normalen Gegner (Tarnsoldaten, gepanzerte Soldaten und Panzer bleiben meist). In Maisburg kommen alle Gegnerarten gemischt. **Endboss in der letzten Welle, Mini-Boss alle 20 Wellen** (auch im Freeplay). Leben der Bosse wachsen mit dem Wellenfaktor. Mini-Bosse kosten 40 Leben, wenn sie durchkommen; ein Endboss am Ziel = Niederlage. Auf der Kartenauswahl stehen Endboss und Mini-Boss.
+
+| Karte | Genre | Gegner (Leben · Tempo) | Spezialgegner | Mini-Boss | Endboss |
+| --- | --- | --- | --- | --- | --- |
+| Grenzfelder | Militär | normale Gegner | Sanitäter | – | Stahlratte (betäubt Türme) |
+| Paprika-Plantage | Guerilla | Buschkämpfer 4 · 54, Machetenläufer 3 · 95 (3 Schaden), Pickup mit MG 34 · 92 | **Rauchwerfer** 9 · 46: alle 6 s Rauch, Gegner im Umkreis 90 px 4 s getarnt | Guerilla-Kommandant 350: Kampfruf, Gegner im Umkreis 4 s +40 % Tempo | Dschungelkönig 2.600 (Monstertruck): Rauch im Umkreis 220 px alle 10 s |
+| Felsplateau | Gebirgsjäger | Gebirgsjäger 5 · 46, Skijäger 3 · 125, Schneemobil 24 · 115 | **Eisgranatier** 10 · 42: friert alle 7 s den nächsten Turm 2,5 s ein | Pistenraupe 600 (gepanzert) | Lawinenbrecher 3.000 (gepanzert): Lawine, Türme im Umkreis 260 px laden 5 s lang ×1,8 langsamer |
+| Dosenfabrik | Roboter | Kampfroboter 7 · 46, Spinnenroboter 3 · 110, Schwerer Mech 120 · 26 (gepanzert, zerfällt in 3 Spinnenroboter) | **Schildroboter** 16 · 40: Gegner im Umkreis 95 px nehmen halben Schaden | Werkmeister 500: repariert alle 3 s Roboter um 10 % | Schrottkoloss 3.600 (gepanzert): baut alle 6 s 2 Kampfroboter |
+| Oase am Salzsee | Marine | Marinesoldat 5 · 50, Kampftaucher 4 · 64 (getarnt), Amphibienfahrzeug 60 · 50 (gepanzert) | **Funker** 10 · 44: Störsender, Türme im Umkreis 150 px −25 % Reichweite | Hovercraft 450 · 70 | Seeschlange 3.200 (Luftkissen-Landungsboot): taucht alle 10 s für 3 s ab, unangreifbar |
+| Große Düne | Wüstenräuber | Wüstenräuber 5 · 64, Kamelreiter 14 · 80, Buggy 26 · 135 | **Plünderer** 9 · 58: kommt er durch, stiehlt er 10 % der Körner (max. 500) | Räuberhauptmann 650 (Halbkette, gepanzert) | Sandsturm-Khan 3.800 (Festung auf Rädern): Sandsturm, alle Türme 6 s −30 % Reichweite |
+| Maisburg | alle | alle Gegnerarten gemischt | alle | alle 5 Mini-Bosse reihum | Kolbenfresser 5.000 (Hightech-Landkreuzer): betäubt Türme, Rauch, baut Roboter, Lawine, taucht ab, Sandsturm |
+
+Anzeige im Spiel: Rauch-, Lawinen- und Sandsturmwolken, eingefrorene Türme (blau), verlangsamte Türme (weißer Ring), gestörte Türme (rotes Zickzack), Schildblase um Schildroboter, abgetauchte Bosse halb durchsichtig.
 
 ## Fahrzeugfabrik
 

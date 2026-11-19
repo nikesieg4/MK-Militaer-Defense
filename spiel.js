@@ -146,7 +146,44 @@
     sanitaeter: { hp: 8, tempo: 46, lohn: 12, schaden: 2, gr: 0.6, heiler: true, name: 'Sanitäter' },
     motorrad: { hp: 10, tempo: 150, lohn: 12, schaden: 4, gr: 0.55, name: 'Motorrad' },
     schuetzenpanzer: { hp: 90, tempo: 40, lohn: 50, schaden: 12, gr: 0.6, panzer: true, absetzen: 4, name: 'Schützenpanzer' },
-    ratte: { hp: 1000, tempo: 15, lohn: 400, schaden: 1000, gr: 0.55, panzer: true, boss: true, name: 'Stahlratte' }
+    ratte: { hp: 1000, tempo: 15, lohn: 400, schaden: 1000, gr: 0.55, panzer: true, boss: true, betaeuben: true, name: 'Stahlratte', hinweis: 'Die Stahlratte hält an und betäubt Türme mit ihren Geschützen. Panzerbrechende Munition, Granaten und Laser helfen.' },
+    // Dschungel (Paprikistan)
+    buschkaempfer: { hp: 4, tempo: 54, lohn: 5, schaden: 1, gr: 0.6, name: 'Buschkämpfer' },
+    machetenlaeufer: { hp: 3, tempo: 95, lohn: 6, schaden: 3, gr: 0.6, name: 'Machetenläufer', info: 'Machetenläufer: sehr schnell, aber wenig Leben.' },
+    rauchwerfer: { hp: 9, tempo: 46, lohn: 12, schaden: 2, gr: 0.6, name: 'Rauchwerfer', faehig: { rauch: { cd: 6, r: 90, dauer: 4 } }, info: 'Rauchwerfer: hüllt Gegner in seiner Nähe in Rauch – sie sind dann getarnt. Nur Türme mit Tarn-Erkennung treffen sie.' },
+    pickup: { hp: 34, tempo: 92, lohn: 22, schaden: 5, gr: 0.6, fahrzeug: true, name: 'Pickup mit MG' },
+    kommandant: { hp: 350, tempo: 30, lohn: 150, schaden: 40, gr: 0.85, boss: true, mini: true, name: 'Guerilla-Kommandant', faehig: { kampfruf: { cd: 8, r: 160, dauer: 4 } }, hinweis: 'Der Kommandant feuert seine Kämpfer an: Gegner in seiner Nähe laufen kurz schneller.' },
+    dschungelkoenig: { hp: 2600, tempo: 14, lohn: 600, schaden: 1000, gr: 0.55, boss: true, fahrzeug: true, name: 'Dschungelkönig', faehig: { rauch: { cd: 10, r: 220, dauer: 5 } }, hinweis: 'Der Dschungelkönig wirft Rauchtöpfe: Alle Gegner im großen Umkreis sind getarnt. Türme mit Tarn-Erkennung sind jetzt Gold wert.' },
+    // Winter (Nordkolbistan)
+    gebirgsjaeger: { hp: 5, tempo: 46, lohn: 6, schaden: 1, gr: 0.6, name: 'Gebirgsjäger' },
+    skijaeger: { hp: 3, tempo: 125, lohn: 7, schaden: 2, gr: 0.6, name: 'Skijäger', info: 'Skijäger: rasen sehr schnell den Hang hinunter.' },
+    eisgranatier: { hp: 10, tempo: 42, lohn: 14, schaden: 2, gr: 0.6, name: 'Eisgranatier', faehig: { frost: { cd: 7, r: 170, dauer: 2.5 } }, info: 'Eisgranatier: friert alle 7 s den nächsten Turm für 2,5 s ein.' },
+    schneemobil: { hp: 24, tempo: 115, lohn: 18, schaden: 4, gr: 0.6, fahrzeug: true, name: 'Schneemobil' },
+    pistenraupe: { hp: 600, tempo: 22, lohn: 160, schaden: 40, gr: 0.6, panzer: true, boss: true, mini: true, fahrzeug: true, name: 'Pistenraupe', hinweis: 'Die Pistenraupe ist schwer gepanzert – panzerbrechende Munition hilft.' },
+    lawinenbrecher: { hp: 3000, tempo: 12, lohn: 700, schaden: 1000, gr: 0.55, panzer: true, boss: true, fahrzeug: true, name: 'Lawinenbrecher', faehig: { lawine: { cd: 12, r: 260, dauer: 5 } }, hinweis: 'Der Lawinenbrecher löst Lawinen aus: Türme in seiner Nähe laden 5 s lang viel langsamer nach.' },
+    // Fabrik (Maisdosistan)
+    kampfroboter: { hp: 7, tempo: 46, lohn: 7, schaden: 1, gr: 0.6, roboter: true, name: 'Kampfroboter' },
+    spinnenroboter: { hp: 3, tempo: 110, lohn: 6, schaden: 2, gr: 0.6, roboter: true, name: 'Spinnenroboter', info: 'Spinnenroboter: schnelle Krabbler mit wenig Leben.' },
+    schildroboter: { hp: 16, tempo: 40, lohn: 16, schaden: 2, gr: 0.6, roboter: true, schild: 95, name: 'Schildroboter', info: 'Schildroboter: sein Energieschild halbiert den Schaden an allen Gegnern in der Nähe – zuerst ausschalten.' },
+    mech: { hp: 120, tempo: 26, lohn: 60, schaden: 10, gr: 0.6, panzer: true, roboter: true, fahrzeug: true, absetzen: 3, absetzTyp: 'spinnenroboter', name: 'Schwerer Mech', info: 'Schwerer Mech: gepanzert, zerfällt beim Zerstören in 3 Spinnenroboter.' },
+    werkmeister: { hp: 500, tempo: 26, lohn: 160, schaden: 40, gr: 0.7, roboter: true, boss: true, mini: true, name: 'Werkmeister', faehig: { reparatur: { cd: 3, r: 140, anteil: 0.1 } }, hinweis: 'Der Werkmeister repariert alle 3 s Roboter in seiner Nähe.' },
+    schrottkoloss: { hp: 3600, tempo: 12, lohn: 800, schaden: 1000, gr: 0.55, panzer: true, roboter: true, boss: true, name: 'Schrottkoloss', faehig: { bauen: { cd: 6, typ: 'kampfroboter', n: 2 } }, hinweis: 'Der Schrottkoloss baut unterwegs ständig neue Kampfroboter.' },
+    // Marine (Ostkolbistan)
+    marinesoldat: { hp: 5, tempo: 50, lohn: 6, schaden: 1, gr: 0.6, name: 'Marinesoldat' },
+    kampftaucher: { hp: 4, tempo: 64, lohn: 8, schaden: 1, gr: 0.6, tarn: true, name: 'Kampftaucher', info: 'Kampftaucher: getarnt – nur Türme mit Tarn-Erkennung sehen sie.' },
+    funker: { hp: 10, tempo: 44, lohn: 14, schaden: 2, gr: 0.6, stoeren: 150, name: 'Funker', info: 'Funker: sein Störsender senkt die Reichweite von Türmen in der Nähe um 25 %.' },
+    amphibienfahrzeug: { hp: 60, tempo: 50, lohn: 40, schaden: 10, gr: 0.6, panzer: true, fahrzeug: true, name: 'Amphibienfahrzeug' },
+    hovercraft: { hp: 450, tempo: 70, lohn: 160, schaden: 40, gr: 0.6, boss: true, mini: true, fahrzeug: true, name: 'Hovercraft', hinweis: 'Das Hovercraft ist schnell – Türme weit vorne am Weg fangen es ab.' },
+    seeschlange: { hp: 3200, tempo: 16, lohn: 800, schaden: 1000, gr: 0.55, boss: true, fahrzeug: true, name: 'Seeschlange', faehig: { abtauchen: { cd: 10, dauer: 3 } }, hinweis: 'Die Seeschlange taucht alle 10 s für 3 s ab und ist dann nicht angreifbar.' },
+    // Wüste (Südkolbistan)
+    raeuber: { hp: 5, tempo: 64, lohn: 6, schaden: 1, gr: 0.6, name: 'Wüstenräuber' },
+    kamelreiter: { hp: 14, tempo: 80, lohn: 12, schaden: 3, gr: 0.6, name: 'Kamelreiter' },
+    buggy: { hp: 26, tempo: 135, lohn: 18, schaden: 4, gr: 0.6, fahrzeug: true, name: 'Buggy' },
+    pluenderer: { hp: 9, tempo: 58, lohn: 12, schaden: 1, gr: 0.6, stehlen: 0.1, name: 'Plünderer', info: 'Plünderer: kommt er durch, stiehlt er 10 % deiner Körner (höchstens 500).' },
+    raeuberhauptmann: { hp: 650, tempo: 30, lohn: 170, schaden: 40, gr: 0.6, panzer: true, boss: true, mini: true, fahrzeug: true, name: 'Räuberhauptmann', hinweis: 'Der Räuberhauptmann fährt ein gepanzertes Halbkettenfahrzeug.' },
+    sandsturmkhan: { hp: 3800, tempo: 12, lohn: 900, schaden: 1000, gr: 0.55, boss: true, fahrzeug: true, name: 'Sandsturm-Khan', faehig: { sandsturm: { cd: 12, dauer: 6 } }, hinweis: 'Der Sandsturm-Khan ruft Sandstürme: Alle Türme haben 6 s lang 30 % weniger Reichweite.' },
+    // Maisburg
+    kolbenfresser: { hp: 5000, tempo: 13, lohn: 1500, schaden: 1000, gr: 0.55, panzer: true, boss: true, betaeuben: true, fahrzeug: true, name: 'Kolbenfresser', faehig: { rauch: { cd: 14, r: 220, dauer: 5 }, bauen: { cd: 9, typ: 'kampfroboter', n: 2 }, lawine: { cd: 16, r: 260, dauer: 5 }, abtauchen: { cd: 13, dauer: 3 }, sandsturm: { cd: 18, dauer: 6 } }, hinweis: 'Der Kolbenfresser kann alles: Türme betäuben, Rauch, Roboter bauen, Lawinen, abtauchen und Sandsturm.' }
   };
 
   // Techbaum wie im Design: Spalte c, Zeile r; dauerhaft, bezahlt mit Verdienstorden (nur zwischen den Runden)
@@ -167,6 +204,20 @@
     { id: 'bunker', n: 'Strohbunker', t: '+20 Leben zu Spielbeginn.', c: 2, r: 4, k: 3, req: 'ernte' },
     { id: 'reserve', n: 'Mais-Reserve', t: '+1 Leben nach jeder Welle.', c: 3, r: 4, k: 5, req: 'bunker' }
   ];
+  // Genre je Karte: Genre-Gegner ersetzen die normalen größtenteils (85 %); Maisburg mischt alle Genres
+  const GENRE = { paprikistan: 'dschungel', nordkolbistan: 'winter', maisdosistan: 'fabrik', ostkolbistan: 'marine', suedkolbistan: 'wueste', maisburg: 'alle' };
+  const ERSATZ = {
+    dschungel: { soldat: 'buschkaempfer', kamikaze: 'machetenlaeufer', humvee: 'pickup', motorrad: 'pickup', sanitaeter: 'rauchwerfer' },
+    winter: { soldat: 'gebirgsjaeger', kamikaze: 'skijaeger', humvee: 'schneemobil', motorrad: 'schneemobil', sanitaeter: 'eisgranatier' },
+    fabrik: { soldat: 'kampfroboter', panzersoldat: 'kampfroboter', kamikaze: 'spinnenroboter', motorrad: 'spinnenroboter', humvee: 'kampfroboter', sanitaeter: 'schildroboter', schuetzenpanzer: 'mech', panzer: 'mech' },
+    marine: { soldat: 'marinesoldat', tarnsoldat: 'kampftaucher', schuetzenpanzer: 'amphibienfahrzeug', humvee: 'amphibienfahrzeug', sanitaeter: 'funker' },
+    wueste: { soldat: 'raeuber', humvee: 'buggy', motorrad: 'kamelreiter', panzersoldat: 'kamelreiter', sanitaeter: 'pluenderer' }
+  };
+  const BOSSE = {
+    westkolbistan: { ende: 'ratte' }, paprikistan: { ende: 'dschungelkoenig', mini: ['kommandant'] }, nordkolbistan: { ende: 'lawinenbrecher', mini: ['pistenraupe'] },
+    maisdosistan: { ende: 'schrottkoloss', mini: ['werkmeister'] }, ostkolbistan: { ende: 'seeschlange', mini: ['hovercraft'] }, suedkolbistan: { ende: 'sandsturmkhan', mini: ['raeuberhauptmann'] },
+    maisburg: { ende: 'kolbenfresser', mini: ['kommandant', 'pistenraupe', 'werkmeister', 'hovercraft', 'raeuberhauptmann'] }
+  };
   const REIHEN = ['Zweig Präzision & Logistik', 'Scharfschütze', 'Zweig Schwere Waffen', 'Ranger', 'Allgemein'];
   const ORDEN = [3, 3, 4, 4, 5, 5, 6];   // Verdienstorden beim ersten Sieg je Karte (+1 je neuem Stern; Wiederholung: 1)
   const HP_KARTE = [1, 1.08, 1.16, 1.24, 1.32, 1.42, 1.55];
@@ -262,7 +313,7 @@
   let S;                  // Spielzustand
   const neu = () => ({
     welle: 0, koerner: 800 + (P.tech.kasse ? 150 : 0), leben: 100 + (P.tech.bunker ? 20 : 0), tempo: 1, pause: false, laeuft: false, ende: false,
-    tuerme: [], gegner: [], geschosse: [], effekte: [], flaechen: [], spawn: [], spawnNr: 0, texte: [], strahlen: [], neu: [],
+    tuerme: [], gegner: [], geschosse: [], effekte: [], flaechen: [], spawn: [], spawnNr: 0, texte: [], strahlen: [], neu: [], schilde: [], wolken: [],
     wahl: null, platzieren: null, maus: null, tech: P.tech, fahrzeuge: [], zeit: 0, startLeben: 100 + (P.tech.bunker ? 20 : 0)
   });
 
@@ -360,6 +411,9 @@
     if (w.reloadSetzen) w.reload = w.reloadSetzen;
     if (S && t.heBis > S.zeit) { w.range += 6; w.heAktiv = true; }
     if (S && t.overBis > S.zeit) { w.dmg *= 1.25; w.range += 6; w.overAktiv = true; }
+    if (S && t.gestoert) w.range *= 0.75;
+    if (S && S.sandBis > S.zeit) w.range *= 0.7;
+    if (S && t.langsamBis > S.zeit) w.reload *= 1.8;
     w.reload = Math.max(0.05, w.reload);
     w.rangePx = w.range * EINHEIT;
     if (def.fabrik) { w.fabrik = true; w.stand = t.b > t.a; if (!w.stand) { w.range = 0; w.rangePx = 0; } w.intervall = Math.max(2, w.intervall); }
@@ -459,7 +513,16 @@
     if (n >= 18) add('panzer', Math.min(8, Math.floor((n - 14) / 2)), 3);
     if (n >= 25) add('humvee', Math.min(20, Math.floor((n - 20) / 2)), 0.9);
     if (n >= 30 && n % 3 === 0) add('kamikaze', Math.min(30, Math.floor(n / 3)), 0.25);   // Kamikaze-Ansturm
-    if (K.id === 'westkolbistan' && n === K.wellen) { t += 4; add('ratte', 1, 0); }   // Boss nur auf Grenzfelder
+    const genre = GENRE[K.id];
+    if (genre) q.forEach((e, i) => {
+      if ((i * 37 + n * 11) % 100 >= 85) return;                         // 15 % bleiben normale Gegner
+      const g = genre === 'alle' ? ['dschungel', 'winter', 'fabrik', 'marine', 'wueste'][(i * 7 + n) % 5] : genre;
+      if (genre === 'alle' && (i * 13 + n) % 100 >= 55) return;          // Maisburg: gut die Hälfte aus anderen Genres
+      if (ERSATZ[g][e.typ]) e.typ = ERSATZ[g][e.typ];
+    });
+    const bo = BOSSE[K.id];
+    if (n === K.wellen) { t += 4; add(bo.ende, 1, 0); }                      // Endboss in der letzten Welle
+    else if (bo.mini && n % 20 === 0) { t += 3; add(bo.mini[(n / 20 - 1) % bo.mini.length], 1, 0); }   // Mini-Boss alle 20 Wellen
     return q;
   }
   function gegnerNeu(typ) {
@@ -467,13 +530,16 @@
     const w = S.spawnNr++ % wege.length, p = wegPos(w, 0);
     const NEU_INFO = { kamikaze: 'Kamikaze! Sehr schnell und wenig Leben – kommt er durch, kostet er 15 Leben.', sanitaeter: 'Sanitäter: heilt alle 2,5 s Gegner in der Nähe – zuerst ausschalten.', motorrad: 'Motorräder sind die schnellsten Gegner.', schuetzenpanzer: 'Schützenpanzer: gepanzert, setzt beim Zerstören 4 Soldaten ab.' };
     S.gesehen = S.gesehen || {};
-    if (NEU_INFO[typ] && !S.gesehen[typ]) { S.gesehen[typ] = true; $('hinweis').textContent = NEU_INFO[typ]; }
-    if (g.boss) { S.bannerBis = S.zeit + 4; $('hinweis').textContent = 'Achtung: Die Stahlratte rollt an! Sie hält an und betäubt Türme mit ihren Geschützen. Panzerbrechende Munition, Granaten und Laser helfen.'; }
+    const info = NEU_INFO[typ] || g.info;
+    if (info && !S.gesehen[typ]) { S.gesehen[typ] = true; $('hinweis').textContent = info; }
+    if (g.boss) { S.bannerBis = S.zeit + 4; S.bannerText = g.name + (g.mini ? ' greift an!' : ' rollt an!'); S.bannerMini = !!g.mini; $('hinweis').textContent = 'Achtung: ' + g.name + '! ' + (g.hinweis || ''); }
     return { typ, w, hp: g.hp * f, max: g.hp * f, d: -20, t: Math.random(), brennt: 0, sichtbarBis: 0, x: p.x, y: p.y, links: false, schussCd: 6, stopp: 0, feuerT: 99, geschossen: true };
   }
 
   // ---------- Kampf ----------
-  function sichtbar(g, t, w) { return !GEGNER[g.typ].tarn || w.tarn || g.sichtbarBis > S.zeit; }
+  const getarnt = (g) => (GEGNER[g.typ].tarn || g.rauchBis > S.zeit) && !(g.sichtbarBis > S.zeit);
+  const abgetaucht = (g) => g.untenBis > S.zeit;
+  function sichtbar(g, t, w) { return !abgetaucht(g) && (!getarnt(g) || w.tarn); }
   function zielWahl(t, w) {
     let best = null, bestWert = -Infinity;
     for (const g of S.gegner) {
@@ -487,15 +553,16 @@
     return best;
   }
   function schaden(g, menge, art, w) {
-    if (g.hp <= 0) return;
+    if (g.hp <= 0 || abgetaucht(g)) return;
     let m = menge;
+    if (S.schilde.length && !GEGNER[g.typ].boss && S.schilde.some((sr) => Math.hypot(sr.x - g.x, sr.y - g.y) < sr.r)) m *= 0.5;
     if (GEGNER[g.typ].panzer && art === 'kugel' && !(w && (w.panzerbrechend || w.laser))) m *= 0.35;
     g.hp -= m;
     if (g.hp <= 0) {
       const def = GEGNER[g.typ];
       S.koerner += def.lohn; erfahrung(def.lohn);
-      effekt('explosion', g.x, g.y - 20, 0, g.typ === 'ratte' ? 1.8 : def.panzer && g.typ !== 'panzersoldat' || g.typ === 'humvee' ? 0.9 : g.typ === 'kamikaze' ? 0.7 : g.typ === 'motorrad' ? 0.6 : 0.35);
-      if (def.absetzen && !g.durch) for (let i = 0; i < def.absetzen; i++) { const n = gegnerNeu('soldat'); n.w = g.w; n.d = Math.max(0, g.d - i * 14); S.neu.push(n); }
+      effekt('explosion', g.x, g.y - 20, 0, def.boss ? (def.mini ? 1.2 : 1.8) : def.fahrzeug || (def.panzer && g.typ !== 'panzersoldat') || g.typ === 'humvee' ? 0.9 : g.typ === 'kamikaze' ? 0.7 : g.typ === 'motorrad' ? 0.6 : 0.35);
+      if (def.absetzen && !g.durch) for (let i = 0; i < def.absetzen; i++) { const n = gegnerNeu(def.absetzTyp || 'soldat'); n.w = g.w; n.d = Math.max(0, g.d - i * 14); S.neu.push(n); }
     }
   }
   function muendung(t) {
@@ -654,6 +721,45 @@
     S.geschosse.push({ art: 'granate_gross', x: mx, y: my, sx: mx, sy: my, tx: z.x, ty: z.y, flug: 0, dauer: 1.0, wurf: true, boss: true, ziel: z });
   }
 
+  // ---------- Fähigkeiten der Genre-Gegner und Bosse ----------
+  function faehigkeiten(g, def, dt) {
+    g.cds = g.cds || {};
+    const bereit = (k, cd) => { g.cds[k] = (g.cds[k] ?? cd * 0.5) - dt; if (g.cds[k] <= 0) { g.cds[k] = cd; return true; } return false; };
+    const text = (tx, farbe) => S.texte.push({ x: g.x, y: g.y - 80, text: tx, farbe, t: 0 });
+    const F = def.faehig;
+    if (F.rauch && bereit('rauch', F.rauch.cd)) {
+      for (const o of S.gegner) if (o.hp > 0 && Math.hypot(o.x - g.x, o.y - g.y) < F.rauch.r) o.rauchBis = S.zeit + F.rauch.dauer;
+      S.wolken.push({ x: g.x, y: g.y - 10, r: F.rauch.r, bis: S.zeit + F.rauch.dauer, dauer: F.rauch.dauer, farbe: '200,200,192' });
+      text('Rauch!', '#E7E4DC');
+    }
+    if (F.kampfruf && bereit('ruf', F.kampfruf.cd)) {
+      for (const o of S.gegner) if (o.hp > 0 && Math.hypot(o.x - g.x, o.y - g.y) < F.kampfruf.r) o.eilBis = S.zeit + F.kampfruf.dauer;
+      text('Kampfruf!', '#FF8A1F');
+    }
+    if (F.reparatur && bereit('rep', F.reparatur.cd)) {
+      let ok = false;
+      for (const o of S.gegner) if (o !== g && o.hp > 0 && o.hp < o.max && GEGNER[o.typ].roboter && !GEGNER[o.typ].boss && Math.hypot(o.x - g.x, o.y - g.y) < F.reparatur.r) { o.hp = Math.min(o.max, o.hp + o.max * F.reparatur.anteil); ok = true; }
+      if (ok) text('Reparatur', '#7CD992');
+    }
+    if (F.frost && bereit('frost', F.frost.cd)) {
+      let ziel = null, best = F.frost.r;
+      for (const t of S.tuerme) { const d = Math.hypot(t.x - g.x, t.y - g.y); if (d < best && !TUERME[t.typ].depot && !werte(t).stunImmun) { best = d; ziel = t; } }
+      if (ziel) { ziel.betaeubtBis = Math.max(ziel.betaeubtBis || 0, S.zeit + F.frost.dauer); ziel.frostBis = S.zeit + F.frost.dauer; S.texte.push({ x: ziel.x, y: ziel.y - 60, text: 'Eingefroren!', farbe: '#9FE0FF', t: 0 }); }
+      else g.cds.frost = 0.5;
+    }
+    if (F.lawine && bereit('lawine', F.lawine.cd)) {
+      for (const t of S.tuerme) if (Math.hypot(t.x - g.x, t.y - g.y) < F.lawine.r && !werte(t).stunImmun) t.langsamBis = S.zeit + F.lawine.dauer;
+      S.wolken.push({ x: g.x, y: g.y - 10, r: F.lawine.r, bis: S.zeit + 1.5, dauer: 1.5, farbe: '240,246,252' });
+      text('Lawine!', '#E8F4FF');
+    }
+    if (F.bauen && bereit('bauen', F.bauen.cd)) {
+      for (let i = 0; i < F.bauen.n; i++) { const n = gegnerNeu(F.bauen.typ); n.w = g.w; n.d = Math.max(0, g.d - 30 - i * 18); S.neu.push(n); }
+      text('Roboter gebaut', '#E8B820');
+    }
+    if (F.abtauchen && bereit('ab', F.abtauchen.cd)) { g.untenBis = S.zeit + F.abtauchen.dauer; text('Abgetaucht!', '#7AC0E0'); }
+    if (F.sandsturm && bereit('sand', F.sandsturm.cd)) { S.sandBis = S.zeit + F.sandsturm.dauer; text('Sandsturm!', '#E0C898'); }
+  }
+
   // ---------- Ablauf ----------
   function update(dt) {
     S.zeit += dt;
@@ -662,8 +768,12 @@
       while (S.spawn.length && S.spawn[0].t <= 0) S.gegner.push(gegnerNeu(S.spawn.shift().typ));
     }
     S.neu = [];
+    S.schilde = []; const stoerer = [];
+    for (const g of S.gegner) { const d = GEGNER[g.typ]; if (g.hp > 0 && g.d > 0) { if (d.schild) S.schilde.push({ x: g.x, y: g.y, r: d.schild }); if (d.stoeren) stoerer.push({ x: g.x, y: g.y, r: d.stoeren }); } }
+    for (const t of S.tuerme) t.gestoert = stoerer.some((st) => Math.hypot(st.x - t.x, st.y - t.y) < st.r);
     for (const g of S.gegner) {
       const def = GEGNER[g.typ];
+      if (def.faehig && g.d > 0) faehigkeiten(g, def, dt);
       if (def.heiler && g.d > 0) {
         g.heilCd = (g.heilCd ?? 1.5) - dt;
         if (g.heilCd <= 0) {
@@ -672,7 +782,7 @@
           if (geheilt) S.texte.push({ x: g.x, y: g.y - 70, text: '+', farbe: '#7CD992', t: 0 });
         }
       }
-      if (def.boss) {
+      if (def.betaeuben) {
         g.feuerT += dt; g.schussCd -= dt;
         if (g.stopp > 0) {
           g.stopp -= dt;
@@ -683,11 +793,15 @@
           if (ziel) { g.stopp = 1.8; g.geschossen = false; g.bossZiel = ziel; g.schussCd = 8; } else g.schussCd = 1;
         }
       }
-      if (!(def.boss && g.stopp > 0)) { g.d += def.tempo * dt; g.t += dt; }
+      if (!(def.betaeuben && g.stopp > 0)) { g.d += def.tempo * (g.eilBis > S.zeit ? 1.4 : 1) * dt; g.t += dt; }
       const p = wegPos(g.w, g.d); g.x = p.x; g.y = p.y; if (Math.abs(p.dx) > 0.3) g.links = p.dx < 0;
       if (g.brennt > 0) { g.brennt -= dt; schaden(g, 4 * dt, 'feuer'); }
-      if (g.d >= wege[g.w].gesamt) { g.hp = 0; g.durch = true; S.leben -= def.schaden; }
+      if (g.d >= wege[g.w].gesamt) {
+        g.hp = 0; g.durch = true; S.leben -= def.schaden;
+        if (def.stehlen) { const weg = Math.min(500, Math.floor(S.koerner * def.stehlen)); S.koerner -= weg; if (weg) S.texte.push({ x: g.x, y: g.y - 60, text: '−' + fmt(weg) + ' Körner', farbe: '#FF6B5E', t: 0 }); }
+      }
     }
+    S.wolken = S.wolken.filter((w) => w.bis > S.zeit);
     for (const f of S.flaechen) { f.t += dt; for (const g of S.gegner) if (Math.hypot(g.x - f.x, g.y - f.y) < 46) g.brennt = 0.5; }
     S.flaechen = S.flaechen.filter((f) => f.bis > S.zeit);
     for (const t of S.tuerme) turmUpdate(t, dt);
@@ -774,15 +888,14 @@
     ctx.restore();
   }
   function gegnerZeichnen(g) {
-    const def = GEGNER[g.typ], feuer = def.boss && g.feuerT < 0.375;
-    const an = A.gegnerAtlas.animationen[feuer ? 'ratte_feuer' : g.typ];
+    const def = GEGNER[g.typ], feuer = def.betaeuben && g.feuerT < 0.375;
+    const an = A.gegnerAtlas.animationen[feuer ? g.typ + '_feuer' : g.typ];
     const f = A.gegnerAtlas.frames[an.bilder[feuer ? Math.min(2, Math.floor(g.feuerT * 8)) : Math.floor(g.t * an.fps) % an.bilder.length]];
-    const getarnt = def.tarn && g.sichtbarBis <= S.zeit;
-    ctx.save(); ctx.globalAlpha = getarnt ? 0.45 : 1;
+    ctx.save(); ctx.globalAlpha = abgetaucht(g) ? 0.25 : getarnt(g) ? 0.45 : 1;
     frameZeichnen(A.gegnerImg, f, g.x, g.y, (g.links ? -1 : 1) * def.gr, def.gr, an.anker.x, an.anker.y);
     ctx.restore();
     if (g.hp < g.max && !def.boss) {
-      const bw = g.typ === 'panzer' ? 70 : g.typ === 'schuetzenpanzer' ? 60 : g.typ === 'humvee' || g.typ === 'motorrad' ? 44 : 36, y = g.y - f.h * def.gr * 0.85;
+      const bw = Math.max(36, Math.min(80, f.w * def.gr * 0.45)), y = g.y - f.h * def.gr * 0.85;
       ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fillRect(g.x - bw / 2 - 1, y - 1, bw + 2, 6);
       ctx.fillStyle = g.hp / g.max > 0.4 ? '#7CD992' : '#FF6B5E'; ctx.fillRect(g.x - bw / 2, y, bw * Math.max(0, g.hp / g.max), 4);
     }
@@ -799,6 +912,17 @@
     } }))];
     for (const v of S.fahrzeuge) dinge.push({ y: v.y, f: () => fahrzeugBild(v.code, v.x, v.y, v.winkel, v.winkel, 0, 96) });
     dinge.sort((p, q) => p.y - q.y).forEach((d) => d.f());
+    for (const wo of S.wolken) {
+      const a = Math.min(1, (wo.bis - S.zeit) / 0.8) * 0.45, gr = ctx.createRadialGradient(wo.x, wo.y, 0, wo.x, wo.y, wo.r);
+      gr.addColorStop(0, `rgba(${wo.farbe},${a})`); gr.addColorStop(0.7, `rgba(${wo.farbe},${a * 0.6})`); gr.addColorStop(1, `rgba(${wo.farbe},0)`);
+      ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(wo.x, wo.y, wo.r, 0, Math.PI * 2); ctx.fill();
+    }
+    for (const t of S.tuerme) {
+      if (t.frostBis > S.zeit) { ctx.fillStyle = 'rgba(160,224,255,0.45)'; ctx.beginPath(); ctx.arc(t.x, t.y, 34, 0, Math.PI * 2); ctx.fill(); ctx.strokeStyle = '#E8F8FF'; ctx.lineWidth = 2; ctx.stroke(); }
+      if (t.langsamBis > S.zeit) { ctx.strokeStyle = 'rgba(232,244,255,0.9)'; ctx.setLineDash([4, 4]); ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(t.x, t.y, 30, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]); }
+      if (t.gestoert) { ctx.strokeStyle = '#FF6B5E'; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.moveTo(t.x - 10, t.y - 44); ctx.lineTo(t.x - 4, t.y - 52); ctx.lineTo(t.x + 2, t.y - 44); ctx.lineTo(t.x + 8, t.y - 52); ctx.stroke(); }
+    }
+    if (S.sandBis > S.zeit) { ctx.fillStyle = `rgba(216,192,138,${Math.min(0.3, (S.sandBis - S.zeit) * 0.3)})`; ctx.fillRect(0, 0, W, H); }
     for (const p of S.geschosse) {
       const an = A.effAtlas.animationen[p.art], fr = A.effAtlas.frames[an.bilder[0]];
       ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot || 0); const k = p.wurf ? 0.7 : p.klein ? 0.55 : 0.8;
@@ -835,8 +959,8 @@
       const a = Math.min(1, (S.bannerBis - S.zeit) / 0.5);
       ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = 'rgba(26,3,6,0.85)'; ctx.fillRect(0, 340, W, 110);
       ctx.fillStyle = '#C9A227'; ctx.fillRect(0, 340, W, 3); ctx.fillRect(0, 447, W, 3);
-      ctx.textAlign = 'center'; ctx.fillStyle = '#E8C766'; ctx.font = '700 16px Inter, sans-serif'; ctx.fillText('BOSS-WELLE', W / 2, 376);
-      ctx.fillStyle = '#FFFFFF'; ctx.font = '700 44px "Space Grotesk", sans-serif'; ctx.fillText('Die Stahlratte rollt an!', W / 2, 424); ctx.restore(); ctx.textAlign = 'left';
+      ctx.textAlign = 'center'; ctx.fillStyle = '#E8C766'; ctx.font = '700 16px Inter, sans-serif'; ctx.fillText(S.bannerMini ? 'MINI-BOSS' : 'BOSS-WELLE', W / 2, 376);
+      ctx.fillStyle = '#FFFFFF'; ctx.font = '700 44px "Space Grotesk", sans-serif'; ctx.fillText(S.bannerText || 'Die Stahlratte rollt an!', W / 2, 424); ctx.restore(); ctx.textAlign = 'left';
     }
     if (S.platzieren && S.maus) {
       const ok = platzOk(S.maus.x, S.maus.y), r = werte({ typ: S.platzieren, a: 0, b: 0 }).rangePx || 70;
@@ -972,7 +1096,7 @@
     for (const t of S.tuerme) { const d = Math.hypot(t.x - p.x, t.y - p.y); if (d < best) { best = d; treffer = t; } }
     S.wahl = treffer; oberflaeche();
   });
-  window.__mk = { S: () => S, P: () => P, update: (dt) => update(dt), platzOk: (x, y) => platzOk(x, y), abstand: (x, y) => abstandZumWeg(x, y), laden: async (i) => { await karteLaden(i); S = neu(); }, welle: () => welleStarten() };
+  window.__mk = { S: () => S, P: () => P, update: (dt) => update(dt), platzOk: (x, y) => platzOk(x, y), abstand: (x, y) => abstandZumWeg(x, y), laden: async (i) => { await karteLaden(i); S = neu(); }, welle: () => welleStarten(), boss: (g) => !!GEGNER[g.typ].boss };
   window.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') { S.platzieren = null; S.wahl = null; oberflaeche(); } });
 
   // ---------- Overlays ----------
@@ -1079,7 +1203,8 @@
           <p style="margin:0;font-size:14px;line-height:1.5;color:#E7D4D6">${k.text}</p>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
             <div style="background:#3A0A10;border-radius:10px;padding:10px 12px"><small style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#E7D4D6">Wellen</small><div style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700">${k.wellen}</div></div>
-            <div style="background:#3A0A10;border-radius:10px;padding:10px 12px"><small style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#E7D4D6">Belohnung</small><div style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#E8C766">+${st ? 1 : ORDEN[kWahl]} Orden</div></div></div>
+            <div style="background:#3A0A10;border-radius:10px;padding:10px 12px"><small style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#E7D4D6">Belohnung</small><div style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#E8C766">+${st ? 1 : ORDEN[kWahl]} Orden</div></div>
+            <div style="grid-column:1 / -1;background:#3A0A10;border-radius:10px;padding:10px 12px"><small style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#E7D4D6">Endboss${BOSSE[k.id].mini ? ' · Mini-Boss alle 20 Wellen' : ''}</small><div style="font-size:15px;font-weight:700;color:#FF8A7A">${GEGNER[BOSSE[k.id].ende].name}${BOSSE[k.id].mini ? `<span style="color:#E7D4D6;font-weight:600"> · ${BOSSE[k.id].mini.length > 1 ? 'alle Mini-Bosse' : GEGNER[BOSSE[k.id].mini[0]].name}</span>` : ''}</div></div></div>
           <div style="font-size:26px;letter-spacing:.1em;color:#E8C766">${'★'.repeat(st)}<span style="color:#5A2A30">${'★'.repeat(3 - st)}</span> <span style="font-size:13px;letter-spacing:0;color:#E7D4D6">${st ? st + ' von 3 Sternen' : '3 Sterne: kein Leben verlieren'}</span></div>
           ${P.rekord[k.id] ? `<div style="font-size:13px;color:#E7D4D6">∞ Freeplay-Rekord: <b style="color:#fff">Welle ${P.rekord[k.id]}</b></div>` : st ? '<div style="font-size:13px;color:#E7D4D6">∞ Freeplay: nach dem Sieg weiterspielen</div>' : ''}
           <div style="flex:1"></div>
