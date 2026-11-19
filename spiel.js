@@ -94,8 +94,28 @@
       ],
       info: 'Railgunner: langsamer, sehr starker Laserstrahl – voller Schaden gegen Panzer. Schienen-Soldat schießt schneller und erkennt Getarnte, Geschützstellung wird zur riesigen Kanone.'
     },
+    fabrik: {
+      name: 'Fahrzeugfabrik', kosten: 900, schraeg: 'bilder/fahrzeug_schraeg.png', json: 'fabrik', tech: 'fabrik', fabrik: true, gross: true, groesse: 110,
+      pfade: ['Rammkolonne', 'Panzerstellung'],
+      basis: { ramm: 4, kraft: 10, intervall: 7, fahrTempo: 170, dmg: 3, reload: 0.3, burst: 1, range: 15, splash: 0 },
+      A: [
+        { n: 'Rammbügel', k: 300, d: { ramm: 4, kraft: 6, range: 1 } },
+        { n: 'Panzerplatten', k: 650, d: { kraft: 20, intervall: -1, reload: -0.05 } },
+        { n: 'MRAP', k: 1900, d: { ramm: 14, kraft: 60, intervall: -1, fahrTempo: -20, panzerbrechend: true } },
+        { n: 'Räumschild', k: 4200, d: { ramm: 35, kraft: 160, intervall: -0.5 } },
+        { n: 'Keiler', k: 15000, d: { ramm: 150, kraft: 900, fahrTempo: -40, fraese: true } }
+      ],
+      B: [
+        { n: 'Schweres MG', k: 400, d: { reload: -0.1, range: 2, ramm: 2 } },
+        { n: 'Spähwagen', k: 1100, d: { dmg: 3, range: 2, tarn: true, intervall: -1 } },
+        { n: 'Schützenpanzer', k: 3200, d: { dmg: 10, reload: 0.15, range: 2, splash: 1.5, panzerbrechend: true } },
+        { n: 'Leopard 2A4', k: 7800, d: { dmg: 90, reload: 1.15, range: 6, splash: 3 } },
+        { n: 'Leopard 2A7', k: 24000, d: { dmg: 260, reload: -0.4, range: 4, splash: 4, stunImmun: true } }
+      ],
+      info: 'Fahrzeugfabrik: schickt Fahrzeuge vom Wegende rückwärts in die Gegner – sie rammen alles auf ihrem Weg. Rammkolonne: Humvee, MRAP, Minenräumpanzer Keiler. Panzerstellung: das Fahrzeug bleibt an der Fabrik stehen und schießt, bis zum Leopard 2A7.'
+    },
     depot: {
-      name: 'Logistik-Depot', kosten: 400, schraeg: 'bilder/depot.png', tech: 'depot', depot: true,
+      name: 'Logistik-Depot', kosten: 400, schraeg: 'bilder/depot.png', tech: 'depot', depot: true, gross: true,
       pfade: ['Versorgung', 'Sanität'],
       basis: { geld: 70, leben: 0, faktor: 1, dmg: 0, reload: 1, burst: 1, range: 0 },
       A: [
@@ -136,6 +156,7 @@
     { id: 'depot', n: 'Logistik-Depot', t: 'Körner zu Beginn jeder Welle, Sanität auch Leben.', c: 2, r: 0, k: 3, req: 'sniper', bild: 'depot' },
     { id: 'juggernaut', n: 'Juggernaut', t: 'Minigun-Turm mit enormem Dauerfeuer.', c: 1, r: 2, k: 5, req: 'ranger', bild: 'juggernaut' },
     { id: 'railgun', n: 'Railgunner', t: 'Laser-Schienenkanone gegen Bosse und Panzer.', c: 2, r: 2, k: 6, req: 'juggernaut', bild: 'railgun' },
+    { id: 'fabrik', n: 'Fahrzeugfabrik', t: 'Rammfahrzeuge oder ein stehender Panzer.', c: 3, r: 2, k: 6, req: 'railgun', bild: 'fabrik' },
     { id: 'ruhig', n: 'Ruhige Hand', t: 'Scharfschützen: +15 % Reichweite.', c: 2, r: 1, k: 2, req: 'sniper' },
     { id: 'tarnung', n: 'Maisfeld-Tarnung', t: 'Phantom-Ausbauten 20 % günstiger.', c: 3, r: 1, k: 4, req: 'ruhig' },
     { id: 'drill1', n: 'Ranger-Drill I', t: 'Ranger: +10 % Feuerrate.', c: 1, r: 3, k: 2, req: 'ranger' },
@@ -191,7 +212,7 @@
   const signaturOk = (o) => o && typeof o === 'object' && typeof o.pruefsumme === 'string' &&
     o.pruefsumme === pruefsumme(kanonisch({ spiel: o.spiel, version: o.version, gespeichert: o.gespeichert, daten: o.daten }));
   // Inhalt prüfen: nur bekannte Felder und sinnvolle Werte
-  const TECH_IDS = ['ranger', 'sniper', 'depot', 'juggernaut', 'railgun', 'ruhig', 'tarnung', 'drill1', 'drill2', 'goldmag', 'kasse', 'ernte', 'bunker', 'reserve'];
+  const TECH_IDS = ['ranger', 'sniper', 'depot', 'juggernaut', 'railgun', 'fabrik', 'ruhig', 'tarnung', 'drill1', 'drill2', 'goldmag', 'kasse', 'ernte', 'bunker', 'reserve'];
   const KARTEN_IDS = ['westkolbistan', 'paprikistan', 'nordkolbistan', 'maisdosistan', 'ostkolbistan', 'suedkolbistan', 'maisburg'];
   const ganz = (v, a, b) => Number.isInteger(v) && v >= a && v <= b;
   function standPruefen(d) {
@@ -206,7 +227,7 @@
       for (const [k, l] of Object.entries(d.laeufe)) {
         if (!KARTEN_IDS.includes(k) || !l || typeof l !== 'object') return null;
         if (!ganz(l.welle, 0, 1e5) || !ganz(l.koerner, 0, 1e9) || !ganz(l.leben, 1, 1e7) || !ganz(l.startLeben, 1, 1e4) || typeof l.freeplay !== 'boolean' || !Array.isArray(l.tuerme) || l.tuerme.length > 300) return null;
-        const ok = l.tuerme.every((t) => t && ['ranger', 'sniper', 'depot', 'juggernaut', 'railgun'].includes(t.typ) && ganz(t.x, 0, 1140) && ganz(t.y, 0, 810) && ganz(t.a, 0, 5) && ganz(t.b, 0, 5)
+        const ok = l.tuerme.every((t) => t && ['ranger', 'sniper', 'depot', 'juggernaut', 'railgun', 'fabrik'].includes(t.typ) && ganz(t.x, 0, 1140) && ganz(t.y, 0, 810) && ganz(t.a, 0, 5) && ganz(t.b, 0, 5)
           && (Math.min(t.a, t.b) <= 2) && ganz(t.ziel, 0, 3) && ganz(t.investiert, 0, 1e7));
         if (!ok) return null;
         laeufe[k] = { welle: l.welle, koerner: l.koerner, leben: l.leben, startLeben: l.startLeben, freeplay: l.freeplay, tuerme: l.tuerme.map((t) => ({ ...t })) };
@@ -242,7 +263,7 @@
   const neu = () => ({
     welle: 0, koerner: 800 + (P.tech.kasse ? 150 : 0), leben: 100 + (P.tech.bunker ? 20 : 0), tempo: 1, pause: false, laeuft: false, ende: false,
     tuerme: [], gegner: [], geschosse: [], effekte: [], flaechen: [], spawn: [], spawnNr: 0, texte: [], strahlen: [], neu: [],
-    wahl: null, platzieren: null, maus: null, tech: P.tech, zeit: 0, startLeben: 100 + (P.tech.bunker ? 20 : 0)
+    wahl: null, platzieren: null, maus: null, tech: P.tech, fahrzeuge: [], zeit: 0, startLeben: 100 + (P.tech.bunker ? 20 : 0)
   });
 
   // ---------- Laden ----------
@@ -250,12 +271,13 @@
   const json = (src) => fetch(src).then((r) => { if (!r.ok) throw new Error(src); return r.json(); });
 
   async function laden() {
+    const [fahrTop, fahrJ, fabrikImg] = await Promise.all([bild('bilder/fahrzeug_draufsicht@2x.png'), json('daten/fahrzeug_draufsicht.json'), bild('bilder/fabrik@2x.png')]);
     const [depot, jugTop, railTop, jugJ, railJ, rangerTop, sniperTop, gegnerImg, effImg, gegnerAtlas, effAtlas, rangerJ, sniperJ, karten] = await Promise.all([
       bild('bilder/depot.png'), bild('bilder/juggernaut_draufsicht@2x.png'), bild('bilder/railgun_draufsicht@2x.png'), json('daten/juggernaut_draufsicht.json'), json('daten/railgun_draufsicht.json'), bild('bilder/ranger_draufsicht@2x.png'), bild('bilder/scharfschuetze_draufsicht@2x.png'),
       bild('bilder/gegner_spritesheet.png'), bild('bilder/effekte_spritesheet.png'),
       json('daten/gegner_atlas.json'), json('daten/effekte_atlas.json'), json('daten/ranger_draufsicht.json'), json('daten/scharfschuetze_draufsicht.json'), json('daten/karten.json')
     ]);
-    A = { depot, jugTop, railTop, juggernaut: jugJ, railgun: railJ, rangerTop, sniperTop, gegnerImg, effImg, gegnerAtlas, effAtlas, ranger: rangerJ, sniper: sniperJ, karten: karten.karten, bilder: {} };
+    A = { fahrTop, fabrik: fahrJ, fabrikImg, depot, jugTop, railTop, juggernaut: jugJ, railgun: railJ, rangerTop, sniperTop, gegnerImg, effImg, gegnerAtlas, effAtlas, ranger: rangerJ, sniper: sniperJ, karten: karten.karten, bilder: {} };
     if (typeof P.stufe !== 'number') { P.stufe = 1; P.xp = 0; }
     if (!P.rekord) P.rekord = {};
     if (typeof P.orden !== 'number') {   // alter Spielstand mit Kornvorrat -> in Orden umrechnen
@@ -291,11 +313,16 @@
   }
   function wegPos(w, d) {
     const { pts, lang } = wege[w];
-    if (d <= 0) return { x: pts[0][0], y: pts[0][1], dx: 1 };
+    if (d <= 0) return { x: pts[0][0], y: pts[0][1], dx: pts[1][0] - pts[0][0], dy: pts[1][1] - pts[0][1] };
     let lo = 0, hi = lang.length - 1;
     while (hi - lo > 1) { const m = (lo + hi) >> 1; if (lang[m] < d) lo = m; else hi = m; }
     const t = (d - lang[lo]) / ((lang[hi] - lang[lo]) || 1);
-    return { x: pts[lo][0] + (pts[hi][0] - pts[lo][0]) * t, y: pts[lo][1] + (pts[hi][1] - pts[lo][1]) * t, dx: pts[hi][0] - pts[lo][0] };
+    return { x: pts[lo][0] + (pts[hi][0] - pts[lo][0]) * t, y: pts[lo][1] + (pts[hi][1] - pts[lo][1]) * t, dx: pts[hi][0] - pts[lo][0], dy: pts[hi][1] - pts[lo][1] };
+  }
+  function naechsterWegpunkt(x, y) {
+    let best = [x + 1, y], bd = Infinity;
+    for (const wg of wege) for (const p of wg.pts) { const d = Math.hypot(p[0] - x, p[1] - y); if (d < bd) { bd = d; best = p; } }
+    return best;
   }
   function abstandZumWeg(x, y) {
     let m = Infinity;
@@ -335,6 +362,7 @@
     if (S && t.overBis > S.zeit) { w.dmg *= 1.25; w.range += 6; w.overAktiv = true; }
     w.reload = Math.max(0.05, w.reload);
     w.rangePx = w.range * EINHEIT;
+    if (def.fabrik) { w.fabrik = true; w.stand = t.b > t.a; if (!w.stand) { w.range = 0; w.rangePx = 0; } w.intervall = Math.max(2, w.intervall); }
     if (def.depot) { w.koernerProWelle = Math.round(w.geld * w.faktor); w.depot = true; }
     return w;
   }
@@ -353,6 +381,17 @@
       if (neu.leben !== alt.leben) z.push(['Leben pro Welle', String(alt.leben), String(neu.leben)]);
       return { zeilen: z, neu: neu.faktor < alt.faktor ? ['Depot bringt insgesamt ' + Math.round((1 - neu.faktor) * 100) + ' % weniger Körner'] : [] };
     }
+    if (alt.fabrik && !neu.stand) {
+      if (neu.ramm !== alt.ramm) z.push(['Rammschaden', zahl(alt.ramm), zahl(neu.ramm)]);
+      if (neu.kraft !== alt.kraft) z.push(['Panzerung', zahl(alt.kraft), zahl(neu.kraft)]);
+      if (neu.intervall !== alt.intervall) z.push(['Fahrzeug alle', zahl(alt.intervall) + ' s', zahl(neu.intervall) + ' s']);
+      if (neu.fahrTempo !== alt.fahrTempo) z.push(['Tempo', zahl(alt.fahrTempo), zahl(neu.fahrTempo)]);
+      const nf = [];
+      if (neu.panzerbrechend && !alt.panzerbrechend) nf.push('rammt Panzerung mit vollem Schaden');
+      if (neu.fraese && !alt.fraese) nf.push('Fräswalze: wirft Gegner zurück');
+      return { zeilen: z, neu: nf };
+    }
+    const standNeu = neu.stand && !alt.stand;
     const nach = (w) => (w.dauerfeuer ? 'Dauerfeuer' : zahl(w.reload) + ' s');
     if (neu.dmg !== alt.dmg) z.push(['Schaden', zahl(alt.dmg), zahl(neu.dmg)]);
     if (nach(neu) !== nach(alt)) z.push(['Nachladen', nach(alt), nach(neu)]);
@@ -362,6 +401,8 @@
     const dps = (w) => (w.dmg * (w.dauerfeuer ? 1 : w.burst)) / w.reload;
     z.push(['Schaden/s', zahl(dps(alt)), zahl(dps(neu))]);
     const neuF = [];
+    if (standNeu) neuF.push('Fahrzeug bleibt an der Fabrik stehen und schießt');
+    if ((neu.splash || 0) !== (alt.splash || 0)) z.push(['Explosionsradius', zahl(alt.splash || 0), zahl(neu.splash || 0)]);
     if (neu.tarn && !alt.tarn) neuF.push('erkennt Getarnte');
     if (neu.panzerbrechend && !alt.panzerbrechend) neuF.push('durchschlägt Panzerung');
     if (neu.granate && neu.granate !== alt.granate) neuF.push(neu.granate >= 2 ? 'Granate 100 Schaden alle 5 s' : 'Granate 75 Schaden alle 8 s');
@@ -372,21 +413,22 @@
     if (neu.he && !alt.he) neuF.push('HE-Munition: alle 20 s für 6 s explosive Kugeln und mehr Reichweite');
     if (neu.overcharge && !alt.overcharge) neuF.push('Overcharge: alle 30 s für 8 s +25 % Schaden und mehr Reichweite');
     if (neu.stunImmun && !alt.stunImmun) neuF.push('immun gegen Betäubung');
+    if (standNeu) for (const r of z) r[1] = '–';
     return { zeilen: z, neu: neuF };
   }
   function turmName(t) {
     const def = TUERME[t.typ];
-    if (t.a === 0 && t.b === 0) return { ranger: 'Grenzranger', sniper: 'Grenzschütze', depot: 'Feldlager', juggernaut: 'Juggernaut', railgun: 'Railgunner' }[t.typ];
+    if (t.a === 0 && t.b === 0) return { ranger: 'Grenzranger', sniper: 'Grenzschütze', depot: 'Feldlager', fabrik: 'Humvee', juggernaut: 'Juggernaut', railgun: 'Railgunner' }[t.typ];
     return t.a >= t.b ? def.A[t.a - 1].n : def.B[t.b - 1].n;
   }
   function platzOk(x, y, typ = S.platzieren) {
-    const gross = typ === 'depot', extra = (TUERME[typ] && TUERME[typ].platz) || 0;
+    const gross = !!(TUERME[typ] && TUERME[typ].gross), extra = (TUERME[typ] && TUERME[typ].platz) || 0;
     if (x < 30 || x > W - 30 || y < 30 || y > H - 30) return false;
     if (x < 540 && y < 90) return false;                         // Anzeige oben links
     if (abstandZumWeg(x, y) < K.wegbreite / 2 + 3 + (gross ? 48 : 22 + extra * 0.4)) return false;
     const z = K.ziel; if (Math.hypot(x - z[0], y - z[1]) < 70) return false;
     for (const e of K.sperren || []) if (((x - e.x) / e.rx) ** 2 + ((y - e.y) / e.ry) ** 2 < 1) return false;
-    for (const t of S.tuerme) if (Math.hypot(t.x - x, t.y - y) < (gross || t.typ === 'depot' ? 80 : 46 + extra * 0.5 + ((TUERME[t.typ].platz || 0) * 0.5))) return false;
+    for (const t of S.tuerme) if (Math.hypot(t.x - x, t.y - y) < (gross || TUERME[t.typ].gross ? 80 : 46 + extra * 0.5 + ((TUERME[t.typ].platz || 0) * 0.5))) return false;
     return true;
   }
   function turmBauen(typ, x, y) {
@@ -417,7 +459,7 @@
     if (n >= 18) add('panzer', Math.min(8, Math.floor((n - 14) / 2)), 3);
     if (n >= 25) add('humvee', Math.min(20, Math.floor((n - 20) / 2)), 0.9);
     if (n >= 30 && n % 3 === 0) add('kamikaze', Math.min(30, Math.floor(n / 3)), 0.25);   // Kamikaze-Ansturm
-    if (n % 20 === 0) { t += 4; add('ratte', 1, 0); }   // Boss jede 20. Welle
+    if (K.id === 'westkolbistan' && n === K.wellen) { t += 4; add('ratte', 1, 0); }   // Boss nur auf Grenzfelder
     return q;
   }
   function gegnerNeu(typ) {
@@ -462,6 +504,7 @@
     return { x: t.x + mx * c - my * s, y: t.y + mx * s + my * c };
   }
   function geschossArt(t, w) {
+    if (t.typ === 'fabrik') return t.b >= 4 ? 'leuchtspur' : t.b >= 3 ? 'kugel_schwer' : 'kugel_50';
     if (t.typ === 'juggernaut') return w.heAktiv ? 'leuchtspur' : t.a >= 4 ? 'kugel_schwer' : t.b >= 2 ? 'kugel_ap' : 'kugel';
     if (t.typ === 'ranger') return t.a === 5 ? 'leuchtspur' : t.a === 4 ? 'kugel_schwer' : t.b >= 1 ? 'kugel_ap' : 'kugel';
     return t.b === 5 ? 'laserkugel' : t.b >= 2 ? 'kugel_50' : 'kugel_scharf';
@@ -483,8 +526,8 @@
   function schiessen(t, w, ziel) {
     if (t.typ === 'railgun') { strahl(t, w, ziel); return; }
     const m = muendung(t);
-    S.geschosse.push({ art: geschossArt(t, w), x: m.x, y: m.y, ziel, tx: ziel.x, ty: ziel.y - 18, tempo: t.typ === 'sniper' ? 1800 : t.typ === 'juggernaut' ? 1500 : 1100, dmg: w.dmg, w, pierce: w.pierce || 0, he: !!w.heAktiv, klein: t.typ === 'juggernaut' });
-    if (t.typ !== 'juggernaut' || Math.random() < 0.5) effekt('muendungsfeuer', m.x, m.y, t.winkel, t.typ === 'sniper' ? 0.75 : 0.55);
+    S.geschosse.push({ art: geschossArt(t, w), x: m.x, y: m.y, ziel, tx: ziel.x, ty: ziel.y - 18, tempo: t.typ === 'sniper' ? 1800 : t.typ === 'juggernaut' || t.typ === 'fabrik' ? 1500 : 1100, splash: (w.splash || 0) * EINHEIT, dmg: w.dmg, w, pierce: w.pierce || 0, he: !!w.heAktiv, klein: t.typ === 'juggernaut' });
+    if (t.typ !== 'juggernaut' || Math.random() < 0.5) effekt('muendungsfeuer', m.x, m.y, t.winkel, t.typ === 'sniper' ? 0.75 : t.typ === 'fabrik' && t.b >= 4 ? 1.3 : 0.55);
     t.schussT = 0;
   }
   function werfen(t, ziel, art) {
@@ -499,6 +542,7 @@
   function turmUpdate(t, dt) {
     if (TUERME[t.typ].depot) return;
     const w = werte(t);
+    if (w.fabrik && !w.stand) return;
     t.schussT += dt;
     if (t.betaeubtBis > S.zeit) { t.burstRest = 0; return; }
     if (w.he) { t.heCd = (t.heCd ?? 8) - dt; if (t.heCd <= 0) { t.heBis = S.zeit + 6; t.heCd = 20; S.texte.push({ x: t.x, y: t.y - 60, text: 'HE-Munition!', farbe: '#FF8A1F', t: 0 }); } }
@@ -509,7 +553,7 @@
     if (ziel) {
       const soll = Math.atan2(ziel.y - 18 - t.y, ziel.x - t.x);
       let diff = Math.atan2(Math.sin(soll - t.winkel), Math.cos(soll - t.winkel));
-      const max = (t.typ === 'sniper' || t.typ === 'railgun' ? 6 : t.typ === 'juggernaut' ? 7 : 9) * dt;
+      const max = (t.typ === 'fabrik' ? 4 : t.typ === 'sniper' || t.typ === 'railgun' ? 6 : t.typ === 'juggernaut' ? 7 : 9) * dt;
       t.winkel += Math.max(-max, Math.min(max, diff));
       diff = Math.atan2(Math.sin(soll - t.winkel), Math.cos(soll - t.winkel));
       t.cd -= dt;
@@ -559,13 +603,48 @@
     if (d <= s) {
       p.weg = true;
       if (p.ziel && p.ziel.hp > 0) {
-        if (p.he) { for (const g of S.gegner) if (g.hp > 0 && Math.hypot(g.x - p.tx, g.y - 18 - p.ty) < 3 * EINHEIT) schaden(g, p.dmg, 'explosion'); effekt('explosion', p.tx, p.ty, 0, 0.3); }
+        if (p.splash) { for (const g of S.gegner) if (g.hp > 0 && Math.hypot(g.x - p.tx, g.y - 18 - p.ty) < p.splash) schaden(g, p.dmg, 'kugel', p.w); effekt('explosion', p.tx, p.ty, 0, p.splash / 60); }
+        else if (p.he) { for (const g of S.gegner) if (g.hp > 0 && Math.hypot(g.x - p.tx, g.y - 18 - p.ty) < 3 * EINHEIT) schaden(g, p.dmg, 'explosion'); effekt('explosion', p.tx, p.ty, 0, 0.3); }
         else schaden(p.ziel, p.dmg, 'kugel', p.w);
         effekt('treffer', p.tx, p.ty, 0, 0.6);
         let rest = p.pierce;
         if (rest > 0) for (const g of S.gegner) { if (rest <= 0) break; if (g !== p.ziel && g.hp > 0 && Math.hypot(g.x - p.ziel.x, g.y - p.ziel.y) < 60) { schaden(g, p.dmg, 'kugel', p.w); rest--; } }
       }
     } else { p.x += (dx / d) * s; p.y += (dy / d) * s; }
+  }
+
+  // ---------- Fahrzeugfabrik: Rammfahrzeuge fahren den Weg rückwärts ----------
+  function fahrzeugeUpdate(dt) {
+    if (S.laeuft) for (const t of S.tuerme) {
+      if (t.typ !== 'fabrik') continue;
+      const w = werte(t); if (w.stand) continue;
+      t.fahrCd = (t.fahrCd ?? 1.5) - dt;
+      if (t.fahrCd > 0 || !S.gegner.some((g) => g.d > 0)) continue;
+      if (S.fahrzeuge.filter((v) => v.turm === t).length >= 3) continue;
+      t.fahrNr = (t.fahrNr || 0) + 1;
+      const wi = t.fahrNr % wege.length;
+      S.fahrzeuge.push({ turm: t, code: t.a + '-' + t.b, w: wi, d: wege[wi].gesamt, kraft: w.kraft, max: w.kraft, ramm: w.ramm, tempo: w.fahrTempo, werte: w, getroffen: new Set(), winkel: 0, x: 0, y: 0 });
+      t.fahrCd = w.intervall;
+    }
+    for (const v of S.fahrzeuge) {
+      v.d -= v.tempo * dt;
+      const p = wegPos(v.w, Math.max(0, v.d)); v.x = p.x; v.y = p.y;
+      if (p.dx || p.dy) v.winkel = Math.atan2(-p.dy, -p.dx);
+      for (const g of S.gegner) {
+        if (v.kraft <= 0) break;
+        if (g.hp <= 0 || g.w !== v.w || g.d < 0 || v.getroffen.has(g) || Math.abs(g.d - v.d) > 26) continue;
+        v.getroffen.add(g);
+        const vor = g.hp, def = GEGNER[g.typ];
+        schaden(g, v.ramm, 'kugel', v.werte);
+        effekt('treffer', g.x, g.y - 16, 0, 0.9);
+        if (def.boss) { v.kraft = 0; break; }
+        v.kraft -= Math.min(vor, v.ramm);
+        if (v.werte.fraese && g.hp > 0) g.d = Math.max(0, g.d - 35);
+      }
+      if (v.kraft <= 0) { v.weg = true; effekt('explosion', v.x, v.y - 10, 0, 0.5); }
+      if (v.d <= 0) v.weg = true;
+    }
+    S.fahrzeuge = S.fahrzeuge.filter((v) => !v.weg);
   }
 
   function bossSchuss(g) {
@@ -612,6 +691,7 @@
     for (const f of S.flaechen) { f.t += dt; for (const g of S.gegner) if (Math.hypot(g.x - f.x, g.y - f.y) < 46) g.brennt = 0.5; }
     S.flaechen = S.flaechen.filter((f) => f.bis > S.zeit);
     for (const t of S.tuerme) turmUpdate(t, dt);
+    fahrzeugeUpdate(dt);
     for (const p of S.geschosse) geschossUpdate(p, dt);
     S.geschosse = S.geschosse.filter((p) => !p.weg);
     S.gegner = S.gegner.filter((g) => g.hp > 0);
@@ -657,7 +737,28 @@
     const n = schleife ? i % an.bilder.length : Math.min(an.bilder.length - 1, i);
     return A.effAtlas.frames[an.bilder[n]];
   }
+  function fahrzeugBild(code, x, y, winkel, turmWinkel, fr, gr) {
+    const info = A.fabrik.frames[code], k = 2;
+    ctx.save(); ctx.translate(x, y); ctx.rotate(winkel);
+    ctx.drawImage(A.fahrTop, info.rumpf.x * k, info.rumpf.y * k, 160 * k, 160 * k, -gr / 2, -gr / 2, gr, gr);
+    ctx.restore();
+    if (info.modus === 'stand') {
+      const b = info.bilder[fr];
+      ctx.save(); ctx.translate(x, y); ctx.rotate(turmWinkel);
+      ctx.drawImage(A.fahrTop, b.x * k, b.y * k, 160 * k, 160 * k, -gr / 2, -gr / 2, gr, gr);
+      ctx.restore();
+    }
+  }
   function turmZeichnen(t, alpha = 1) {
+    if (t.typ === 'fabrik') {
+      const k = 0.7, code = t.a + '-' + t.b;
+      ctx.save(); ctx.globalAlpha = alpha;
+      ctx.drawImage(A.fabrikImg, t.x - 110 * k, t.y - 140 * k, 220 * k, 220 * k);
+      if (t.rumpf === undefined) t.rumpf = S && K ? Math.atan2(naechsterWegpunkt(t.x, t.y)[1] - t.y, naechsterWegpunkt(t.x, t.y)[0] - t.x) : 0;
+      const bereit = A.fabrik.frames[code].modus === 'stand' || !S.laeuft || (t.fahrCd ?? 0) < 2;
+      if (bereit) fahrzeugBild(code, t.x, t.y, t.rumpf, t.winkel, t.schussT < 0.06 ? 1 : t.schussT < 0.14 ? 2 : 0, TUERME.fabrik.groesse);
+      ctx.restore(); return;
+    }
     if (TUERME[t.typ].depot) {
       const i = KOMBIS.indexOf(t.a + '-' + t.b), k = 150 / 256;
       ctx.save(); ctx.globalAlpha = alpha;
@@ -696,6 +797,7 @@
       if (t === S.wahl) { ctx.save(); ctx.shadowColor = '#E8C766'; ctx.shadowBlur = 16; turmZeichnen(t); ctx.restore(); } else turmZeichnen(t);
       if (t.betaeubtBis > S.zeit) frameZeichnen(A.effImg, effFrame('betaeubt', S.zeit, true), t.x, t.y - 46, 1, 1);
     } }))];
+    for (const v of S.fahrzeuge) dinge.push({ y: v.y, f: () => fahrzeugBild(v.code, v.x, v.y, v.winkel, v.winkel, 0, 96) });
     dinge.sort((p, q) => p.y - q.y).forEach((d) => d.f());
     for (const p of S.geschosse) {
       const an = A.effAtlas.animationen[p.art], fr = A.effAtlas.frames[an.bilder[0]];
@@ -752,7 +854,7 @@
   function leisteZeichnen() {
     const box = $('tuerme');
     box.innerHTML = '';
-    for (const typ of ['ranger', 'sniper', 'depot', 'juggernaut', 'railgun', null]) {
+    for (const typ of ['ranger', 'sniper', 'depot', 'juggernaut', 'railgun', 'fabrik']) {
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'turmkarte';
       if (!typ) { b.classList.add('gesperrt'); b.disabled = true; b.innerHTML = '<div class="bild" style="display:flex;align-items:center;justify-content:center;font-size:36px;color:#5A2A30;font-weight:700">?</div><span class="name">Bald</span><span class="preis">gesperrt</span>'; box.appendChild(b); continue; }
@@ -783,7 +885,7 @@
     const wk = $('welleKnopf');
     wk.disabled = S.laeuft || S.ende;
     wk.textContent = S.laeuft ? 'Welle läuft …' : `▶ Welle ${S.welle + 1} starten`;
-    const schluessel = JSON.stringify([S.platzieren, P.tech, S.koerner >= 250, S.koerner >= 285, S.koerner >= 400, S.koerner >= 1600, S.koerner >= 3200]);
+    const schluessel = JSON.stringify([S.platzieren, P.tech, S.koerner >= 250, S.koerner >= 285, S.koerner >= 400, S.koerner >= 900, S.koerner >= 1600, S.koerner >= 3200]);
     if (schluessel !== letzteLeiste) { letzteLeiste = schluessel; leisteZeichnen(); }
     panelZeichnen();
   }
@@ -800,8 +902,8 @@
     $('pBild').setAttribute('style', schraegStil(t.typ, t.a, t.b, 84));
     $('pCode').textContent = `${def.name} ${t.a}-${t.b}`;
     $('pName').textContent = turmName(t);
-    $('pWerte').textContent = def.depot ? `${fmt(w.koernerProWelle)} Körner${w.leben ? ' und ' + w.leben + ' Leben' : ''} zu Beginn jeder Welle` : `Schaden ${zahl(w.dmg)} · ${w.dauerfeuer ? 'Dauerfeuer' : 'Nachladen ' + zahl(w.reload) + ' s'} · Reichweite ${zahl(w.range)}`;
-    $('pZiel').parentElement.style.display = def.depot ? 'none' : 'flex';
+    $('pWerte').textContent = w.fabrik && !w.stand ? `Rammschaden ${zahl(w.ramm)} · Panzerung ${zahl(w.kraft)} · alle ${zahl(w.intervall)} s ein Fahrzeug` : def.depot ? `${fmt(w.koernerProWelle)} Körner${w.leben ? ' und ' + w.leben + ' Leben' : ''} zu Beginn jeder Welle` : `Schaden ${zahl(w.dmg)} · ${w.dauerfeuer ? 'Dauerfeuer' : 'Nachladen ' + zahl(w.reload) + ' s'} · Reichweite ${zahl(w.range)}`;
+    $('pZiel').parentElement.style.display = def.depot || (w.fabrik && !w.stand) ? 'none' : 'flex';
     const pf = $('pPfade'); pf.innerHTML = '';
     const titel2 = def.pfade || (t.typ === 'ranger' ? ['Präzision', 'Sturm'] : ['Phantom', 'Schwerkaliber']);
     for (const [pfad, titel] of [['A', titel2[0]], ['B', titel2[1]]]) {

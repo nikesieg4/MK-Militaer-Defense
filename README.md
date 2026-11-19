@@ -49,7 +49,7 @@ Erfahrung (EP): jeder Abschuss = Körner-Belohnung des Gegners, jede geschaffte 
 
 ## Techbaum (dauerhaft)
 
-Verzweigt ab dem Ranger, mit Verbindungslinien. **Nur zwischen den Runden** auf dem Weltbildschirm (Kampagne) erreichbar, bezahlt mit Verdienstorden. Ranger (frei) → Zweig *Präzision & Logistik*: **Scharfschütze 3** → **Logistik-Depot 3**; Zweig *Schwere Waffen*: **Juggernaut 5** → **Railgunner 6**; Ruhige Hand 2 → Maisfeld-Tarnung 4; Ranger-Drill I 2 → II 3 → Goldmagazin 4; Kriegskasse 2 (+150 Startkörner) → Erntebonus 3 → Strohbunker 3 (+20 Leben) → Mais-Reserve 5 (+1 Leben je Welle). Alte Spielstände mit Kornvorrat werden einmalig in Orden umgerechnet.
+Verzweigt ab dem Ranger, mit Verbindungslinien. **Nur zwischen den Runden** auf dem Weltbildschirm (Kampagne) erreichbar, bezahlt mit Verdienstorden. Ranger (frei) → Zweig *Präzision & Logistik*: **Scharfschütze 3** → **Logistik-Depot 3**; Zweig *Schwere Waffen*: **Juggernaut 5** → **Railgunner 6** → **Fahrzeugfabrik 6**; Ruhige Hand 2 → Maisfeld-Tarnung 4; Ranger-Drill I 2 → II 3 → Goldmagazin 4; Kriegskasse 2 (+150 Startkörner) → Erntebonus 3 → Strohbunker 3 (+20 Leben) → Mais-Reserve 5 (+1 Leben je Welle). Alte Spielstände mit Kornvorrat werden einmalig in Orden umgerechnet.
 
 ## Logistik-Depot (Wirtschaftsturm)
 
@@ -79,9 +79,19 @@ Kreuzpfade wirken zusammen: Körner = Versorgung × (1 − Abzug), z. B. 2-2 = 2
 | Motorrad | 10 | 150 | 12 | 4 | schnellstes Fahrzeug | 12 |
 | Schützenpanzer | 90 | 40 | 50 | 12 | gepanzert, setzt beim Zerstören 4 Soldaten ab | 15 |
 | Panzer | 180 | 24 | 100 | 20 | gepanzert | 10 |
-| Stahlratte (Boss) | 1.000 | 15 | 400 | Niederlage | betäubt Türme | jede 20. Welle |
+| Stahlratte (Boss) | 1.000 | 15 | 400 | Niederlage | betäubt Türme | nur Grenzfelder, Welle 20 |
 
 Leben × (1 + 0,06 × Welle + 0,04 × Wellen über 50) × Kartenfaktor. Die Mengen wachsen bis etwa Welle 40–70 und bleiben dann gleich, danach steigt nur noch das Leben. Beim ersten Auftauchen eines neuen Gegners erklärt ihn der Hinweis rechts.
+
+## Fahrzeugfabrik
+
+900 Körner, im Techbaum nach dem Railgunner (6 Orden). Große Halle mit Vorplatz, braucht Platz wie das Depot. Die Stufe 0-0 ist ein Humvee.
+
+- **Rammkolonne (oberer Pfad):** Während einer Welle fährt alle *Intervall* Sekunden ein Fahrzeug vom Wegende rückwärts zum Start (höchstens 3 je Fabrik, bei 2 Wegen abwechselnd). Jeder Gegner, den es berührt, bekommt den Rammschaden; die Panzerung des Fahrzeugs sinkt um den verursachten Schaden, bei 0 explodiert es. Bosse zerstören das Fahrzeug sofort.
+  Rammbügel 300 (Rammschaden 4 → 8, Panzerung 10 → 16) · Panzerplatten 650 (Panzerung 36, alle 6 s) · MRAP 1.900 (Rammschaden 22, Panzerung 96, rammt Panzerung voll) · Räumschild 4.200 (57 / 256, alle 4,5 s) · **Keiler** 15.000 (Minenräumpanzer: 207 / 1.156, Fräswalze wirft Gegner 35 px zurück).
+- **Panzerstellung (unterer Pfad):** Das Fahrzeug bleibt auf dem Vorplatz stehen, der Turm dreht sich zum Ziel und schießt.
+  Schweres MG 400 (Humvee mit MG, Schaden 3, 0,2 s, Reichweite 17) · Spähwagen 1.100 (Schaden 6, erkennt Getarnte) · Schützenpanzer 3.200 (Maschinenkanone 16, Explosionsradius 1,5, durchschlägt Panzerung) · Leopard 2A4 7.800 (Kanone 106, 1,5 s, Radius 4,5) · **Leopard 2A7** 24.000 (Kanone 366, 1,1 s, Reichweite 31, Radius 8,5, immun gegen Betäubung).
+- Kreuzpfade: A 1–2 geben der Panzerstellung +1 Reichweite und schnelleres Nachladen, B 1–2 der Rammkolonne +2 Rammschaden und ein Fahrzeug 1 s früher (Spähwagen-Stufe).
 
 ## Juggernaut und Railgunner (nach TDX)
 
@@ -101,9 +111,9 @@ Zielzeit = so lange muss ein Ziel anvisiert sein, bevor der erste Schuss fällt.
 
 Wie in BTD6: Sobald ein Turm im Laden oder auf der Karte angetippt ist, erscheint rechts oben über der Turmauswahl „ⓘ Ausbaupfade“. Er zeigt beide Pfade mit Bild, Name, Preis und kurzer Wirkung jeder Stufe (pausiert das Spiel).
 
-## Boss: Stahlratte (jede 20. Welle)
+## Boss: Stahlratte (Grenzfelder, Welle 20)
 
-Landkreuzer nach Vorbild P. 1000 (verkleinert, neutrale Lackierung). Kommt am Ende jeder 20. Welle (auf allen Karten), mit Banner und Boss-Lebensleiste. Leben 1.000 × Wellenfaktor (2.200), kugelfest, Tempo 15, Belohnung 400 Körner; erreicht er das Ziel, ist die Karte verloren. Alle 8 s: steht ein Turm in 340 px Umkreis, hält er 1,8 s an und feuert eine schwere Granate auf den teuersten Turm – Türme im Umkreis 50 px sind 4 s **betäubt** (schießen nicht, Sterne darüber).
+Landkreuzer nach Vorbild P. 1000 (verkleinert, neutrale Lackierung). Kommt am Ende von Welle 20 auf Grenzfelder, mit Banner und Boss-Lebensleiste. Leben 1.000 × Wellenfaktor (2.200), kugelfest, Tempo 15, Belohnung 400 Körner; erreicht er das Ziel, ist die Karte verloren. Alle 8 s: steht ein Turm in 340 px Umkreis, hält er 1,8 s an und feuert eine schwere Granate auf den teuersten Turm – Türme im Umkreis 50 px sind 4 s **betäubt** (schießen nicht, Sterne darüber).
 
 ## Einstellungen und Spielstand
 
