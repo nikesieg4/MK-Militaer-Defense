@@ -518,7 +518,11 @@
       if (S.freeplay) {
         const fp = S.welle - K.wellen;
         P.rekord[K.id] = Math.max(P.rekord[K.id] || 0, S.welle);
-        if (fp > 0 && fp % 20 === 0) { P.orden++; toast(`${fp} Freeplay-Wellen geschafft! +1 Verdienstorden`); }
+        // Freeplay-Orden nur, wenn die Karte wirklich besiegt ist (Sterne gespeichert)
+        if (fp > 0 && fp % 20 === 0) {
+          if (P.sterne[K.id] > 0) { P.orden++; toast(`${fp} Freeplay-Wellen geschafft! +1 Verdienstorden`); }
+          else toast(`${fp} Freeplay-Wellen geschafft – Orden gibt es erst, wenn die Karte besiegt ist.`);
+        }
         sichern();
       } else if (S.welle >= K.wellen && !S.ende) { S.ende = true; ende(true); }
     }
@@ -881,7 +885,7 @@
       <div style="display:flex;gap:12px;margin-top:16px"><button class="gold" type="button" id="zurKampagne" style="width:260px">Zur Kampagne</button><button class="rand" type="button" id="nochmal" style="width:220px">Nochmal spielen</button>${sieg ? '<button class="rand" type="button" id="freeplay" style="width:260px">∞ Freeplay weiterspielen</button>' : ''}</div>
       ${sieg ? '<p class="klein" style="margin-top:12px">Freeplay: Die Wellen gehen weiter, die Gegner werden jede Welle 10 % zäher. Alle 20 Freeplay-Wellen gibt es 1 Verdienstorden.</p>' : ''}`);
     $('zurKampagne').onclick = () => { if (sieg && naechste < A.karten.length) kWahl = naechste; kampagne(); };
-    if ($('freeplay')) $('freeplay').onclick = () => { S.freeplay = true; S.ende = false; S.pause = false; overlayZu(); toast('Freeplay! Die Gegner werden jede Welle stärker.'); oberflaeche(); };
+    if ($('freeplay')) $('freeplay').onclick = () => { if (!(P.sterne[K.id] > 0)) return; S.freeplay = true; S.ende = false; S.pause = false; overlayZu(); toast('Freeplay! Die Gegner werden jede Welle stärker.'); oberflaeche(); };
     $('nochmal').onclick = () => { overlayZu(); spielenDirekt(); };
   }
   function spielenDirekt() { S = neu(); letzteLeiste = ''; letztesPanel = ''; techZurueck = 'spiel'; overlayZu(); oberflaeche(); }

@@ -35,7 +35,7 @@ Die Wege führen aus der Karte hinaus (kein Kornspeicher mehr); Ostkolbistan end
 
 ## Freeplay
 
-Nach einem Sieg: „∞ Freeplay weiterspielen“. Die Wellen gehen weiter, Gegner-Leben steigen zusätzlich um **10 % pro Freeplay-Welle** (×1,1^n). **Alle 20 Freeplay-Wellen 1 Verdienstorden.** Rekord je Karte wird gespeichert und in der Kampagne angezeigt. Eine Niederlage im Freeplay kostet nichts.
+Nach einem Sieg: „∞ Freeplay weiterspielen“. Die Wellen gehen weiter, Gegner-Leben steigen zusätzlich um **10 % pro Freeplay-Welle** (×1,1^n). **Alle 20 Freeplay-Wellen 1 Verdienstorden – nur, wenn die Karte besiegt ist.** Rekord je Karte wird gespeichert und in der Kampagne angezeigt. Eine Niederlage im Freeplay kostet nichts.
 
 ## Spieler-Stufe
 
