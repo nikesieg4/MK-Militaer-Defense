@@ -56,7 +56,7 @@ Erfahrung (EP): jeder Abschuss = Körner-Belohnung des Gegners, jede geschaffte 
 
 ## Techbaum (dauerhaft)
 
-**Jeder Turm hat seinen eigenen Baum:** oben der Turm, darunter seine eigenen Verbesserungen (bauen aufeinander auf). Die Türme stehen in Zweigen: Der erste Turm eines Zweigs braucht den Ranger, jeder weitere den Turm links daneben. Rechts steht „Allgemein“. Die Fläche scrollt waagerecht (wischen oder Mausrad). Nur zwischen den Runden auf dem Weltbildschirm, bezahlt mit Verdienstorden.
+**Jeder Turm hat seinen eigenen Baum:** oben der Turm, darunter seine eigenen Verbesserungen (bauen aufeinander auf). Zweige: Start · Präzision & Logistik (Scharfschütze → Depot → Feldarzt) · Schwere Waffen (Juggernaut → Railgunner → Fahrzeugfabrik) · Explosiv & Feuer (Raketenwerfer → Flammenwerfer → Artillerie) · Energie (Laser Gunner). Die Türme stehen in Zweigen: Der erste Turm eines Zweigs braucht den Ranger, jeder weitere den Turm links daneben. Rechts steht „Allgemein“. Die Fläche scrollt waagerecht (wischen oder Mausrad). Nur zwischen den Runden auf dem Weltbildschirm, bezahlt mit Verdienstorden.
 
 | Turm (Orden) | Zweig | Eigene Verbesserungen (Orden) |
 | --- | --- | --- |
@@ -66,6 +66,11 @@ Erfahrung (EP): jeder Abschuss = Körner-Belohnung des Gegners, jede geschaffte 
 | Juggernaut (5) | Schwere Waffen | Schnellwechsel-Läufe (3, +8 % Feuerrate) → Heizweste (4, nicht einfrierbar) |
 | Railgunner (6) | Schwere Waffen | Kondensatoren (3, −10 % Nachladen) → Zielrechner (4, Zielzeit −30 %) |
 | Fahrzeugfabrik (6) | Schwere Waffen | Fließband (3, Fahrzeuge 15 % öfter) → Verbundpanzerung (4, +25 % Fahrzeug-HP) |
+| Feldarzt (4) | Präzision & Logistik | Sanitätskurs (3, +25 % Erholung) → Ladegerät (4, Ladungen 20 % öfter) |
+| Raketenwerfer (4) | Explosiv & Feuer | Leichtbau-Rohre (3, +10 % Reichweite) → Tandem-Sprengkopf (4, +25 % gegen Panzer) |
+| Flammenwerfer (4) | Explosiv & Feuer | Druckluft (3, +1 Reichweite) → Klebriges Napalm (3, Brand +2 s) |
+| Artillerie (6) | Explosiv & Feuer | Feuerleitstelle (3, −10 % Nachladen) → Größere Ladung (4, +15 % Radius) |
+| Laser Gunner (4) | Energie | Kühlrippen (3, −8 % Nachladen) → Fokuslinse (4, +10 % Schaden) |
 | Allgemein | – | Kriegskasse (2, +150 Startkörner) → Erntebonus (3, +10 % Wellenbonus) → Strohbunker (3, +20 Leben) → Mais-Reserve (5, +1 Leben je Welle) |
 
 Alte Spielstände mit Kornvorrat werden einmalig in Orden umgerechnet.
@@ -127,6 +132,25 @@ Jede Karte hat ein Genre. Dessen Gegner ersetzen etwa 85 % der normalen Gegner, 
 Das Felsplateau ist verschneit (Tannen, vereiste Tümpel, Schnee-Plateaus) und hat einen durchgehenden Schneefall-Effekt (170 Flocken in 3 Ebenen, leichter Wind).
 
 Anzeige im Spiel: Rauch-, Lawinen- und Sandsturmwolken, eingefrorene Türme (blau), verlangsamte Türme (weißer Ring), gestörte Türme (rotes Zickzack), Schildblase um Schildroboter, abgetauchte Bosse halb durchsichtig.
+
+## Turm-Paket 1 (nach TDX-Wiki)
+
+Werte und Ausbaupfade aus dem TDX-Wiki (Quelltexte im Info-Repo unter `seiten/td-ranger-sprites/tdx-quellen/`), Körnerpreise ×0,5. Reichweite und Explosionsradius in TDX-Einheiten (1 Einheit = 14 px). Die Turmleiste scrollt jetzt (11 Türme).
+
+| Turm (TDX-Vorbild) | Kosten | Grundwerte | Oberer Pfad | Unterer Pfad |
+| --- | --- | --- | --- | --- |
+| **Artillerie** (Artillery) | 925 | 65 Schaden, 11 s, Reichweite 65 (fast die ganze Karte), Radius 4 | Geübte Mannschaft 275 · M119+ 500 · Schnellfeuer 1.000 · Größere Granaten 3.250 · Dreifachrohr 9.250 (3er-Salve) | HE-Granaten 600 · Schwere Granaten 1.500 · M198-Haubitze 5.125 · Langes Rohr 6.000 · Himmelsfalke 50.000 (2.080 Schaden, Radius 13, erkennt Getarnte, betäubungsimmun) |
+| **Raketenwerfer** (Missile Trooper) | 425 | 40 Schaden, 7,5 s, Reichweite 16, Radius 2 | HE-Raketen 425 · Zielfernrohr 150 · SMAW+ 900 (Tarn) · Großer Sprengkopf 1.625 · Javelin 6.250 (×3 gegen Panzer, Zielzeit 3 s) | Schnelle Hände 120 · Ladetraining 130 · M2 Carl 1.200 · Großer Splitterradius 1.825 · Mehrfachwerfer 11.000 (alle 0,6 s eine Rakete) |
+| **Flammenwerfer** (Flame Trooper) | 425 | 2 Schaden alle 0,2 s im Kegel, Reichweite 6, Brand 1/s für 5 s | Heißere Flamme 575 · Größerer Werfer 1.125 · Napalm 2.625 · M3-Flammenwerfer 5.250 (brennende Gegner +5 % Schaden, betäubungsimmun) · Exo-Flammenanzug 15.250 (Feuerring: 500 Schaden + 100/s Brand) | *eigener Pfad „Brandsatz“* (TDX hat nur einen Pfad): Zündflaschen 400 · Brandlache 900 · Phosphor 2.400 (Tarn) · Feuerwand 5.000 · Inferno-Werfer 16.000 |
+| **Feldarzt** (Medic) | 250 | Erholung 50 %/s, Reichweite 12 | Heilzellen 200 · Stärkerer Strahl 415 · Medigun II 1.500 · Schutzladung 4.000 · Volle Schutzladung 14.500 | Mehr Reichweite 75 · Ausdauerzellen 225 · Weitstrahl 1.400 · Kraftladung 4.625 · Volle Kraftladung 14.000 |
+| **Laser Gunner** | 465 | 4 Schaden, 0,7 s, Reichweite 14, erkennt Getarnte, Laser voll gegen Panzer | Laser-Wissen 240 · Energiezellen 525 · Laser-Gewehr 2.100 (Durchschlag) · Verstärkte Technik 3.250 (Schockmunition) · Laser-Minigun 14.375 | Bessere Sensoren 75 · Erweiterte Technik 200 · Laser-MP 1.640 (Tarn-Sensor I) · Laser-MP+ 3.500 (II) · Doppel-MP 8.175 (III) |
+
+Anpassungen an unser Spiel:
+- **Artillerie:** Die Granate fliegt im Bogen und zielt dorthin, wo der Gegner bei der Landung sein wird. Explosionen wirken voll gegen Panzerung.
+- **Raketen:** Explosionsschaden wird mit dem Panzer-Faktor (×1 bis ×3) gegen gepanzerte Gegner und Fahrzeuge multipliziert.
+- **Flammenwerfer:** trifft alle Gegner im Kegel. Feuer wirkt voll gegen Panzerung. Die Reichweite ist 6 statt 5, weil Türme bei uns einen Mindestabstand zum Weg haben. Brandlachen: alle 5 s / 3 s / 2 s eine brennende Fläche am Ziel (Radius 40 / 56 / 76 px).
+- **Feldarzt:** In TDX heilt er Turm-Leben, die es bei uns nicht gibt. Hier lässt die „Erholung“ Betäubung, Einfrieren und Lawinen-Verlangsamung von Türmen in Reichweite schneller enden (50 %/s = Betäubung läuft 1,5× so schnell ab). Schutzladung: alle 20 s ein Turm 5 s (voll: 8 s, auch der Arzt selbst) immun gegen Betäubung, Frost, Lawine und Störsender. Kraftladung: alle 25 s der teuerste Turm in Reichweite 8 s doppelter (voll: 10 s dreifacher) Schaden.
+- **Laser Gunner:** Schockmunition alle 20 s für 6 s (+30 % Schaden, Treffer bremsen Gegner 2 s um 30 %). Tarn-Sensor I/II/III alle 12/10/8 s: deckt Getarnte in Reichweite 6 s auf und trifft sie mit 4/6/8-fachem Schaden.
 
 ## Fahrzeugfabrik
 
