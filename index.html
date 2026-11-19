@@ -29,10 +29,10 @@ button{font-family:inherit}
 #leiste{position:absolute;left:1140px;top:0;width:300px;height:810px;background:var(--flaeche);border-left:2px solid var(--gold);display:flex;flex-direction:column;gap:12px;padding:18px 16px}
 #leiste h2{margin:0;font-family:'Space Grotesk',sans-serif;font-size:26px}
 #tuerme{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.turmkarte{position:relative;height:150px;border-radius:12px;border:2px solid var(--linie);background:var(--flaeche2);color:#fff;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;overflow:hidden}
+.turmkarte{position:relative;height:128px;border-radius:12px;border:2px solid var(--linie);background:var(--flaeche2);color:#fff;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;overflow:hidden}
 .turmkarte.aktiv{border-color:var(--gold2);background:var(--rot2)}
-.turmkarte .bild{width:112px;height:112px;margin-top:-4px;background-repeat:no-repeat}
-.turmkarte .name{font-size:13px;font-weight:700;margin-top:-6px}
+.turmkarte .bild{width:96px;height:96px;margin-top:-2px;background-repeat:no-repeat}
+.turmkarte .name{font-size:13px;font-weight:700;margin-top:-4px}
 .turmkarte .preis{font-size:13px;font-weight:700;color:var(--gold2)}
 .turmkarte.gesperrt .bild{opacity:.35}.turmkarte.gesperrt .preis{color:var(--leise)}
 .turmkarte.teuer .preis{color:#FF8A7A}
@@ -54,7 +54,7 @@ button{font-family:inherit}
 .aend{display:flex;flex-direction:column;gap:2px;font-size:12px;color:var(--leise)}.aend b{color:#fff;font-weight:700}.aend .neu{color:#7CD992;font-weight:700}
 .zu{width:44px;height:44px;flex-shrink:0;align-self:flex-start;border-radius:10px;border:1px solid var(--linie);background:var(--flaeche2);color:#fff;cursor:pointer;font-size:18px}
 #overlay{position:absolute;inset:0;z-index:4;display:none;align-items:center;justify-content:center;background:rgba(26,3,6,.82)}
-.karte{background:var(--flaeche);border:2px solid var(--gold);border-radius:18px;padding:28px 32px;max-width:980px;width:100%}
+.karte{background:var(--flaeche);border:2px solid var(--gold);border-radius:18px;padding:28px 32px;max-width:980px;width:100%;max-height:790px;overflow-y:auto}
 .karte h1{margin:0 0 6px;font-family:'Space Grotesk',sans-serif;font-size:40px}
 .karte p{color:var(--leise);line-height:1.5}
 .karte.voll{position:absolute;inset:0;max-width:none;width:1440px;height:810px;border:none;border-radius:0;padding:0;background:var(--dunkel)}
@@ -105,7 +105,7 @@ button{font-family:inherit}
   </div>
 
   <div id="leiste">
-    <div style="display:flex;justify-content:space-between;align-items:baseline"><h2>Türme</h2><span class="klein">antippen, dann platzieren</span></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;min-height:40px"><h2>Türme</h2><button type="button" id="pfadeKnopf" class="rand" style="display:none;height:40px;padding:0 12px;font-size:14px">ⓘ Ausbaupfade</button><span class="klein" id="leisteTipp">antippen, dann platzieren</span></div>
     <div id="tuerme"></div>
     <div id="hinweis">Wähle einen Turm und tippe auf eine freie Stelle neben dem Weg.</div>
     <div style="flex:1"></div>

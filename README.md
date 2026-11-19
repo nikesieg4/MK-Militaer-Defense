@@ -48,7 +48,7 @@ Erfahrung (EP): jeder Abschuss = Körner-Belohnung des Gegners, jede geschaffte 
 
 ## Techbaum (dauerhaft)
 
-Wie im Design: Zeilen Türme / Scharfschütze / Ranger / Allgemein mit Verbindungslinien. **Nur zwischen den Runden** auf dem Weltbildschirm (Kampagne) erreichbar, bezahlt mit Verdienstorden. Ranger (frei) → **Scharfschütze 3** → (nächster Turm: bald); Ruhige Hand 2 → Maisfeld-Tarnung 4; Ranger-Drill I 2 → II 3 → Goldmagazin 4; Kriegskasse 2 (+150 Startkörner) → Erntebonus 3 → Strohbunker 3 (+20 Leben) → Mais-Reserve 5 (+1 Leben je Welle). Alte Spielstände mit Kornvorrat werden einmalig in Orden umgerechnet.
+Wie im Design: Zeilen Türme / Scharfschütze / Ranger / Allgemein mit Verbindungslinien. **Nur zwischen den Runden** auf dem Weltbildschirm (Kampagne) erreichbar, bezahlt mit Verdienstorden. Ranger (frei) → **Scharfschütze 3** → **Logistik-Depot 3** → **Juggernaut 5** → **Railgunner 6**; Ruhige Hand 2 → Maisfeld-Tarnung 4; Ranger-Drill I 2 → II 3 → Goldmagazin 4; Kriegskasse 2 (+150 Startkörner) → Erntebonus 3 → Strohbunker 3 (+20 Leben) → Mais-Reserve 5 (+1 Leben je Welle). Alte Spielstände mit Kornvorrat werden einmalig in Orden umgerechnet.
 
 ## Logistik-Depot (Wirtschaftsturm)
 
@@ -64,6 +64,24 @@ Kosten 400 Körner, im Techbaum freischalten (3 Verdienstorden, nach Scharfschü
 | 5 | Staatsreserve: 1.500 | 9.500 | Feldkrankenhaus: 30 Leben, −30 % | 9.000 |
 
 Kreuzpfade wirken zusammen: Körner = Versorgung × (1 − Abzug), z. B. 2-2 = 200 × 0,9 = 180 Körner + 3 Leben. Mindestabstand zum Weg und zu anderen Türmen ist größer als bei Schützen.
+
+## Juggernaut und Railgunner (nach TDX)
+
+Werte nach dem TDX-Wiki, Körnerpreise ×0,5. Größere Türme (Bildgröße 150, mehr Platzbedarf).
+
+**Juggernaut** – 3.200 Körner, Minigun im Dauerfeuer (Schaden 8, Nachladen 0,1 s, Reichweite 15).
+- Oberer Pfad *Feuerwalze*: Kraft-Handschuhe 425 · Gelenkdämpfer 800 · Langer Lauf 3.100 · Power-Minigun 4.500 (durchschlägt Panzerung) · Feuerwalze 33.500 (alle 20 s für 6 s HE-Munition: explosive Kugeln, mehr Reichweite).
+- Unterer Pfad *Doppelfeuer*: Bessere Handhabung 300 · AP-Munition 1.800 · Doppel-Minigun 3.750 (erkennt Getarnte) · Kybernetischer Puls 7.000 · Volle Leistung 60.000 (Zielzeit 1,2 s, alle 30 s für 8 s Overcharge +25 % Schaden und Reichweite, immun gegen Betäubung).
+
+**Railgunner** – 1.600 Körner, sofortiger Laserstrahl (Schaden 150, Nachladen 5 s, Reichweite 22), Laserschaden voll gegen Panzerung.
+- Oberer Pfad *Schienen-Soldat*: Kühlzellen 525 · Erweiterte Optik 1.250 · Schienen-Soldat 2.500 (erkennt Getarnte) · Kampfanzug 6.000 (Durchschlag +1) · Super-Schienen-Soldat 13.500.
+- Unterer Pfad *Geschützstellung*: Proto-Munition 925 · Blitzzellen 1.600 · Geschützstellung 4.000 (Sandsack-Stellung) · Doppelrohr 8.500 · XRT-9000 100.000 (Schaden 19.010, Nachladen 0,85 s, Zielzeit 10 s, immun gegen Betäubung).
+
+Zielzeit = so lange muss ein Ziel anvisiert sein, bevor der erste Schuss fällt.
+
+## Ausbaupfade-Knopf
+
+Wie in BTD6: Sobald ein Turm im Laden oder auf der Karte angetippt ist, erscheint rechts oben über der Turmauswahl „ⓘ Ausbaupfade“. Er zeigt beide Pfade mit Bild, Name, Preis und kurzer Wirkung jeder Stufe (pausiert das Spiel).
 
 ## Boss: Stahlratte (Grenzfelder, Welle 20)
 
