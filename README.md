@@ -107,11 +107,11 @@ Anzeige im Spiel: Rauch-, Lawinen- und Sandsturmwolken, eingefrorene Türme (bla
 
 900 Körner, im Techbaum nach dem Railgunner (6 Orden). Große Halle mit Vorplatz, braucht Platz wie das Depot. Die Stufe 0-0 ist ein Humvee.
 
-- **Rammkolonne (oberer Pfad):** Während einer Welle fährt alle *Intervall* Sekunden ein Fahrzeug vom Wegende rückwärts zum Start (höchstens 3 je Fabrik, bei 2 Wegen abwechselnd). Jeder Gegner, den es berührt, bekommt den Rammschaden; die Panzerung des Fahrzeugs sinkt um den verursachten Schaden, bei 0 explodiert es. Bosse zerstören das Fahrzeug sofort.
-  Rammbügel 300 (Rammschaden 4 → 8, Panzerung 10 → 16) · Panzerplatten 650 (Panzerung 36, alle 6 s) · MRAP 1.900 (Rammschaden 22, Panzerung 96, rammt Panzerung voll) · Räumschild 4.200 (57 / 256, alle 4,5 s) · **Keiler** 15.000 (Minenräumpanzer: 207 / 1.156, Fräswalze wirft Gegner 35 px zurück).
+- **Rammkolonne (oberer Pfad):** Während einer Welle fährt alle *Intervall* Sekunden ein Fahrzeug vom Wegende rückwärts zum Start (höchstens 3 je Fabrik, bei 2 Wegen abwechselnd). **Jedes Fahrzeug hat HP und gibt sie beim Rammen an die Gegner ab:** Hat der Gegner weniger Leben als das Fahrzeug HP, stirbt er und das Fahrzeug behält den Rest (10 HP gegen 7 Leben → Gegner tot, Fahrzeug 3 HP). Reicht es nicht, verliert der Gegner so viele Leben, wie das Fahrzeug noch HP hat, und das Fahrzeug explodiert (3 HP gegen 4 Leben → Gegner 1 Leben, Fahrzeug kaputt). Gepanzerte Gegner kosten ohne MRAP-Stufe das 1/0,35-fache an HP, Gegner im Schild eines Schildroboters das Doppelte; abgetauchte Bosse werden nicht getroffen. HP-Leiste über jedem Fahrzeug.
+  Fahrzeug-HP: Humvee 10 · Rammbügel 300 (20) · Panzerplatten 650 (40, alle 6 s) · MRAP 1.900 (100, rammt Panzerung voll, alle 5 s) · Räumschild 4.200 (260, alle 4,5 s) · **Keiler** 15.000 (Minenräumpanzer: 1.160 HP, Fräswalze wirft überlebende Gegner 35 px zurück).
 - **Panzerstellung (unterer Pfad):** Das Fahrzeug bleibt auf dem Vorplatz stehen, der Turm dreht sich zum Ziel und schießt.
   Schweres MG 400 (Humvee mit MG, Schaden 3, 0,2 s, Reichweite 17) · Spähwagen 1.100 (Schaden 6, erkennt Getarnte) · Schützenpanzer 3.200 (Maschinenkanone 16, Explosionsradius 1,5, durchschlägt Panzerung) · Leopard 2A4 7.800 (Kanone 106, 1,5 s, Radius 4,5) · **Leopard 2A7** 24.000 (Kanone 366, 1,1 s, Reichweite 31, Radius 8,5, immun gegen Betäubung).
-- Kreuzpfade: A 1–2 geben der Panzerstellung +1 Reichweite und schnelleres Nachladen, B 1–2 der Rammkolonne +2 Rammschaden und ein Fahrzeug 1 s früher (Spähwagen-Stufe).
+- Kreuzpfade: A 1–2 geben der Panzerstellung +1 Reichweite und schnelleres Nachladen, B 1–2 der Rammkolonne +4 Fahrzeug-HP und ein Fahrzeug 1 s früher (Spähwagen-Stufe).
 
 ## Juggernaut und Railgunner (nach TDX)
 
