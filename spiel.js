@@ -137,11 +137,11 @@
   };
 
   const GEGNER = {
-    soldat: { hp: 3, tempo: 52, lohn: 5, schaden: 1, gr: 0.6 },
-    tarnsoldat: { hp: 3, tempo: 66, lohn: 7, schaden: 1, gr: 0.6, tarn: true },
-    panzersoldat: { hp: 12, tempo: 34, lohn: 14, schaden: 2, gr: 0.62, panzer: true },
-    humvee: { hp: 30, tempo: 100, lohn: 20, schaden: 5, gr: 0.6 },
-    panzer: { hp: 180, tempo: 24, lohn: 100, schaden: 20, gr: 0.6, panzer: true },
+    soldat: { hp: 3, tempo: 52, lohn: 5, schaden: 1, gr: 0.6, name: 'Soldat' },
+    tarnsoldat: { hp: 3, tempo: 66, lohn: 7, schaden: 1, gr: 0.6, tarn: true, name: 'Tarnsoldat' },
+    panzersoldat: { hp: 12, tempo: 34, lohn: 14, schaden: 2, gr: 0.62, panzer: true, name: 'Gepanzerter Soldat' },
+    humvee: { hp: 30, tempo: 100, lohn: 20, schaden: 5, gr: 0.6, name: 'Humvee' },
+    panzer: { hp: 180, tempo: 24, lohn: 100, schaden: 20, gr: 0.6, panzer: true, name: 'Panzer' },
     kamikaze: { hp: 2, tempo: 135, lohn: 6, schaden: 15, gr: 0.6, name: 'Kamikaze' },
     sanitaeter: { hp: 8, tempo: 46, lohn: 12, schaden: 2, gr: 0.6, heiler: true, name: 'Sanitäter' },
     motorrad: { hp: 10, tempo: 150, lohn: 12, schaden: 4, gr: 0.55, name: 'Motorrad' },
@@ -390,6 +390,7 @@
   const XP_BEDARF = (stufe) => Math.round((3000 * Math.pow(1.35, stufe - 1)) / 50) * 50;   // 3.000, 4.050, 5.450, …
   let xpSichern = 0;
   function erfahrung(n) {
+    if (S && S.sandbox) return;   // Sandbox: keine Belohnungen
     P.xp += n;
     while (P.xp >= XP_BEDARF(P.stufe)) {
       P.xp -= XP_BEDARF(P.stufe); P.stufe++; P.orden++;
@@ -840,13 +841,14 @@
     S.strahlen = S.strahlen.filter((st) => st.t < 0.3);
     S.texte = S.texte.filter((tx) => tx.t < 1.8);
     S.effekte = S.effekte.filter((e) => e.t < e.dauer);
-    if (S.leben <= 0 && !S.ende) { S.leben = 0; S.ende = true; ende(false); }
+    if (S.leben <= 0 && !S.ende && !S.sandbox) { S.leben = 0; S.ende = true; ende(false); }
     if (S.laeuft && !S.spawn.length && !S.gegner.length) {
       S.laeuft = false;
       S.koerner += Math.round((150 + S.welle * 25) * (P.tech.ernte ? 1.1 : 1));
       if (P.tech.reserve) S.leben += 1;
       erfahrung(10 + S.welle * 2);
-      if (S.freeplay) {
+      if (S.sandbox) { /* Sandbox: unendlich Wellen, keine Belohnungen */ }
+      else if (S.freeplay) {
         const fp = S.welle - K.wellen;
         P.rekord[K.id] = Math.max(P.rekord[K.id] || 0, S.welle);
         // Freeplay-Orden nur, wenn die Karte wirklich besiegt ist (Sterne gespeichert)
@@ -1029,7 +1031,7 @@
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'turmkarte';
       if (!typ) { b.classList.add('gesperrt'); b.disabled = true; b.innerHTML = '<div class="bild" style="display:flex;align-items:center;justify-content:center;font-size:36px;color:#5A2A30;font-weight:700">?</div><span class="name">Bald</span><span class="preis">gesperrt</span>'; box.appendChild(b); continue; }
-      const def = TUERME[typ], frei = !def.tech || P.tech[def.tech];
+      const def = TUERME[typ], frei = !def.tech || P.tech[def.tech] || S.sandbox;
       if (!frei) b.classList.add('gesperrt');
       else if (S.koerner < def.kosten) b.classList.add('teuer');
       if (S.platzieren === typ) b.classList.add('aktiv');
@@ -1050,8 +1052,8 @@
     $('auto').textContent = S.auto ? 'Auto an' : 'Auto'; $('auto').setAttribute('aria-pressed', S.auto ? 'true' : 'false'); $('auto').style.background = S.auto ? '#C9A227' : ''; $('auto').style.color = S.auto ? '#1C1416' : '';
     const pfadTyp = S.platzieren || (S.wahl && S.wahl.typ);
     $('pfadeKnopf').style.display = pfadTyp ? 'block' : 'none'; $('leisteTipp').style.display = pfadTyp ? 'none' : 'inline';
-    $('welle').textContent = S.welle; $('wellenMax').textContent = S.freeplay ? '∞ Freeplay' : K.wellen;
-    $('koerner').textContent = fmt(S.koerner); $('leben').textContent = Math.max(0, Math.ceil(S.leben));
+    $('welle').textContent = S.welle; $('wellenMax').textContent = S.sandbox ? '∞' : S.freeplay ? '∞ Freeplay' : K.wellen;
+    $('koerner').textContent = isFinite(S.koerner) ? fmt(S.koerner) : '∞'; $('leben').textContent = isFinite(S.leben) ? Math.max(0, Math.ceil(S.leben)) : '∞';
     $('tempo').textContent = S.tempo + '×'; $('pause').textContent = S.pause ? '▶' : '❚❚';
     const wk = $('welleKnopf');
     wk.disabled = S.laeuft || S.ende;
@@ -1109,7 +1111,7 @@
     return { welle: S.welle, koerner: Math.floor(S.koerner), leben: Math.max(1, Math.ceil(S.leben)), startLeben: S.startLeben, freeplay: !!S.freeplay,
       tuerme: S.tuerme.map((t) => ({ typ: t.typ, x: Math.round(t.x), y: Math.round(t.y), a: t.a, b: t.b, ziel: t.ziel || 0, investiert: Math.round(t.investiert) })) };
   }
-  function laufSichern() { if (!K || !S || S.ende) return; if (!P.laeufe) P.laeufe = {}; P.laeufe[K.id] = laufStand(); sichern(); }
+  function laufSichern() { if (!K || !S || S.ende || S.sandbox) return; if (!P.laeufe) P.laeufe = {}; P.laeufe[K.id] = laufStand(); sichern(); }
   function laufLoeschen() { if (P.laeufe && K) delete P.laeufe[K.id]; sichern(); }
   function welleStarten() {
     if (S.laeuft || S.ende) return;
@@ -1258,6 +1260,7 @@
           ${z === 'zu' ? `<div style="height:60px;border-radius:14px;border:2px dashed #5A2A30;color:#E7D4D6;display:flex;align-items:center;justify-content:center;gap:10px;font-size:15px;font-weight:700">${SCHLOSS} Erst ${L[kWahl - 1].land} gewinnen</div>`
             : P.laeufe && P.laeufe[k.id] ? `<div style="display:flex;flex-direction:column;gap:8px"><button type="button" class="gold" id="fortsetzen">▶ Fortsetzen · Welle ${P.laeufe[k.id].welle + 1}${P.laeufe[k.id].freeplay ? ' (Freeplay)' : ''}</button><button type="button" class="rand" id="spielen" style="height:46px">Neu starten</button></div>`
             : `<button type="button" class="gold" id="spielen">▶ ${st ? 'Nochmal spielen' : 'Spielen'}</button>`}
+          <button type="button" class="rand" id="sandbox" style="height:44px">Sandbox · Testmodus</button>
         </div></div>`, true);
     document.querySelectorAll('[data-karte]').forEach((b) => b.onclick = () => { kWahl = +b.dataset.karte; kampagne(); });
     $('zumTech').onclick = () => techZeigen('kampagne');
@@ -1266,19 +1269,65 @@
       $('fortsetzen').onclick = () => spielen(kWahl, true);
       $('spielen').onclick = () => bestaetigen('Neu starten?', `Deine gespeicherte Runde auf ${k.land} (ab Welle ${P.laeufe[k.id].welle + 1}) wird dabei verworfen.`, 'Neu starten', () => { delete P.laeufe[k.id]; sichern(); spielen(kWahl); }, true, () => kampagne());
     } else if ($('spielen')) $('spielen').onclick = () => spielen(kWahl);
+    $('sandbox').onclick = () => spielen(kWahl, false, true);
   }
-  async function spielen(i, fortsetzen) {
-    const knopf = $(fortsetzen ? 'fortsetzen' : 'spielen'); if (knopf) knopf.textContent = 'Lädt …';
+  async function spielen(i, fortsetzen, sandbox) {
+    const knopf = $(sandbox ? 'sandbox' : fortsetzen ? 'fortsetzen' : 'spielen'); if (knopf) knopf.textContent = 'Lädt …';
     await karteLaden(i);
     S = neu(); letzteLeiste = ''; letztesPanel = ''; techZurueck = 'spiel';
+    if (sandbox) { S.sandbox = true; S.koerner = Infinity; S.leben = Infinity; S.startLeben = Infinity; }
+    sandboxLeiste();
     const l = fortsetzen && P.laeufe && P.laeufe[K.id];
     if (l) {
       Object.assign(S, { welle: l.welle, koerner: l.koerner, leben: l.leben, startLeben: l.startLeben, freeplay: l.freeplay });
       S.tuerme = l.tuerme.map((t) => ({ ...t, winkel: -Math.PI / 2, cd: 0.3, burstRest: 0, burstCd: 0, schussT: 1, granCd: 2, brandCd: 4, leuchtCd: 1 }));
     }
     overlayZu(); oberflaeche();
+    if (sandbox) { $('hinweis').textContent = 'Sandbox'; return; }
     $('hinweis').textContent = l ? `Fortgesetzt: ${K.land}, weiter mit Welle ${l.welle + 1}.` : `${K.land} – ${K.titel}: ${K.text} Wähle einen Turm und tippe neben den Weg.`;
   }
+  // ---------- Sandbox: Spawn-Menü unter der Turmauswahl ----------
+  const SPAWN_GRUPPEN = {
+    Standard: ['soldat', 'tarnsoldat', 'kamikaze', 'panzersoldat', 'sanitaeter', 'humvee', 'motorrad', 'schuetzenpanzer', 'panzer'],
+    Dschungel: ['buschkaempfer', 'buschgeist', 'machetenlaeufer', 'rauchwerfer', 'pickup'],
+    Winter: ['gebirgsjaeger', 'schneetarner', 'skijaeger', 'eisgranatier', 'schneemobil'],
+    Fabrik: ['kampfroboter', 'tarnroboter', 'spinnenroboter', 'schildroboter', 'mech'],
+    Marine: ['marinesoldat', 'kampftaucher', 'funker', 'amphibienfahrzeug'],
+    'Wüste': ['raeuber', 'sandgeist', 'kamelreiter', 'buggy', 'pluenderer'],
+    Bosse: ['kommandant', 'pistenraupe', 'werkmeister', 'hovercraft', 'raeuberhauptmann', 'ratte', 'dschungelkoenig', 'lawinenbrecher', 'schrottkoloss', 'seeschlange', 'sandsturmkhan', 'kolbenfresser']
+  };
+  let spawnGruppe = 'Standard', spawnZahl = 1;
+  const spawnIcons = {};
+  function spawnIcon(typ) {
+    if (spawnIcons[typ]) return spawnIcons[typ];
+    const an = A.gegnerAtlas.animationen[typ], fr = A.gegnerAtlas.frames[an.bilder[0]];
+    const c = document.createElement('canvas'); c.width = 88; c.height = 88;
+    const k = Math.min(84 / fr.w, 84 / fr.h), x = c.getContext('2d');
+    x.drawImage(A.gegnerImg, fr.x, fr.y, fr.w, fr.h, (88 - fr.w * k) / 2, (88 - fr.h * k) / 2, fr.w * k, fr.h * k);
+    return (spawnIcons[typ] = c.toDataURL());
+  }
+  function sandboxLeiste() {
+    const an = !!(S && S.sandbox);
+    $('spawnMenu').style.display = an ? 'flex' : 'none';
+    $('leiste').classList.toggle('sandbox', an);
+    $('hinweis').style.display = an ? 'none' : 'block';
+    $('leisteFlex').style.display = an ? 'none' : 'block';
+    $('leisteFuss').textContent = an ? 'Sandbox: unendlich Körner, Leben und Wellen – keine Belohnungen, nichts wird gespeichert.' : 'Techbaum nur zwischen den Runden – auf dem Weltbildschirm (Haus-Knopf oben rechts).';
+    if (!an) return;
+    $('spawnAnzahl').innerHTML = [1, 5, 10].map((n) => `<button type="button" data-zahl="${n}" class="${n === spawnZahl ? 'an' : ''}">×${n}</button>`).join('');
+    $('spawnTabs').innerHTML = Object.keys(SPAWN_GRUPPEN).map((g) => `<button type="button" data-gruppe="${g}" class="${g === spawnGruppe ? 'an' : ''}">${g}</button>`).join('');
+    $('spawnListe').innerHTML = SPAWN_GRUPPEN[spawnGruppe].map((typ) => `<button type="button" data-spawn="${typ}" title="${GEGNER[typ].name || typ}" aria-label="${GEGNER[typ].name || typ} spawnen"><img src="${spawnIcon(typ)}" width="44" height="44" alt=""></button>`).join('');
+    document.querySelectorAll('[data-zahl]').forEach((b) => b.onclick = () => { spawnZahl = +b.dataset.zahl; sandboxLeiste(); });
+    document.querySelectorAll('[data-gruppe]').forEach((b) => b.onclick = () => { spawnGruppe = b.dataset.gruppe; sandboxLeiste(); });
+    document.querySelectorAll('[data-spawn]').forEach((b) => b.onclick = () => {
+      const typ = b.dataset.spawn;
+      for (let i = 0; i < spawnZahl; i++) { const g = gegnerNeu(typ); g.d = -20 - i * 26; S.gegner.push(g); }
+      $('spawnMenu').title = '';
+      toast(`${spawnZahl} × ${GEGNER[typ].name || typ}`);
+    });
+    $('spawnWeg').onclick = () => { S.gegner = []; S.fahrzeuge = []; S.geschosse = []; };
+  }
+
   function ende(sieg, aufgegeben) {
     laufLoeschen();
     if (S.freeplay) {
@@ -1308,10 +1357,16 @@
     if ($('freeplay')) $('freeplay').onclick = () => { if (!(P.sterne[K.id] > 0)) return; S.freeplay = true; S.ende = false; S.pause = false; overlayZu(); toast('Freeplay! Die Gegner werden jede Welle stärker.'); oberflaeche(); };
     $('nochmal').onclick = () => { overlayZu(); spielenDirekt(); };
   }
-  function spielenDirekt() { laufLoeschen(); S = neu(); letzteLeiste = ''; letztesPanel = ''; techZurueck = 'spiel'; overlayZu(); oberflaeche(); }
+  function spielenDirekt() { laufLoeschen(); S = neu(); sandboxLeiste(); letzteLeiste = ''; letztesPanel = ''; techZurueck = 'spiel'; overlayZu(); oberflaeche(); }
   $('heim').onclick = () => {
     if (!S || S.ende) { kampagne(); return; }
     const vorPause = S.pause; S.pause = true;
+    if (S.sandbox) {
+      overlay(`<h1>Sandbox verlassen?</h1><p>Im Testmodus wird nichts gespeichert.</p><div style="display:flex;gap:12px;margin-top:16px"><button class="gold" type="button" id="jaWeg" style="width:220px">Ja, zur Kampagne</button><button class="rand" type="button" id="neinBleib" style="width:220px">Weiterspielen</button></div>`);
+      $('jaWeg').onclick = () => { S.ende = true; S.auto = false; kWahl = A.karten.indexOf(K); kampagne(); };
+      $('neinBleib').onclick = () => { S.pause = vorPause; overlayZu(); };
+      return;
+    }
     const ab = S.laeuft ? S.welle : S.welle + 1;
     overlay(`<h1>Karte verlassen?</h1><p>Deine Runde wird gespeichert. Auf der Karte kannst du sie mit <b>„Fortsetzen“</b> weiterspielen – ab Welle ${ab}${S.laeuft ? ' (die laufende Welle startet neu)' : ''}.</p>
       <div style="display:flex;gap:12px;margin-top:16px"><button class="gold" type="button" id="jaWeg" style="width:220px">Ja, zur Kampagne</button><button class="rand" type="button" id="neinBleib" style="width:220px">Weiterspielen</button></div>`);

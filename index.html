@@ -27,6 +27,10 @@ button{font-family:inherit}
 .knopf{min-width:56px;height:48px;border-radius:12px;border:1px solid var(--linie);background:rgba(43,5,9,.92);color:#fff;font-size:16px;font-weight:800;cursor:pointer}
 .knopf:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 #leiste{position:absolute;left:1140px;top:0;width:300px;height:810px;background:var(--flaeche);border-left:2px solid var(--gold);display:flex;flex-direction:column;gap:12px;padding:18px 16px}
+#spawnListe button,#spawnTabs button,#spawnAnzahl button{border:1px solid #5A2A30;background:#2B0509;color:#E7D4D6;border-radius:6px;cursor:pointer;font:700 11px Inter,sans-serif}
+#spawnListe button{height:48px;padding:0;display:flex;align-items:center;justify-content:center}
+#spawnListe button:hover,#spawnTabs button.an,#spawnAnzahl button.an{border-color:#C9A227;color:#E8C766;background:#4A0810}
+#spawnTabs button,#spawnAnzahl button{height:24px;padding:0 7px}
 #leiste h2{margin:0;font-family:'Space Grotesk',sans-serif;font-size:26px}
 #tuerme{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .turmkarte{position:relative;height:128px;border-radius:12px;border:2px solid var(--linie);background:var(--flaeche2);color:#fff;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;overflow:hidden}
@@ -36,6 +40,7 @@ button{font-family:inherit}
 .turmkarte .preis{font-size:13px;font-weight:700;color:var(--gold2)}
 .turmkarte.gesperrt .bild{opacity:.35}.turmkarte.gesperrt .preis{color:var(--leise)}
 .turmkarte.teuer .preis{color:#FF8A7A}
+#leiste.sandbox .turmkarte{height:84px}#leiste.sandbox .turmkarte .bild{transform:scale(.6);transform-origin:50% 0;margin-bottom:-38px}#leiste.sandbox .turmkarte .preis{display:none}#leiste.sandbox{gap:8px}
 .schloss{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:14px;background:var(--dunkel);display:flex;align-items:center;justify-content:center}
 #hinweis{font-size:13px;line-height:1.45;color:var(--leise);background:var(--flaeche2);border-radius:10px;padding:10px 12px;min-height:60px}
 .gold{height:64px;border-radius:14px;border:none;background:var(--gold);color:#1C1416;font-size:19px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px}
@@ -108,8 +113,14 @@ button{font-family:inherit}
     <div style="display:flex;justify-content:space-between;align-items:center;min-height:40px"><h2>Türme</h2><button type="button" id="pfadeKnopf" class="rand" style="display:none;height:40px;padding:0 12px;font-size:14px">ⓘ Ausbaupfade</button><span class="klein" id="leisteTipp">antippen, dann platzieren</span></div>
     <div id="tuerme"></div>
     <div id="hinweis">Wähle einen Turm und tippe auf eine freie Stelle neben dem Weg.</div>
-    <div style="flex:1"></div>
-    <div class="klein" style="text-align:center">Techbaum nur zwischen den Runden – auf dem Weltbildschirm (Haus-Knopf oben rechts).</div>
+    <div id="spawnMenu" style="display:none;flex-direction:column;gap:6px;min-height:0;flex:1">
+      <div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#E8C766">Gegner spawnen</b><span id="spawnAnzahl" style="display:flex;gap:4px"></span></div>
+      <div id="spawnTabs" style="display:flex;flex-wrap:wrap;gap:4px"></div>
+      <div id="spawnListe" style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;overflow-y:auto;min-height:0;flex:1;align-content:start"></div>
+      <button type="button" id="spawnWeg" class="rand" style="height:32px;font-size:13px">Alle Gegner entfernen</button>
+    </div>
+    <div id="leisteFlex" style="flex:1"></div>
+    <div class="klein" id="leisteFuss" style="text-align:center">Techbaum nur zwischen den Runden – auf dem Weltbildschirm (Haus-Knopf oben rechts).</div>
     <button class="gold" id="welleKnopf" type="button">▶ Welle 1 starten</button>
   </div>
 

@@ -66,6 +66,12 @@ Kosten 400 Körner, im Techbaum freischalten (3 Verdienstorden, nach Scharfschü
 
 Kreuzpfade wirken zusammen: Körner = Versorgung × (1 − Abzug), z. B. 2-2 = 200 × 0,9 = 180 Körner + 3 Leben. Mindestabstand zum Weg und zu anderen Türmen ist größer als bei Schützen.
 
+## Sandbox (Testmodus)
+
+Auf jeder Karte der Kampagne, auch auf noch gesperrten, gibt es den Knopf **„Sandbox · Testmodus“**. Dort hast du unendlich Körner und Leben (Anzeige ∞), unendlich Wellen (kein Sieg am Kartenende) und alle Türme ohne Techbaum. Die Verbesserungen aus dem Techbaum wirken trotzdem. **Keine Belohnungen:** keine EP, Stufen, Orden oder Sterne, kein Freeplay-Rekord, nichts wird gespeichert. Der Haus-Knopf verlässt die Sandbox ohne Speichern.
+
+Unter der Turmauswahl (kompaktere Turmkarten) sitzt das **Spawn-Menü**: Gruppen Standard, Dschungel, Winter, Fabrik, Marine, Wüste und Bosse (alle Mini- und Endbosse). Die Anzahl ×1, ×5 oder ×10 lässt sich wählen. Antippen setzt die Gegner am Wegstart ein (Leben nach aktueller Welle). „Alle Gegner entfernen“ räumt die Karte. Normale Wellen lassen sich zusätzlich starten.
+
 ## Gegner
 
 | Gegner | Leben | Tempo | Lohn | Schaden am Ziel | Besonderheit | ab Welle |
