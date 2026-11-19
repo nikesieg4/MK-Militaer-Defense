@@ -1,7 +1,7 @@
 // Maiskolbistan Militär-Defense – Testkarte 1 (Westkolbistan)
 // Reines JavaScript, kein Bau-Schritt. Grafiken aus dem Maiskolbistan-Info-Repo (seiten/td-ranger-sprites).
 'use strict';
-const VERSION = '2026-11-19-2';   // bei jedem Update hochzählen (auch in index.html)
+const VERSION = '2026-11-19-3';   // bei jedem Update hochzählen (auch in index.html)
 
 (() => {
   const W = 1140, H = 810, MITTE = 570;
@@ -1066,14 +1066,20 @@ const VERSION = '2026-11-19-2';   // bei jedem Update hochzählen (auch in index
     wk.disabled = S.laeuft || S.ende;
     wk.textContent = S.laeuft ? 'Welle läuft …' : `▶ Welle ${S.welle + 1} starten`;
     const schluessel = JSON.stringify([S.platzieren, P.tech, S.koerner >= 250, S.koerner >= 285, S.koerner >= 400, S.koerner >= 900, S.koerner >= 1600, S.koerner >= 3200]);
+    if (gedrueckt) return;
     if (schluessel !== letzteLeiste) { letzteLeiste = schluessel; leisteZeichnen(); }
     panelZeichnen();
   }
-  let letztesPanel = '';
+  let letztesPanel = '', gedrueckt = false;
+  // Solange ein Finger/die Maus gedrückt ist, keine Knöpfe neu bauen (sonst geht der Klick verloren)
+  window.addEventListener('pointerdown', () => { gedrueckt = true; }, true);
+  window.addEventListener('pointerup', () => { setTimeout(() => { gedrueckt = false; }, 0); }, true);
+  window.addEventListener('pointercancel', () => { gedrueckt = false; }, true);
   function panelZeichnen() {
     const p = $('panel'), t = S.wahl;
     if (!t) { p.style.display = 'none'; letztesPanel = ''; return; }
-    const schluessel = JSON.stringify([S.tuerme.indexOf(t), t.a, t.b, t.ziel, Math.floor(S.koerner), P.tech]);
+    const kosten = (pfad) => { const st = pfad === 'A' ? t.a : t.b; return st < 5 && TUERME[t.typ][pfad][st] ? ausbauKosten(t, pfad) : Infinity; };
+    const schluessel = JSON.stringify([S.tuerme.indexOf(t), t.a, t.b, t.ziel, S.koerner >= kosten('A'), S.koerner >= kosten('B'), Math.round(t.investiert), P.tech]);
     if (schluessel === letztesPanel) return;
     letztesPanel = schluessel;
     p.style.display = 'flex';
@@ -1474,6 +1480,9 @@ const VERSION = '2026-11-19-2';   // bei jedem Update hochzählen (auch in index
     $('buehne').style.transformOrigin = 'center center';
   }
   window.addEventListener('resize', skalieren);
+  for (const e of ['gesturestart', 'gesturechange', 'gestureend']) document.addEventListener(e, (ev) => ev.preventDefault(), { passive: false });
+  document.addEventListener('dblclick', (ev) => ev.preventDefault(), { passive: false });
+  document.addEventListener('touchmove', (ev) => { if (ev.touches.length > 1) ev.preventDefault(); }, { passive: false });
 
   // ---------- Schleife ----------
   let vorher = 0, uiT = 0;

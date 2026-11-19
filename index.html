@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Maiskolbistan Militär-Defense</title>
 <meta name="description" content="Tower Defense der Republik Maiskolbistan: Verteidige 7 Karten mit Ranger, Scharfschütze und Logistik-Depot – mit Boss, Techbaum und Freeplay. Kostenlos im Browser.">
 <meta property="og:title" content="Militär-Defense – Republik Maiskolbistan">
@@ -15,8 +15,9 @@
 <style>
 :root{--rot:#7A0F1A;--rot2:#4A0810;--dunkel:#1A0306;--flaeche:#2B0509;--flaeche2:#3A0A10;--linie:#5A2A30;--gold:#C9A227;--gold2:#E8C766;--text:#FFFFFF;--leise:#E7D4D6}
 *{box-sizing:border-box}
-html,body{margin:0;height:100%;background:var(--dunkel);color:var(--text);font-family:Inter,system-ui,sans-serif;overflow:hidden}
+html,body{touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-text-size-adjust:100%;overscroll-behavior:none;margin:0;height:100%;background:var(--dunkel);color:var(--text);font-family:Inter,system-ui,sans-serif;overflow:hidden}
 button{font-family:inherit}
+button{touch-action:manipulation}#feld{touch-action:none}
 #buehne{position:absolute;left:50%;top:50%;width:1440px;height:810px;transform-origin:0 0}
 #feld{position:absolute;left:0;top:0;width:1140px;height:810px;display:block;cursor:default}
 .chip{display:flex;align-items:center;gap:10px;background:rgba(43,5,9,.92);border:1px solid var(--linie);border-radius:12px;padding:10px 16px}
@@ -127,6 +128,6 @@ button{font-family:inherit}
   <div id="toast" role="status" aria-live="polite" style="position:absolute;left:570px;top:96px;transform:translateX(-50%);display:none;z-index:5;background:#2B0509;border:2px solid #C9A227;border-radius:12px;padding:12px 20px;font-weight:800;font-size:17px;color:#E8C766;white-space:nowrap"></div>
   <div id="overlay"><div class="karte" id="overlayInhalt"></div></div>
 </div>
-<script src="spiel.js?v=2026-11-19-2"></script>
+<script src="spiel.js?v=2026-11-19-3"></script>
 </body>
 </html>

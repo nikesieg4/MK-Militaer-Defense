@@ -34,6 +34,12 @@ Die Wege führen aus der Karte hinaus (kein Kornspeicher mehr); Ostkolbistan end
 - **Zweite Währung: Verdienstorden** (dauerhaft, nur für den Techbaum): für besiegte Karten, Stufenaufstiege und alle 20 Freeplay-Wellen – erster Sieg 3–6 Orden, jeder Wiederholungssieg 1 Orden, dazu +1 je neu erreichtem Stern. Niederlage/Aufgeben: 0.
 - Fortschritt im Browser gespeichert (`localStorage` `mkd-fortschritt-1`).
 
+## Bedienung (Maus, Touch, Apple)
+
+- Das Ausbau-Panel und die Turmleiste werden nur noch neu aufgebaut, wenn sich wirklich etwas ändert (Stufe, leistbar ja/nein). Vorher passierte das bei jedem Korn, also bis zu zehnmal pro Sekunde, und Klicks gingen verloren, wenn der Knopf zwischen Drücken und Loslassen ersetzt wurde. Während ein Finger oder die Maus gedrückt ist, wird gar nichts neu aufgebaut.
+- Kein Zoomen auf iPhone/iPad: `maximum-scale=1, user-scalable=no`, `touch-action: manipulation` (kein Doppeltipp-Zoom), `touch-action: none` auf dem Spielfeld, Pinch-Gesten (`gesturestart`) und Doppelklick werden abgefangen, kein Textmarkieren und kein Lupen-/Kontextmenü beim langen Drücken.
+- `VERSION` in spiel.js und `?v=` in index.html bei jedem Update hochzählen (gegen alten Browser-Zwischenspeicher).
+
 ## Fortsetzen und Auto
 
 - **Fortsetzen:** Zu Beginn jeder Welle (und nach jeder Welle, jedem Bau, Ausbau, Verkauf zwischen den Wellen) wird der Stand der Runde gespeichert: Welle, Körner, Leben, Türme, Freeplay. ⌂ → „Ja, zur Kampagne“ sichert die Runde; auf der Karte erscheint **„Fortsetzen · Welle N“** (dazu „Neu starten“ mit Rückfrage). Wer mitten in einer Welle geht, startet diese Welle neu. Ein Sieg oder eine Niederlage löscht den gespeicherten Lauf. Gespeichert wird im signierten Spielstand (`laeufe`, je Karte einer).
