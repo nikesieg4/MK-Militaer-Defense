@@ -1,7 +1,7 @@
 // Maiskolbistan Militär-Defense – Testkarte 1 (Westkolbistan)
 // Reines JavaScript, kein Bau-Schritt. Grafiken aus dem Maiskolbistan-Info-Repo (seiten/td-ranger-sprites).
 'use strict';
-const VERSION = '2026-11-19-3';   // bei jedem Update hochzählen (auch in index.html)
+const VERSION = '2026-11-19-4';   // bei jedem Update hochzählen (auch in index.html)
 
 (() => {
   const W = 1140, H = 810, MITTE = 570;
@@ -193,23 +193,35 @@ const VERSION = '2026-11-19-3';   // bei jedem Update hochzählen (auch in index
   };
 
   // Techbaum wie im Design: Spalte c, Zeile r; dauerhaft, bezahlt mit Verdienstorden (nur zwischen den Runden)
+  // Techbaum: jeder Turm hat einen eigenen Baum (Turm oben, darunter seine Verbesserungen).
+  // Türme stehen in Zweigen; der erste Turm eines Zweigs braucht den Ranger, die weiteren den Turm links daneben.
   const TECH = [
-    { id: 'ranger', n: 'Ranger', t: 'Start-Turm. Feuerstöße, zwei Ausbaupfade.', c: 0, r: 0, k: 0, bild: 'ranger' },
-    { id: 'sniper', n: 'Scharfschütze', t: 'Große Reichweite, Tarn- und Schwerkaliber-Pfad.', c: 1, r: 0, k: 3, req: 'ranger', bild: 'sniper' },
-    { id: 'depot', n: 'Logistik-Depot', t: 'Körner zu Beginn jeder Welle, Sanität auch Leben.', c: 2, r: 0, k: 3, req: 'sniper', bild: 'depot' },
-    { id: 'juggernaut', n: 'Juggernaut', t: 'Minigun-Turm mit enormem Dauerfeuer.', c: 1, r: 2, k: 5, req: 'ranger', bild: 'juggernaut' },
-    { id: 'railgun', n: 'Railgunner', t: 'Laser-Schienenkanone gegen Bosse und Panzer.', c: 2, r: 2, k: 6, req: 'juggernaut', bild: 'railgun' },
-    { id: 'fabrik', n: 'Fahrzeugfabrik', t: 'Rammfahrzeuge oder ein stehender Panzer.', c: 3, r: 2, k: 6, req: 'railgun', bild: 'fabrik' },
-    { id: 'ruhig', n: 'Ruhige Hand', t: 'Scharfschützen: +15 % Reichweite.', c: 2, r: 1, k: 2, req: 'sniper' },
-    { id: 'tarnung', n: 'Maisfeld-Tarnung', t: 'Phantom-Ausbauten 20 % günstiger.', c: 3, r: 1, k: 4, req: 'ruhig' },
-    { id: 'drill1', n: 'Ranger-Drill I', t: 'Ranger: +10 % Feuerrate.', c: 1, r: 3, k: 2, req: 'ranger' },
-    { id: 'drill2', n: 'Ranger-Drill II', t: 'Ranger: weitere +10 % Feuerrate.', c: 2, r: 3, k: 3, req: 'drill1' },
-    { id: 'goldmag', n: 'Goldmagazin', t: 'Neue Ranger starten mit Panzerbrechend.', c: 3, r: 3, k: 4, req: 'drill2' },
-    { id: 'kasse', n: 'Kriegskasse', t: '+150 Körner Startgeld.', c: 0, r: 4, k: 2 },
-    { id: 'ernte', n: 'Erntebonus', t: '+10 % Körner pro geschaffter Welle.', c: 1, r: 4, k: 3, req: 'kasse' },
-    { id: 'bunker', n: 'Strohbunker', t: '+20 Leben zu Spielbeginn.', c: 2, r: 4, k: 3, req: 'ernte' },
-    { id: 'reserve', n: 'Mais-Reserve', t: '+1 Leben nach jeder Welle.', c: 3, r: 4, k: 5, req: 'bunker' }
+    { id: 'ranger', n: 'Ranger', t: 'Start-Turm. Feuerstöße, zwei Ausbaupfade.', k: 0, bild: 'ranger', zweig: 'Start' },
+    { id: 'drill1', n: 'Ranger-Drill I', t: 'Ranger: +10 % Feuerrate.', k: 2, turm: 'ranger' },
+    { id: 'drill2', n: 'Ranger-Drill II', t: 'Ranger: weitere +10 % Feuerrate.', k: 3, turm: 'ranger' },
+    { id: 'goldmag', n: 'Goldmagazin', t: 'Neue Ranger starten mit Panzerbrechend.', k: 4, turm: 'ranger' },
+    { id: 'sniper', n: 'Scharfschütze', t: 'Große Reichweite, Tarn- und Schwerkaliber-Pfad.', k: 3, req: 'ranger', bild: 'sniper', zweig: 'Präzision & Logistik' },
+    { id: 'ruhig', n: 'Ruhige Hand', t: 'Scharfschützen: +15 % Reichweite.', k: 2, turm: 'sniper' },
+    { id: 'tarnung', n: 'Maisfeld-Tarnung', t: 'Phantom-Ausbauten 20 % günstiger.', k: 4, turm: 'sniper' },
+    { id: 'depot', n: 'Logistik-Depot', t: 'Körner zu Beginn jeder Welle, Sanität auch Leben.', k: 3, req: 'sniper', bild: 'depot', zweig: 'Präzision & Logistik' },
+    { id: 'depot1', n: 'Lagerverwalter', t: 'Depots bringen 10 % mehr Körner.', k: 3, turm: 'depot' },
+    { id: 'depot2', n: 'Feldküche', t: 'Depot-Ausbauten 15 % günstiger.', k: 3, turm: 'depot' },
+    { id: 'juggernaut', n: 'Juggernaut', t: 'Minigun-Turm mit enormem Dauerfeuer.', k: 5, req: 'ranger', bild: 'juggernaut', zweig: 'Schwere Waffen' },
+    { id: 'jug1', n: 'Schnellwechsel-Läufe', t: 'Juggernauts: +8 % Feuerrate.', k: 3, turm: 'juggernaut' },
+    { id: 'jug2', n: 'Heizweste', t: 'Juggernauts lassen sich nicht einfrieren.', k: 4, turm: 'juggernaut' },
+    { id: 'railgun', n: 'Railgunner', t: 'Laser-Schienenkanone gegen Bosse und Panzer.', k: 6, req: 'juggernaut', bild: 'railgun', zweig: 'Schwere Waffen' },
+    { id: 'rail1', n: 'Kondensatoren', t: 'Railgunner: −10 % Nachladezeit.', k: 3, turm: 'railgun' },
+    { id: 'rail2', n: 'Zielrechner', t: 'Railgunner: Zielzeit −30 %.', k: 4, turm: 'railgun' },
+    { id: 'fabrik', n: 'Fahrzeugfabrik', t: 'Rammfahrzeuge oder fahrende Panzer.', k: 6, req: 'railgun', bild: 'fabrik', zweig: 'Schwere Waffen' },
+    { id: 'fab1', n: 'Fließband', t: 'Fabriken schicken 15 % öfter Fahrzeuge.', k: 3, turm: 'fabrik' },
+    { id: 'fab2', n: 'Verbundpanzerung', t: 'Fahrzeuge haben 25 % mehr HP.', k: 4, turm: 'fabrik' },
+    { id: 'kasse', n: 'Kriegskasse', t: '+150 Körner Startgeld.', k: 2, allg: true },
+    { id: 'ernte', n: 'Erntebonus', t: '+10 % Körner pro geschaffter Welle.', k: 3, allg: true, req: 'kasse' },
+    { id: 'bunker', n: 'Strohbunker', t: '+20 Leben zu Spielbeginn.', k: 3, allg: true, req: 'ernte' },
+    { id: 'reserve', n: 'Mais-Reserve', t: '+1 Leben nach jeder Welle.', k: 5, allg: true, req: 'bunker' }
   ];
+  // Verbesserungen eines Turms bauen aufeinander auf (erste braucht den Turm)
+  TECH.forEach((d, i) => { if (d.turm) { const vor = TECH.slice(0, i).reverse().find((x) => x.turm === d.turm); d.req = vor ? vor.id : d.turm; } });
   // Genre je Karte: Genre-Gegner ersetzen die normalen größtenteils (85 %); Maisburg mischt alle Genres
   const GENRE = { paprikistan: 'dschungel', nordkolbistan: 'winter', maisdosistan: 'fabrik', ostkolbistan: 'marine', suedkolbistan: 'wueste', maisburg: 'alle' };
   const ERSATZ = {
@@ -224,7 +236,6 @@ const VERSION = '2026-11-19-3';   // bei jedem Update hochzählen (auch in index
     maisdosistan: { ende: 'schrottkoloss', mini: ['werkmeister'] }, ostkolbistan: { ende: 'seeschlange', mini: ['hovercraft'] }, suedkolbistan: { ende: 'sandsturmkhan', mini: ['raeuberhauptmann'] },
     maisburg: { ende: 'kolbenfresser', mini: ['kommandant', 'pistenraupe', 'werkmeister', 'hovercraft', 'raeuberhauptmann'] }
   };
-  const REIHEN = ['Zweig Präzision & Logistik', 'Scharfschütze', 'Zweig Schwere Waffen', 'Ranger', 'Allgemein'];
   const ORDEN = [3, 3, 4, 4, 5, 5, 6];   // Verdienstorden beim ersten Sieg je Karte (+1 je neuem Stern; Wiederholung: 1)
   const HP_KARTE = [1, 1.08, 1.16, 1.24, 1.32, 1.42, 1.55];
   const SPEICHER = 'mkd-fortschritt-1';
@@ -269,7 +280,7 @@ const VERSION = '2026-11-19-3';   // bei jedem Update hochzählen (auch in index
   const signaturOk = (o) => o && typeof o === 'object' && typeof o.pruefsumme === 'string' &&
     o.pruefsumme === pruefsumme(kanonisch({ spiel: o.spiel, version: o.version, gespeichert: o.gespeichert, daten: o.daten }));
   // Inhalt prüfen: nur bekannte Felder und sinnvolle Werte
-  const TECH_IDS = ['ranger', 'sniper', 'depot', 'juggernaut', 'railgun', 'fabrik', 'ruhig', 'tarnung', 'drill1', 'drill2', 'goldmag', 'kasse', 'ernte', 'bunker', 'reserve'];
+  const TECH_IDS = ['ranger', 'sniper', 'depot', 'juggernaut', 'railgun', 'fabrik', 'depot1', 'depot2', 'jug1', 'jug2', 'rail1', 'rail2', 'fab1', 'fab2', 'ruhig', 'tarnung', 'drill1', 'drill2', 'goldmag', 'kasse', 'ernte', 'bunker', 'reserve'];
   const KARTEN_IDS = ['westkolbistan', 'paprikistan', 'nordkolbistan', 'maisdosistan', 'ostkolbistan', 'suedkolbistan', 'maisburg'];
   const ganz = (v, a, b) => Number.isInteger(v) && v >= a && v <= b;
   function standPruefen(d) {
@@ -416,6 +427,10 @@ const VERSION = '2026-11-19-3';   // bei jedem Update hochzählen (auch in index
     for (let i = 0; i < t.b; i++) add(def.B[i].d);
     if (t.typ === 'ranger') { if (P.tech.drill1) w.reload *= 0.9; if (P.tech.drill2) w.reload *= 0.9; }
     if (t.typ === 'sniper' && P.tech.ruhig) w.range *= 1.15;
+    if (t.typ === 'juggernaut' && P.tech.jug1) w.reload *= 0.92;
+    if (t.typ === 'railgun' && P.tech.rail1) w.reload *= 0.9;
+    if (t.typ === 'railgun' && P.tech.rail2 && w.zielzeit) w.zielzeit *= 0.7;
+    if (t.typ === 'fabrik') { if (P.tech.fab1) w.intervall *= 0.85; if (P.tech.fab2) w.kraft *= 1.25; }
     if (w.dauerfeuer && t.typ !== 'juggernaut') { w.reload = 0.15; w.burst = 1; }
     if (w.reloadSetzen) w.reload = w.reloadSetzen;
     if (S && t.heBis > S.zeit) { w.range += 6; w.heAktiv = true; }
@@ -426,13 +441,14 @@ const VERSION = '2026-11-19-3';   // bei jedem Update hochzählen (auch in index
     w.reload = Math.max(0.05, w.reload);
     w.rangePx = w.range * EINHEIT;
     if (def.fabrik) { w.fabrik = true; w.stand = t.b > t.a; if (!w.stand) { w.range = 0; w.rangePx = 0; } w.intervall = Math.max(2, w.intervall); }
-    if (def.depot) { w.koernerProWelle = Math.round(w.geld * w.faktor); w.depot = true; }
+    if (def.depot) { w.koernerProWelle = Math.round(w.geld * w.faktor * (P.tech.depot1 ? 1.1 : 1)); w.depot = true; }
     return w;
   }
   function ausbauKosten(t, pfad) {
     const def = TUERME[t.typ], stufe = pfad === 'A' ? t.a : t.b;
     let k = def[pfad][stufe].k;
     if (t.typ === 'sniper' && pfad === 'A' && P.tech.tarnung) k = Math.round(k * 0.8);
+    if (t.typ === 'depot' && P.tech.depot2) k = Math.round(k * 0.85);
     return k;
   }
   const zahl = (n) => (Math.round(n * 100) / 100).toLocaleString('de-DE');
@@ -771,7 +787,7 @@ const VERSION = '2026-11-19-3';   // bei jedem Update hochzählen (auch in index
     }
     if (F.frost && bereit('frost', F.frost.cd)) {
       let ziel = null, best = F.frost.r;
-      for (const t of S.tuerme) { const d = Math.hypot(t.x - g.x, t.y - g.y); if (d < best && !TUERME[t.typ].depot && !werte(t).stunImmun) { best = d; ziel = t; } }
+      for (const t of S.tuerme) { const d = Math.hypot(t.x - g.x, t.y - g.y); if (d < best && !TUERME[t.typ].depot && !werte(t).stunImmun && !(t.typ === 'juggernaut' && P.tech.jug2)) { best = d; ziel = t; } }
       if (ziel) { ziel.betaeubtBis = Math.max(ziel.betaeubtBis || 0, S.zeit + F.frost.dauer); ziel.frostBis = S.zeit + F.frost.dauer; S.texte.push({ x: ziel.x, y: ziel.y - 60, text: 'Eingefroren!', farbe: '#9FE0FF', t: 0 }); }
       else g.cds.frost = 0.5;
     }
@@ -1175,38 +1191,52 @@ const VERSION = '2026-11-19-3';   // bei jedem Update hochzählen (auch in index
   let techZurueck = null;
   function techZeigen(zurueck) {
     if (zurueck) techZurueck = zurueck;
-    const NW = 250, NH = 108, X = [40, 315, 590, 865, 1140], Y = [128, 266, 404, 542, 680], byId = {};
+    const NW = 250, NH = 108, SP = 278, Y0 = 62, DY = 128, byId = {};
     TECH.forEach((d) => { byId[d.id] = d; });
-    let linien = '', knoten = '', zahl = 0;
+    // Spalten: jeder Turm eine Spalte, darunter seine Verbesserungen; ganz rechts „Allgemein“
+    const tuerme = TECH.filter((d) => d.bild), pos = {};
+    tuerme.forEach((d, i) => { pos[d.id] = { x: 40 + i * SP, y: Y0 }; TECH.filter((u) => u.turm === d.id).forEach((u, r) => { pos[u.id] = { x: 40 + i * SP, y: Y0 + (r + 1) * DY }; }); });
+    const ax = 40 + tuerme.length * SP + 30;
+    TECH.filter((d) => d.allg).forEach((d, r) => { pos[d.id] = { x: ax, y: Y0 + r * DY }; });
+    const breite = ax + NW + 40;
+    let linien = '', knoten = '', schilder = '', zahl = 0;
+    const seg = (x, y, w, h, c) => `<div aria-hidden="true" style="position:absolute;left:${x}px;top:${y}px;width:${w}px;height:${h}px;background:${c};border-radius:2px"></div>`;
     for (const d of TECH) {
       if (!d.req) continue;
-      const p = byId[d.req], c = P.tech[p.id] ? '#C9A227' : '#5A2A30';
-      const x1 = X[p.c], y1 = Y[p.r], x2 = X[d.c], y2 = Y[d.r];
-      const seg = (x, y, w, h) => `<div aria-hidden="true" style="position:absolute;left:${x}px;top:${y}px;width:${w}px;height:${h}px;background:${c};border-radius:2px"></div>`;
-      if (p.r === d.r) linien += seg(x1 + NW, y1 + NH / 2 - 2, x2 - x1 - NW, 4);
-      else { const cx = x1 + NW / 2 - 2; linien += seg(cx, y1 + NH, 4, y2 + NH / 2 - y1 - NH) + seg(cx, y2 + NH / 2 - 2, x2 - cx, 4); }
+      const p = pos[d.req], q = pos[d.id], c = P.tech[d.req] ? '#C9A227' : '#5A2A30';
+      if (p.x === q.x) linien += seg(p.x + NW / 2 - 2, p.y + NH, 4, q.y - p.y - NH, c);                 // senkrecht in der Spalte
+      else if (q.x - p.x === SP && !d.turm) linien += seg(p.x + NW, p.y + NH / 2 - 2, SP - NW, 4, c);  // Nachbar im Zweig
+      else { const yb = Y0 - 18; linien += seg(p.x + NW / 2 - 2, yb, 4, 18, c) + seg(p.x + NW / 2, yb, q.x - p.x, 4, c) + seg(q.x + NW / 2 - 2, yb, 4, 18, c); }   // Zweig-Anfang ← Ranger
     }
+    // Zweig-Beschriftungen über den Türmen
+    let vorher = null;
+    tuerme.forEach((d, i) => { if (d.zweig !== vorher) { schilder += `<div style="position:absolute;left:${40 + i * SP}px;top:8px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#E8C766">${d.zweig}</div>`; vorher = d.zweig; } });
+    schilder += `<div style="position:absolute;left:${ax}px;top:8px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#E8C766">Allgemein</div>`;
     for (const d of TECH) {
       const hat = !!P.tech[d.id]; if (hat) zahl++;
       const reqOk = !d.req || !!P.tech[d.req], frei = !hat && reqOk && !d.bald, kann = frei && P.orden >= d.k;
-      let btn = hat ? (d.k ? 'Gekauft' : 'Freigeschaltet') : d.bald ? 'Bald' : !reqOk ? 'Benötigt: ' + byId[d.req].n : kann ? (d.bild ? 'Freischalten · ' : 'Kaufen · ') + d.k + (d.bild ? '' : ' Orden') : d.k + ' Orden · zu wenig';
-      const rand = hat ? '#E8C766' : frei ? '#C9A227' : '#5A2A30';
+      const btn = hat ? (d.k ? 'Gekauft' : 'Freigeschaltet') : d.bald ? 'Bald' : !reqOk ? 'Benötigt: ' + byId[d.req].n : kann ? (d.bild ? 'Freischalten · ' : 'Kaufen · ') + d.k + (d.bild ? '' : ' Orden') : d.k + ' Orden · zu wenig';
+      const rand = hat ? '#E8C766' : frei ? '#C9A227' : '#5A2A30', { x, y } = pos[d.id];
       const img = d.bild ? `<div style="width:72px;height:84px;flex-shrink:0;border-radius:10px;background:#1A0306;overflow:hidden"><div style="${schraegStil(d.bild, 0, 0, 120)};width:120px;height:120px;margin:-20px 0 0 -24px;opacity:${hat ? 1 : 0.4}"></div></div>` : '';
-      knoten += `<div style="position:absolute;left:${X[d.c]}px;top:${Y[d.r]}px;width:${NW}px;height:${NH}px;box-sizing:border-box;border-radius:14px;border:2px solid ${rand};background:${hat ? '#4A0810' : '#2B0509'};display:flex;gap:10px;padding:8px 12px;opacity:${d.bald ? 0.55 : 1}">${img}
+      knoten += `<div style="position:absolute;left:${x}px;top:${y}px;width:${NW}px;height:${NH}px;box-sizing:border-box;border-radius:14px;border:2px solid ${rand};background:${hat ? '#4A0810' : '#2B0509'};display:flex;gap:10px;padding:8px 12px;opacity:${d.bald ? 0.55 : 1}">${img}
         <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px"><div style="display:flex;justify-content:space-between;gap:6px"><span style="font-size:${d.bild ? 14 : 15}px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.n}</span>${hat ? '<span style="color:#E8C766;font-weight:800" aria-label="gekauft">✓</span>' : !reqOk || d.bald ? `<span style="color:#E7D4D6" aria-label="gesperrt">${SCHLOSS}</span>` : ''}</div>
         <span style="font-size:${d.bild ? 11 : 12}px;line-height:1.3;color:#E7D4D6;flex:1;min-height:0;overflow:hidden">${d.t}</span>
         <button type="button" data-tech="${d.id}" ${kann ? '' : 'disabled'} style="height:34px;flex-shrink:0;border-radius:8px;border:none;background:${kann ? '#C9A227' : hat ? '#2B0509' : '#3A0A10'};color:${kann ? '#1C1416' : hat ? '#E8C766' : '#E7D4D6'};font-size:13px;font-weight:800;cursor:${kann ? 'pointer' : 'default'}">${btn}</button></div></div>`;
     }
-    const labels = REIHEN.map((r, k) => `<div style="position:absolute;left:${X[Math.min(...TECH.filter((d) => d.r === k).map((d) => d.c))]}px;top:${Y[k] - 22}px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#E8C766">${r}</div>`).join('');
+    const legende = `<div style="position:absolute;right:40px;bottom:14px;display:flex;gap:18px;font-size:12px;color:#E7D4D6;align-items:center">
+        <span style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:4px;border:2px solid #E8C766;background:#4A0810"></span>gekauft</span>
+        <span style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:4px;border:2px solid #C9A227;background:#2B0509"></span>kaufbar</span>
+        <span style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:4px;border:2px solid #5A2A30;background:#2B0509"></span>gesperrt</span>
+        <span>${breite > 1440 ? '← zur Seite wischen/scrollen →' : ''}</span></div>`;
+    const alteScroll = $('techFlaeche') ? $('techFlaeche').scrollLeft : 0;
     overlay(`<div style="position:absolute;left:0;top:0;width:1440px;height:96px;box-sizing:border-box;padding:0 40px;display:flex;align-items:center;justify-content:space-between;background:#2B0509;border-bottom:2px solid #C9A227">
         <div style="display:flex;align-items:center;gap:18px"><button type="button" id="techZu" class="knopf" aria-label="Zurück" style="width:48px">‹</button>
-          <div><h1 style="margin:0;font-size:34px;line-height:1">Techbaum</h1><span style="font-size:14px;color:#E7D4D6">Türme freischalten und dauerhafte Verbesserungen kaufen – bezahlt mit Verdienstorden für besiegte Karten</span></div></div>
+          <div><h1 style="margin:0;font-size:34px;line-height:1">Techbaum</h1><span style="font-size:14px;color:#E7D4D6">Jeder Turm hat seinen eigenen Baum – erst den Turm freischalten, dann seine Verbesserungen. Bezahlt mit Verdienstorden.</span></div></div>
         <div style="display:flex;align-items:center;gap:14px"><span style="font-size:14px;color:#E7D4D6">${zahl - 1} von ${TECH.length - 1} erforscht</span>${vorratChip()}</div></div>
-      ${labels}${linien}${knoten}
-      <div style="position:absolute;left:1140px;top:266px;width:250px;display:flex;flex-direction:column;gap:10px;font-size:12px;color:#E7D4D6"><span style="font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#E8C766">Legende</span>
-        <span style="display:flex;align-items:center;gap:8px"><span style="width:16px;height:16px;border-radius:4px;border:2px solid #E8C766;background:#4A0810"></span>gekauft</span>
-        <span style="display:flex;align-items:center;gap:8px"><span style="width:16px;height:16px;border-radius:4px;border:2px solid #C9A227;background:#2B0509"></span>kaufbar</span>
-        <span style="display:flex;align-items:center;gap:8px"><span style="width:16px;height:16px;border-radius:4px;border:2px solid #5A2A30;background:#2B0509"></span>gesperrt</span></div>`, true);
+      <div id="techFlaeche" style="position:absolute;left:0;top:98px;width:1440px;height:670px;overflow-x:auto;overflow-y:hidden;touch-action:pan-x"><div style="position:relative;width:${breite}px;height:650px">${schilder}${linien}${knoten}</div></div>${legende}`, true);
+    $('techFlaeche').scrollLeft = alteScroll;
+    // Mausrad scrollt waagerecht
+    $('techFlaeche').addEventListener('wheel', (ev) => { if (Math.abs(ev.deltaY) > Math.abs(ev.deltaX)) { $('techFlaeche').scrollLeft += ev.deltaY; ev.preventDefault(); } }, { passive: false });
     document.querySelectorAll('[data-tech]').forEach((b) => b.onclick = () => {
       const d = byId[b.dataset.tech];
       if (P.tech[d.id] || P.orden < d.k || (d.req && !P.tech[d.req]) || d.bald) return;

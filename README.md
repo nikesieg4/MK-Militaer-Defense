@@ -56,7 +56,19 @@ Erfahrung (EP): jeder Abschuss = Körner-Belohnung des Gegners, jede geschaffte 
 
 ## Techbaum (dauerhaft)
 
-Verzweigt ab dem Ranger, mit Verbindungslinien. **Nur zwischen den Runden** auf dem Weltbildschirm (Kampagne) erreichbar, bezahlt mit Verdienstorden. Ranger (frei) → Zweig *Präzision & Logistik*: **Scharfschütze 3** → **Logistik-Depot 3**; Zweig *Schwere Waffen*: **Juggernaut 5** → **Railgunner 6** → **Fahrzeugfabrik 6**; Ruhige Hand 2 → Maisfeld-Tarnung 4; Ranger-Drill I 2 → II 3 → Goldmagazin 4; Kriegskasse 2 (+150 Startkörner) → Erntebonus 3 → Strohbunker 3 (+20 Leben) → Mais-Reserve 5 (+1 Leben je Welle). Alte Spielstände mit Kornvorrat werden einmalig in Orden umgerechnet.
+**Jeder Turm hat seinen eigenen Baum:** oben der Turm, darunter seine eigenen Verbesserungen (bauen aufeinander auf). Die Türme stehen in Zweigen: Der erste Turm eines Zweigs braucht den Ranger, jeder weitere den Turm links daneben. Rechts steht „Allgemein“. Die Fläche scrollt waagerecht (wischen oder Mausrad). Nur zwischen den Runden auf dem Weltbildschirm, bezahlt mit Verdienstorden.
+
+| Turm (Orden) | Zweig | Eigene Verbesserungen (Orden) |
+| --- | --- | --- |
+| Ranger (frei) | Start | Ranger-Drill I (2, +10 % Feuerrate) → Drill II (3, +10 %) → Goldmagazin (4, starten mit Panzerbrechend) |
+| Scharfschütze (3) | Präzision & Logistik | Ruhige Hand (2, +15 % Reichweite) → Maisfeld-Tarnung (4, Phantom-Ausbauten −20 %) |
+| Logistik-Depot (3) | Präzision & Logistik | Lagerverwalter (3, +10 % Körner) → Feldküche (3, Depot-Ausbauten −15 %) |
+| Juggernaut (5) | Schwere Waffen | Schnellwechsel-Läufe (3, +8 % Feuerrate) → Heizweste (4, nicht einfrierbar) |
+| Railgunner (6) | Schwere Waffen | Kondensatoren (3, −10 % Nachladen) → Zielrechner (4, Zielzeit −30 %) |
+| Fahrzeugfabrik (6) | Schwere Waffen | Fließband (3, Fahrzeuge 15 % öfter) → Verbundpanzerung (4, +25 % Fahrzeug-HP) |
+| Allgemein | – | Kriegskasse (2, +150 Startkörner) → Erntebonus (3, +10 % Wellenbonus) → Strohbunker (3, +20 Leben) → Mais-Reserve (5, +1 Leben je Welle) |
+
+Alte Spielstände mit Kornvorrat werden einmalig in Orden umgerechnet.
 
 ## Logistik-Depot (Wirtschaftsturm)
 
