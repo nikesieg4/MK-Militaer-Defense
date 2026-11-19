@@ -154,9 +154,21 @@
     if (!d.tech || typeof d.tech !== 'object' || !Object.entries(d.tech).every(([k, v]) => TECH_IDS.includes(k) && v === true) || !d.tech.ranger) return null;
     if (!d.sterne || typeof d.sterne !== 'object' || !Object.entries(d.sterne).every(([k, v]) => KARTEN_IDS.includes(k) && ganz(v, 1, 3))) return null;
     if (d.rekord != null && (typeof d.rekord !== 'object' || !Object.entries(d.rekord).every(([k, v]) => KARTEN_IDS.includes(k) && ganz(v, 0, 1e5)))) return null;
-    return { orden: d.orden, stufe: d.stufe, xp: d.xp, tech: { ...d.tech }, sterne: { ...d.sterne }, rekord: { ...(d.rekord || {}) } };
+    const laeufe = {};
+    if (d.laeufe != null) {
+      if (typeof d.laeufe !== 'object' || Array.isArray(d.laeufe)) return null;
+      for (const [k, l] of Object.entries(d.laeufe)) {
+        if (!KARTEN_IDS.includes(k) || !l || typeof l !== 'object') return null;
+        if (!ganz(l.welle, 0, 1e5) || !ganz(l.koerner, 0, 1e9) || !ganz(l.leben, 1, 1e7) || !ganz(l.startLeben, 1, 1e4) || typeof l.freeplay !== 'boolean' || !Array.isArray(l.tuerme) || l.tuerme.length > 300) return null;
+        const ok = l.tuerme.every((t) => t && ['ranger', 'sniper', 'depot'].includes(t.typ) && ganz(t.x, 0, 1140) && ganz(t.y, 0, 810) && ganz(t.a, 0, 5) && ganz(t.b, 0, 5)
+          && (Math.min(t.a, t.b) <= 2) && ganz(t.ziel, 0, 3) && ganz(t.investiert, 0, 1e7));
+        if (!ok) return null;
+        laeufe[k] = { welle: l.welle, koerner: l.koerner, leben: l.leben, startLeben: l.startLeben, freeplay: l.freeplay, tuerme: l.tuerme.map((t) => ({ ...t })) };
+      }
+    }
+    return { orden: d.orden, stufe: d.stufe, xp: d.xp, tech: { ...d.tech }, sterne: { ...d.sterne }, rekord: { ...(d.rekord || {}) }, laeufe };
   }
-  const NEUSTAND = () => ({ orden: 0, stufe: 1, xp: 0, tech: { ranger: true }, sterne: {}, rekord: {} });
+  const NEUSTAND = () => ({ orden: 0, stufe: 1, xp: 0, tech: { ranger: true }, sterne: {}, rekord: {}, laeufe: {} });
   let ladeHinweis = '';
   const P = (() => {
     try {
@@ -525,7 +537,10 @@
         }
         sichern();
       } else if (S.welle >= K.wellen && !S.ende) { S.ende = true; ende(true); }
+      if (!S.ende) laufSichern();
     }
+    // Auto: nächste Welle startet von selbst
+    if (S.auto && !S.laeuft && !S.ende) { S.autoT = (S.autoT || 0) + dt; if (S.autoT > 1.2) welleStarten(); }
   }
 
   // ---------- Zeichnen ----------
@@ -597,7 +612,7 @@
     }
     const boss = S.gegner.find((g) => GEGNER[g.typ].boss);
     if (boss) {
-      const x0 = 430, bw = 480;
+      const x0 = 420, bw = 380;
       ctx.fillStyle = 'rgba(43,5,9,0.92)'; ctx.strokeStyle = '#C9A227'; ctx.lineWidth = 2;
       ctx.beginPath(); ctx.roundRect(x0, 20, bw, 52, 12); ctx.fill(); ctx.stroke();
       ctx.fillStyle = '#E8C766'; ctx.font = '700 13px Inter, sans-serif'; ctx.fillText('BOSS · ' + GEGNER[boss.typ].name.toUpperCase(), x0 + 14, 40);
@@ -650,6 +665,7 @@
   }
   let letzteLeiste = '';
   function oberflaeche() {
+    $('auto').textContent = S.auto ? 'Auto an' : 'Auto'; $('auto').setAttribute('aria-pressed', S.auto ? 'true' : 'false'); $('auto').style.background = S.auto ? '#C9A227' : ''; $('auto').style.color = S.auto ? '#1C1416' : '';
     $('welle').textContent = S.welle; $('wellenMax').textContent = S.freeplay ? '∞ Freeplay' : K.wellen;
     $('koerner').textContent = fmt(S.koerner); $('leben').textContent = Math.max(0, Math.ceil(S.leben));
     $('tempo').textContent = S.tempo + '×'; $('pause').textContent = S.pause ? '▶' : '❚❚';
@@ -692,20 +708,29 @@
       const b = document.createElement('button'); b.type = 'button';
       b.textContent = fertig ? 'Fertig' : gesperrt ? 'Gesperrt' : fmt(k) + ' Körner';
       b.disabled = !kann; b.style.background = kann ? '#C9A227' : '#2B0509'; b.style.color = kann ? '#1C1416' : '#E7D4D6';
-      b.onclick = () => { if (!kann) return; S.koerner -= k; t.investiert += k; if (pfad === 'A') t.a++; else t.b++; oberflaeche(); };
+      b.onclick = () => { if (!kann) return; S.koerner -= k; t.investiert += k; if (pfad === 'A') t.a++; else t.b++; if (!S.laeuft) laufSichern(); oberflaeche(); };
       d.appendChild(b); pf.appendChild(d);
     }
     $('pZiel').textContent = ZIELE[t.ziel] + ' ⟳';
     $('pVerkauf').textContent = `Verkaufen · ${fmt(t.investiert * 0.7)} Körner`;
   }
   $('pZiel').onclick = () => { if (S.wahl) { S.wahl.ziel = (S.wahl.ziel + 1) % ZIELE.length; oberflaeche(); } };
-  $('pVerkauf').onclick = () => { const t = S.wahl; if (!t) return; S.koerner += Math.round(t.investiert * 0.7); S.tuerme = S.tuerme.filter((x) => x !== t); S.wahl = null; oberflaeche(); };
+  $('pVerkauf').onclick = () => { const t = S.wahl; if (!t) return; S.koerner += Math.round(t.investiert * 0.7); S.tuerme = S.tuerme.filter((x) => x !== t); S.wahl = null; if (!S.laeuft) laufSichern(); oberflaeche(); };
   $('pZu').onclick = () => { S.wahl = null; oberflaeche(); };
+  $('auto').onclick = () => { if (!S) return; S.auto = !S.auto; S.autoT = 0; oberflaeche(); };
   $('tempo').onclick = () => { S.tempo = S.tempo === 1 ? 2 : 1; oberflaeche(); };
   $('pause').onclick = () => { S.pause = !S.pause; oberflaeche(); };
+  // Laufender Durchgang: Stand zwischen den Wellen (Türme, Körner, Leben) – zum Fortsetzen
+  function laufStand() {
+    return { welle: S.welle, koerner: Math.floor(S.koerner), leben: Math.max(1, Math.ceil(S.leben)), startLeben: S.startLeben, freeplay: !!S.freeplay,
+      tuerme: S.tuerme.map((t) => ({ typ: t.typ, x: Math.round(t.x), y: Math.round(t.y), a: t.a, b: t.b, ziel: t.ziel || 0, investiert: Math.round(t.investiert) })) };
+  }
+  function laufSichern() { if (!K || !S || S.ende) return; if (!P.laeufe) P.laeufe = {}; P.laeufe[K.id] = laufStand(); sichern(); }
+  function laufLoeschen() { if (P.laeufe && K) delete P.laeufe[K.id]; sichern(); }
   function welleStarten() {
     if (S.laeuft || S.ende) return;
-    S.welle++; S.spawn = welleBauen(S.welle); S.laeuft = true;
+    laufSichern();   // Stand vor der Welle: wird beim Fortsetzen wiederhergestellt
+    S.welle++; S.spawn = welleBauen(S.welle); S.laeuft = true; S.autoT = 0;
     for (const t of S.tuerme) {
       if (!TUERME[t.typ].depot) continue;
       const w = werte(t);
@@ -726,7 +751,7 @@
   cv.addEventListener('pointerdown', (ev) => {
     const p = feldPunkt(ev); S.maus = p;
     if (S.platzieren) {
-      if (platzOk(p.x, p.y) && S.koerner >= TUERME[S.platzieren].kosten) { turmBauen(S.platzieren, p.x, p.y); S.platzieren = null; $('hinweis').textContent = 'Turm gebaut. Tippe ihn an, um ihn auszubauen.'; }
+      if (platzOk(p.x, p.y) && S.koerner >= TUERME[S.platzieren].kosten) { turmBauen(S.platzieren, p.x, p.y); S.platzieren = null; if (!S.laeuft) laufSichern(); $('hinweis').textContent = 'Turm gebaut. Tippe ihn an, um ihn auszubauen.'; }
       else $('hinweis').textContent = S.koerner < TUERME[S.platzieren].kosten ? 'Zu wenig Körner.' : 'Hier kann nicht gebaut werden (zu nah am Weg, auf Wasser, Felsen oder an einem anderen Turm).';
       oberflaeche(); return;
     }
@@ -824,7 +849,7 @@
       return `<button type="button" data-karte="${i}" aria-label="Karte ${i + 1}: ${k.land}, ${k.titel}" style="display:flex;flex-direction:column;padding:0;border-radius:12px;border:2px solid ${i === kWahl ? '#E8C766' : '#5A2A30'};background:#2B0509;color:#fff;overflow:hidden;cursor:pointer;text-align:left">
         <div style="position:relative;width:100%;aspect-ratio:1140/810;background:#3A0A10"><img src="bilder/vorschau_${k.bild.replace('.png', '.jpg')}" alt="" style="width:100%;height:100%;display:block;opacity:${z === 'zu' ? 0.35 : 1}">${z === 'zu' ? `<span style="position:absolute;left:50%;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:17px;background:#1A0306;color:#E8C766;display:flex;align-items:center;justify-content:center">${SCHLOSS}</span>` : ''}</div>
         <div style="display:flex;flex-direction:column;gap:2px;padding:8px 9px 10px"><span style="font-size:12px;font-weight:700;color:#E8C766">${i + 1} · ${k.land}</span><span style="font-size:13px;font-weight:700">${k.titel}</span>
-        <span style="font-size:12px;color:#E7D4D6;letter-spacing:.1em">${z === 'fertig' ? '★'.repeat(st) + '☆'.repeat(3 - st) : z === 'offen' ? 'Jetzt spielen' : 'Gesperrt'}</span></div></button>`; }).join('');
+        <span style="font-size:12px;color:#E7D4D6;letter-spacing:.1em">${P.laeufe && P.laeufe[k.id] ? '▶ Welle ' + (P.laeufe[k.id].welle + 1) : z === 'fertig' ? '★'.repeat(st) + '☆'.repeat(3 - st) : z === 'offen' ? 'Jetzt spielen' : 'Gesperrt'}</span></div></button>`; }).join('');
     const k = L[kWahl], z = zustand(kWahl), st = P.sterne[k.id] || 0;
     const gesamtSterne = Object.values(P.sterne).reduce((a, b) => a + b, 0), gewonnen = Object.keys(P.sterne).length;
     overlay(`<div style="position:absolute;left:40px;top:28px;display:flex;flex-direction:column;gap:4px"><div style="font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#E8C766">Kampagne · Bir Tawil</div>
@@ -846,21 +871,31 @@
           ${P.rekord[k.id] ? `<div style="font-size:13px;color:#E7D4D6">∞ Freeplay-Rekord: <b style="color:#fff">Welle ${P.rekord[k.id]}</b></div>` : st ? '<div style="font-size:13px;color:#E7D4D6">∞ Freeplay: nach dem Sieg weiterspielen</div>' : ''}
           <div style="flex:1"></div>
           ${z === 'zu' ? `<div style="height:60px;border-radius:14px;border:2px dashed #5A2A30;color:#E7D4D6;display:flex;align-items:center;justify-content:center;gap:10px;font-size:15px;font-weight:700">${SCHLOSS} Erst ${L[kWahl - 1].land} gewinnen</div>`
+            : P.laeufe && P.laeufe[k.id] ? `<div style="display:flex;flex-direction:column;gap:8px"><button type="button" class="gold" id="fortsetzen">▶ Fortsetzen · Welle ${P.laeufe[k.id].welle + 1}${P.laeufe[k.id].freeplay ? ' (Freeplay)' : ''}</button><button type="button" class="rand" id="spielen" style="height:46px">Neu starten</button></div>`
             : `<button type="button" class="gold" id="spielen">▶ ${st ? 'Nochmal spielen' : 'Spielen'}</button>`}
         </div></div>`, true);
     document.querySelectorAll('[data-karte]').forEach((b) => b.onclick = () => { kWahl = +b.dataset.karte; kampagne(); });
     $('zumTech').onclick = () => techZeigen('kampagne');
     $('zuEinst').onclick = () => einstellungen();
-    if ($('spielen')) $('spielen').onclick = () => spielen(kWahl);
+    if ($('fortsetzen')) {
+      $('fortsetzen').onclick = () => spielen(kWahl, true);
+      $('spielen').onclick = () => bestaetigen('Neu starten?', `Deine gespeicherte Runde auf ${k.land} (ab Welle ${P.laeufe[k.id].welle + 1}) wird dabei verworfen.`, 'Neu starten', () => { delete P.laeufe[k.id]; sichern(); spielen(kWahl); }, true, () => kampagne());
+    } else if ($('spielen')) $('spielen').onclick = () => spielen(kWahl);
   }
-  async function spielen(i) {
-    $('spielen').textContent = 'Lädt …';
+  async function spielen(i, fortsetzen) {
+    const knopf = $(fortsetzen ? 'fortsetzen' : 'spielen'); if (knopf) knopf.textContent = 'Lädt …';
     await karteLaden(i);
     S = neu(); letzteLeiste = ''; letztesPanel = ''; techZurueck = 'spiel';
+    const l = fortsetzen && P.laeufe && P.laeufe[K.id];
+    if (l) {
+      Object.assign(S, { welle: l.welle, koerner: l.koerner, leben: l.leben, startLeben: l.startLeben, freeplay: l.freeplay });
+      S.tuerme = l.tuerme.map((t) => ({ ...t, winkel: -Math.PI / 2, cd: 0.3, burstRest: 0, burstCd: 0, schussT: 1, granCd: 2, brandCd: 4, leuchtCd: 1 }));
+    }
     overlayZu(); oberflaeche();
-    $('hinweis').textContent = `${K.land} – ${K.titel}: ${K.text} Wähle einen Turm und tippe neben den Weg.`;
+    $('hinweis').textContent = l ? `Fortgesetzt: ${K.land}, weiter mit Welle ${l.welle + 1}.` : `${K.land} – ${K.titel}: ${K.text} Wähle einen Turm und tippe neben den Weg.`;
   }
   function ende(sieg, aufgegeben) {
+    laufLoeschen();
     if (S.freeplay) {
       S.ende = true; S.pause = true; P.rekord[K.id] = Math.max(P.rekord[K.id] || 0, S.welle - 1); sichern();
       const fp = Math.max(0, S.welle - 1 - K.wellen);
@@ -888,13 +923,14 @@
     if ($('freeplay')) $('freeplay').onclick = () => { if (!(P.sterne[K.id] > 0)) return; S.freeplay = true; S.ende = false; S.pause = false; overlayZu(); toast('Freeplay! Die Gegner werden jede Welle stärker.'); oberflaeche(); };
     $('nochmal').onclick = () => { overlayZu(); spielenDirekt(); };
   }
-  function spielenDirekt() { S = neu(); letzteLeiste = ''; letztesPanel = ''; techZurueck = 'spiel'; overlayZu(); oberflaeche(); }
+  function spielenDirekt() { laufLoeschen(); S = neu(); letzteLeiste = ''; letztesPanel = ''; techZurueck = 'spiel'; overlayZu(); oberflaeche(); }
   $('heim').onclick = () => {
     if (!S || S.ende) { kampagne(); return; }
     const vorPause = S.pause; S.pause = true;
-    overlay(`<h1>Karte verlassen?</h1><p>Die laufende Runde endet. Verdienstorden gibt es nur, wenn du die Karte besiegst.</p>
+    const ab = S.laeuft ? S.welle : S.welle + 1;
+    overlay(`<h1>Karte verlassen?</h1><p>Deine Runde wird gespeichert. Auf der Karte kannst du sie mit <b>„Fortsetzen“</b> weiterspielen – ab Welle ${ab}${S.laeuft ? ' (die laufende Welle startet neu)' : ''}.</p>
       <div style="display:flex;gap:12px;margin-top:16px"><button class="gold" type="button" id="jaWeg" style="width:220px">Ja, zur Kampagne</button><button class="rand" type="button" id="neinBleib" style="width:220px">Weiterspielen</button></div>`);
-    $('jaWeg').onclick = () => ende(false, true);
+    $('jaWeg').onclick = () => { if (!S.laeuft) laufSichern(); S.ende = true; S.auto = false; kWahl = A.karten.indexOf(K); kampagne(); };
     $('neinBleib').onclick = () => { S.pause = vorPause; overlayZu(); };
   };
 
@@ -949,10 +985,10 @@
       for (const k of Object.keys(P)) delete P[k]; Object.assign(P, NEUSTAND()); sichern(); kWahl = null; einstellungen('Alles zurückgesetzt.');
     }, true);
   }
-  function bestaetigen(titel, text, knopf, ok, gefahr) {
+  function bestaetigen(titel, text, knopf, ok, gefahr, zurueck) {
     overlay(`<h1>${titel}</h1><p>${text}</p><div style="display:flex;gap:12px;margin-top:16px">
       <button type="button" class="gold" id="bJa" style="width:240px;${gefahr ? 'background:#B3261E;color:#fff' : ''}">${knopf}</button><button type="button" class="rand" id="bNein" style="width:200px">Abbrechen</button></div>`);
-    $('bJa').onclick = ok; $('bNein').onclick = () => einstellungen();
+    $('bJa').onclick = ok; $('bNein').onclick = zurueck || (() => einstellungen());
   }
 
   // ---------- Bühne skalieren ----------

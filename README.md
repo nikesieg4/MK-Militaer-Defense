@@ -33,6 +33,11 @@ Die Wege führen aus der Karte hinaus (kein Kornspeicher mehr); Ostkolbistan end
 - **Zweite Währung: Verdienstorden** (dauerhaft, nur für den Techbaum): für besiegte Karten, Stufenaufstiege und alle 20 Freeplay-Wellen – erster Sieg 3–6 Orden, jeder Wiederholungssieg 1 Orden, dazu +1 je neu erreichtem Stern. Niederlage/Aufgeben: 0.
 - Fortschritt im Browser gespeichert (`localStorage` `mkd-fortschritt-1`).
 
+## Fortsetzen und Auto
+
+- **Fortsetzen:** Zu Beginn jeder Welle (und nach jeder Welle, jedem Bau, Ausbau, Verkauf zwischen den Wellen) wird der Stand der Runde gespeichert: Welle, Körner, Leben, Türme, Freeplay. ⌂ → „Ja, zur Kampagne“ sichert die Runde; auf der Karte erscheint **„Fortsetzen · Welle N“** (dazu „Neu starten“ mit Rückfrage). Wer mitten in einer Welle geht, startet diese Welle neu. Ein Sieg oder eine Niederlage löscht den gespeicherten Lauf. Gespeichert wird im signierten Spielstand (`laeufe`, je Karte einer).
+- **Auto:** Knopf oben rechts. Ist er an, startet die nächste Welle 1,2 s nach dem Ende der vorigen von selbst.
+
 ## Freeplay
 
 Nach einem Sieg: „∞ Freeplay weiterspielen“. Die Wellen gehen weiter, Gegner-Leben steigen zusätzlich um **10 % pro Freeplay-Welle** (×1,1^n). **Alle 20 Freeplay-Wellen 1 Verdienstorden – nur, wenn die Karte besiegt ist.** Rekord je Karte wird gespeichert und in der Kampagne angezeigt. Eine Niederlage im Freeplay kostet nichts.
