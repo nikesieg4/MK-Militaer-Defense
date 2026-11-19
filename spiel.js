@@ -106,13 +106,13 @@
         { n: 'Keiler', k: 15000, d: { kraft: 900, fahrTempo: -40, fraese: true } }
       ],
       B: [
-        { n: 'Schweres MG', k: 400, d: { reload: -0.1, range: 2, kraft: 4 } },
-        { n: 'Spähwagen', k: 1100, d: { dmg: 3, range: 2, tarn: true, intervall: -1 } },
-        { n: 'Schützenpanzer', k: 3200, d: { dmg: 10, reload: 0.15, range: 2, splash: 1.5, panzerbrechend: true } },
-        { n: 'Leopard 2A4', k: 7800, d: { dmg: 90, reload: 1.15, range: 6, splash: 3 } },
-        { n: 'Leopard 2A7', k: 24000, d: { dmg: 260, reload: -0.4, range: 4, splash: 4, stunImmun: true } }
+        { n: 'Schweres MG', k: 400, d: { reload: -0.1, range: 2, kraft: 10 } },
+        { n: 'Spähwagen', k: 1100, d: { dmg: 3, range: 2, tarn: true, intervall: -1, kraft: 30 } },
+        { n: 'Schützenpanzer', k: 3200, d: { dmg: 10, reload: 0.15, range: 2, splash: 1.5, panzerbrechend: true, kraft: 80, intervall: 1, fahrTempo: -30 } },
+        { n: 'Leopard 2A4', k: 7800, d: { dmg: 90, reload: 1.15, range: 6, splash: 3, kraft: 250, intervall: 2, fahrTempo: -20 } },
+        { n: 'Leopard 2A7', k: 24000, d: { dmg: 260, reload: -0.4, range: 4, splash: 4, stunImmun: true, kraft: 700, intervall: 1 } }
       ],
-      info: 'Fahrzeugfabrik: schickt Fahrzeuge vom Wegende rückwärts in die Gegner – jedes Fahrzeug hat HP und gibt sie beim Rammen an die Gegner ab: Ein Gegner mit weniger Leben stirbt, der Rest bleibt dem Fahrzeug; reicht es nicht, explodiert das Fahrzeug. Rammkolonne: Humvee, MRAP, Minenräumpanzer Keiler. Panzerstellung: das Fahrzeug bleibt an der Fabrik stehen und schießt, bis zum Leopard 2A7.'
+      info: 'Fahrzeugfabrik: schickt Fahrzeuge vom Wegende rückwärts in die Gegner – jedes Fahrzeug hat HP und gibt sie beim Rammen an die Gegner ab: Ein Gegner mit weniger Leben stirbt, der Rest bleibt dem Fahrzeug; reicht es nicht, explodiert das Fahrzeug. Rammkolonne: Humvee, MRAP, Minenräumpanzer Keiler. Panzerstellung: die Fahrzeuge fahren genauso los, halten aber an, sobald Gegner in Reichweite sind, und schießen – bis zum Leopard 2A7. Laufen Gegner in sie hinein, verlieren sie HP wie beim Rammen.'
     },
     depot: {
       name: 'Logistik-Depot', kosten: 400, schraeg: 'bilder/depot.png', tech: 'depot', depot: true, gross: true,
@@ -459,7 +459,8 @@
     const dps = (w) => (w.dmg * (w.dauerfeuer ? 1 : w.burst)) / w.reload;
     z.push(['Schaden/s', zahl(dps(alt)), zahl(dps(neu))]);
     const neuF = [];
-    if (standNeu) neuF.push('Fahrzeug bleibt an der Fabrik stehen und schießt');
+    if (standNeu) neuF.push('Fahrzeuge halten bei Gegnern in Reichweite an und schießen');
+    if (neu.fabrik) { if (neu.kraft !== alt.kraft) z.push(['Fahrzeug-HP', zahl(alt.kraft), zahl(neu.kraft)]); if (neu.intervall !== alt.intervall) z.push(['Fahrzeug alle', zahl(alt.intervall) + ' s', zahl(neu.intervall) + ' s']); }
     if ((neu.splash || 0) !== (alt.splash || 0)) z.push(['Explosionsradius', zahl(alt.splash || 0), zahl(neu.splash || 0)]);
     if (neu.tarn && !alt.tarn) neuF.push('erkennt Getarnte');
     if (neu.panzerbrechend && !alt.panzerbrechend) neuF.push('durchschlägt Panzerung');
@@ -571,7 +572,7 @@
   }
   function muendung(t) {
     const code = t.a + '-' + t.b, info = A[t.typ].frames[code].bilder[0].muendung;
-    const k = (TUERME[t.typ].groesse || TURM_GROESSE) / 160, mx = (info.x - 80) * k, my = (info.y - 80) * k, c = Math.cos(t.winkel), s = Math.sin(t.winkel);
+    const k = (t.gr || TUERME[t.typ].groesse || TURM_GROESSE) / 160, mx = (info.x - 80) * k, my = (info.y - 80) * k, c = Math.cos(t.winkel), s = Math.sin(t.winkel);
     return { x: t.x + mx * c - my * s, y: t.y + mx * s + my * c };
   }
   function geschossArt(t, w) {
@@ -613,7 +614,7 @@
   function turmUpdate(t, dt) {
     if (TUERME[t.typ].depot) return;
     const w = werte(t);
-    if (w.fabrik && !w.stand) return;
+    if (w.fabrik) return;
     t.schussT += dt;
     if (t.betaeubtBis > S.zeit) { t.burstRest = 0; return; }
     if (w.he) { t.heCd = (t.heCd ?? 8) - dt; if (t.heCd <= 0) { t.heBis = S.zeit + 6; t.heCd = 20; S.texte.push({ x: t.x, y: t.y - 60, text: 'HE-Munition!', farbe: '#FF8A1F', t: 0 }); } }
@@ -688,19 +689,34 @@
   function fahrzeugeUpdate(dt) {
     if (S.laeuft) for (const t of S.tuerme) {
       if (t.typ !== 'fabrik') continue;
-      const w = werte(t); if (w.stand) continue;
+      const w = werte(t);
       t.fahrCd = (t.fahrCd ?? 1.5) - dt;
       if (t.fahrCd > 0 || !S.gegner.some((g) => g.d > 0)) continue;
       if (S.fahrzeuge.filter((v) => v.turm === t).length >= 3) continue;
       t.fahrNr = (t.fahrNr || 0) + 1;
       const wi = t.fahrNr % wege.length;
-      S.fahrzeuge.push({ turm: t, code: t.a + '-' + t.b, w: wi, d: wege[wi].gesamt, kraft: w.kraft, max: w.kraft, tempo: w.fahrTempo, werte: w, getroffen: new Set(), winkel: 0, x: 0, y: 0 });
+      S.fahrzeuge.push({ turm: t, typ: 'fabrik', a: t.a, b: t.b, ziel: t.ziel || 0, gr: 96, code: t.a + '-' + t.b, w: wi, d: wege[wi].gesamt, kraft: w.kraft, max: w.kraft, tempo: w.fahrTempo, werte: w, stand: !!w.stand, getroffen: new Set(), winkel: 0, tw: null, cd: 0.3, schussT: 1, x: 0, y: 0 });
       t.fahrCd = w.intervall;
     }
     for (const v of S.fahrzeuge) {
-      v.d -= v.tempo * dt;
+      // Panzerstellung: hält an, sobald ein Gegner in Reichweite ist, und schießt mit dem Turm
+      let ziel = null;
+      if (v.stand) {
+        v.schussT += dt; v.cd -= dt;
+        const rumpf = v.winkel, wt = v.tw ?? rumpf;
+        ziel = zielWahl({ x: v.x, y: v.y, ziel: v.ziel }, v.werte);
+        if (ziel) {
+          const soll = Math.atan2(ziel.y - 18 - v.y, ziel.x - v.x);
+          let diff = Math.atan2(Math.sin(soll - wt), Math.cos(soll - wt));
+          v.tw = wt + Math.max(-4 * dt, Math.min(4 * dt, diff));
+          diff = Math.atan2(Math.sin(soll - v.tw), Math.cos(soll - v.tw));
+          if (v.cd <= 0 && Math.abs(diff) < 0.3) { const sch = { ...v, winkel: v.tw }; schiessen(sch, v.werte, ziel); v.schussT = 0; v.cd = v.werte.reload; }
+        } else v.tw = wt + Math.atan2(Math.sin(rumpf - wt), Math.cos(rumpf - wt)) * Math.min(1, 3 * dt);
+      }
+      const blockiert = v.stand && S.fahrzeuge.some((o) => o !== v && o.w === v.w && o.d < v.d && v.d - o.d < 55);   // Abstand zum Vordermann
+      if (!ziel && !blockiert) v.d -= v.tempo * dt;
       const p = wegPos(v.w, Math.max(0, v.d)); v.x = p.x; v.y = p.y;
-      if (p.dx || p.dy) v.winkel = Math.atan2(-p.dy, -p.dx);
+      if (!ziel && (p.dx || p.dy)) v.winkel = Math.atan2(-p.dy, -p.dx);
       for (const g of S.gegner) {
         if (v.kraft <= 0) break;
         if (g.hp <= 0 || g.w !== v.w || g.d < 0 || abgetaucht(g) || v.getroffen.has(g) || Math.abs(g.d - v.d) > 26) continue;
@@ -877,7 +893,7 @@
       ctx.save(); ctx.globalAlpha = alpha;
       ctx.drawImage(A.fabrikImg, t.x - 110 * k, t.y - 140 * k, 220 * k, 220 * k);
       if (t.rumpf === undefined) t.rumpf = S && K ? Math.atan2(naechsterWegpunkt(t.x, t.y)[1] - t.y, naechsterWegpunkt(t.x, t.y)[0] - t.x) : 0;
-      const bereit = A.fabrik.frames[code].modus === 'stand' || !S.laeuft || (t.fahrCd ?? 0) < 2;
+      const bereit = !S.laeuft || (t.fahrCd ?? 0) < 2;
       if (bereit) fahrzeugBild(code, t.x, t.y, t.rumpf, t.winkel, t.schussT < 0.06 ? 1 : t.schussT < 0.14 ? 2 : 0, TUERME.fabrik.groesse);
       ctx.restore(); return;
     }
@@ -929,13 +945,14 @@
     ctx.drawImage(A.bilder[A.karten.indexOf(K)], 0, 0, W, H);
     for (const f of S.flaechen) frameZeichnen(A.effImg, effFrame('brandflaeche', f.t, true), f.x, f.y, 0.9, 0.9);
     const w = S.wahl ? werte(S.wahl) : null;
-    if (S.wahl && w.rangePx > 0) { ctx.beginPath(); ctx.arc(S.wahl.x, S.wahl.y, w.rangePx, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fill(); ctx.setLineDash([8, 6]); ctx.strokeStyle = '#E8C766'; ctx.lineWidth = 2; ctx.stroke(); ctx.setLineDash([]); }
+    if (S.wahl && S.wahl.typ === 'fabrik') { for (const v of S.fahrzeuge) if (v.turm === S.wahl && v.stand) { ctx.beginPath(); ctx.arc(v.x, v.y, v.werte.rangePx, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255,255,255,0.08)'; ctx.fill(); ctx.setLineDash([8, 6]); ctx.strokeStyle = '#E8C766'; ctx.lineWidth = 2; ctx.stroke(); ctx.setLineDash([]); } }
+    else if (S.wahl && w.rangePx > 0) { ctx.beginPath(); ctx.arc(S.wahl.x, S.wahl.y, w.rangePx, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fill(); ctx.setLineDash([8, 6]); ctx.strokeStyle = '#E8C766'; ctx.lineWidth = 2; ctx.stroke(); ctx.setLineDash([]); }
     const dinge = [...S.gegner.map((g) => ({ y: g.y, f: () => gegnerZeichnen(g) })), ...S.tuerme.map((t) => ({ y: t.y + 20, f: () => {
       if (t === S.wahl) { ctx.save(); ctx.shadowColor = '#E8C766'; ctx.shadowBlur = 16; turmZeichnen(t); ctx.restore(); } else turmZeichnen(t);
       if (t.betaeubtBis > S.zeit) frameZeichnen(A.effImg, effFrame('betaeubt', S.zeit, true), t.x, t.y - 46, 1, 1);
     } }))];
     for (const v of S.fahrzeuge) dinge.push({ y: v.y, f: () => {
-      fahrzeugBild(v.code, v.x, v.y, v.winkel, v.winkel, 0, 96);
+      fahrzeugBild(v.code, v.x, v.y, v.winkel, v.tw ?? v.winkel, v.schussT < 0.06 ? 1 : v.schussT < 0.14 ? 2 : 0, 96);
       const bw = 40, y = v.y - 34, k = Math.max(0, v.kraft / v.max);
       ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fillRect(v.x - bw / 2 - 1, y - 1, bw + 2, 6);
       ctx.fillStyle = k > 0.4 ? '#E8C766' : '#FF8A1F'; ctx.fillRect(v.x - bw / 2, y, bw * k, 4);
@@ -1056,7 +1073,7 @@
     $('pBild').setAttribute('style', schraegStil(t.typ, t.a, t.b, 84));
     $('pCode').textContent = `${def.name} ${t.a}-${t.b}`;
     $('pName').textContent = turmName(t);
-    $('pWerte').textContent = w.fabrik && !w.stand ? `Fahrzeug-HP ${zahl(w.kraft)} · alle ${zahl(w.intervall)} s ein Fahrzeug` : def.depot ? `${fmt(w.koernerProWelle)} Körner${w.leben ? ' und ' + w.leben + ' Leben' : ''} zu Beginn jeder Welle` : `Schaden ${zahl(w.dmg)} · ${w.dauerfeuer ? 'Dauerfeuer' : 'Nachladen ' + zahl(w.reload) + ' s'} · Reichweite ${zahl(w.range)}`;
+    $('pWerte').textContent = w.fabrik && !w.stand ? `Fahrzeug-HP ${zahl(w.kraft)} · alle ${zahl(w.intervall)} s ein Fahrzeug` : w.fabrik ? `Schaden ${zahl(w.dmg)} · Nachladen ${zahl(w.reload)} s · Reichweite ${zahl(w.range)} · HP ${zahl(w.kraft)}` : def.depot ? `${fmt(w.koernerProWelle)} Körner${w.leben ? ' und ' + w.leben + ' Leben' : ''} zu Beginn jeder Welle` : `Schaden ${zahl(w.dmg)} · ${w.dauerfeuer ? 'Dauerfeuer' : 'Nachladen ' + zahl(w.reload) + ' s'} · Reichweite ${zahl(w.range)}`;
     $('pZiel').parentElement.style.display = def.depot || (w.fabrik && !w.stand) ? 'none' : 'flex';
     const pf = $('pPfade'); pf.innerHTML = '';
     const titel2 = def.pfade || (t.typ === 'ranger' ? ['Präzision', 'Sturm'] : ['Phantom', 'Schwerkaliber']);
