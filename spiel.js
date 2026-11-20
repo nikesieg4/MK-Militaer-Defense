@@ -1,7 +1,7 @@
 // Maiskolbistan Militär-Defense – Testkarte 1 (Westkolbistan)
 // Reines JavaScript, kein Bau-Schritt. Grafiken aus dem Maiskolbistan-Info-Repo (seiten/td-ranger-sprites).
 'use strict';
-const VERSION = '2026-11-20-8';   // bei jedem Update hochzählen (auch in index.html)
+const VERSION = '2026-11-20-9';   // bei jedem Update hochzählen (auch in index.html)
 
 (() => {
   const W = 1140, H = 810, MITTE = 570;
@@ -119,7 +119,7 @@ const VERSION = '2026-11-20-8';   // bei jedem Update hochzählen (auch in index
       info: 'Artillerie: feuert Granaten im hohen Bogen über die ganze Karte, Flächenschaden. Sehr langsam, aber stark. Der Schuss zielt dorthin, wo der Gegner bei der Landung ist.'
     },
     raketen: {
-      name: 'Raketenwerfer', kosten: 425, schraeg: 'bilder/raketen_schraeg.png', json: 'raketen', tech: 'raketen',
+      name: 'Raketenwerfer', kosten: 425, schraeg: 'bilder/raketen_schraeg.png', json: 'raketen', tech: 'raketen', groesse: 84,
       pfade: ['Panzerjäger', 'Raketenhagel'],
       basis: { dmg: 40, reload: 7.5, burst: 1, range: 16, splash: 2, pt: 1, rakete: true },
       A: [
