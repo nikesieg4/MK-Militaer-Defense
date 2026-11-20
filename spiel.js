@@ -1,7 +1,7 @@
 // Maiskolbistan Militär-Defense – Testkarte 1 (Westkolbistan)
 // Reines JavaScript, kein Bau-Schritt. Grafiken aus dem Maiskolbistan-Info-Repo (seiten/td-ranger-sprites).
 'use strict';
-const VERSION = '2026-11-20-14';   // bei jedem Update hochzählen (auch in index.html)
+const VERSION = '2026-11-20-15';   // bei jedem Update hochzählen (auch in index.html)
 
 (() => {
   const W = 1140, H = 810, MITTE = 570;
@@ -180,7 +180,7 @@ const VERSION = '2026-11-20-14';   // bei jedem Update hochzählen (auch in inde
       info: 'Feldarzt: schießt nicht. Sein Strahl lässt Türme in Reichweite schneller aus Betäubung, Einfrieren und Lawinen-Verlangsamung erwachen. Schutzladung macht einen Turm unverwundbar gegen Betäubung, Kraftladung verdoppelt bzw. verdreifacht seinen Schaden.'
     },
     laser: {
-      name: 'Laser Gunner', kosten: 465, schraeg: 'bilder/laser_schraeg.png', json: 'laser', tech: 'laser',
+      name: 'Laser Gunner', kosten: 465, schraeg: 'bilder/laser_schraeg.png', json: 'laser', tech: 'laser', groesse: 84,
       pfade: ['Laser-Gewehr', 'Laser-MP'],
       basis: { dmg: 4, reload: 0.7, burst: 1, range: 14, laser: true, tarn: true },
       A: [
