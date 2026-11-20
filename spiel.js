@@ -1,11 +1,12 @@
 // Maiskolbistan Militär-Defense – Testkarte 1 (Westkolbistan)
 // Reines JavaScript, kein Bau-Schritt. Grafiken aus dem Maiskolbistan-Info-Repo (seiten/td-ranger-sprites).
 'use strict';
-const VERSION = '2026-11-20-10';   // bei jedem Update hochzählen (auch in index.html)
+const VERSION = '2026-11-20-11';   // bei jedem Update hochzählen (auch in index.html)
 
 (() => {
   const W = 1140, H = 810, MITTE = 570;
   const EINHEIT = 14;           // 1 Reichweiten-Einheit (TDX-Wiki) = 14 px
+  const EFF_Q = 2;               // Auflösungsfaktor von effekte_spritesheet@2x.png gegenüber den Atlas-Koordinaten
   const TURM_GROESSE = 120;     // Draufsicht-Turm auf der Karte
   // Zeichengröße auf der Karte; die Railgun-Stellung (Pfad B ab 3) ist größer als der Railgun-Soldat
   const turmGroesse = (t) => { const d = TUERME[t.typ]; return (d.groesseStellung && t.b >= 3) ? d.groesseStellung : (d.groesse || TURM_GROESSE); };
@@ -464,7 +465,7 @@ const VERSION = '2026-11-20-10';   // bei jedem Update hochzählen (auch in inde
     const [fahrTop, fahrJ, fabrikImg] = await Promise.all([bild('bilder/fahrzeug_draufsicht@2x.png'), json('daten/fahrzeug_draufsicht.json'), bild('bilder/fabrik@2x.png')]);
     const [depot, jugTop, railTop, jugJ, railJ, rangerTop, sniperTop, gegnerImg, effImg, gegnerAtlas, effAtlas, rangerJ, sniperJ, karten] = await Promise.all([
       bild('bilder/depot.png'), bild('bilder/juggernaut_draufsicht@2x.png'), bild('bilder/railgun_draufsicht@2x.png'), json('daten/juggernaut_draufsicht.json'), json('daten/railgun_draufsicht.json'), bild('bilder/ranger_draufsicht@2x.png'), bild('bilder/scharfschuetze_draufsicht@2x.png'),
-      bild('bilder/gegner_spritesheet.png'), bild('bilder/effekte_spritesheet.png'),
+      bild('bilder/gegner_spritesheet.png'), bild('bilder/effekte_spritesheet@2x.png'),
       json('daten/gegner_atlas.json'), json('daten/effekte_atlas.json'), json('daten/ranger_draufsicht.json'), json('daten/scharfschuetze_draufsicht.json'), json('daten/karten.json')
     ]);
     A = { top: {}, fahrTop, fabrik: fahrJ, fabrikImg, depot, jugTop, railTop, juggernaut: jugJ, railgun: railJ, rangerTop, sniperTop, gegnerImg, effImg, gegnerAtlas, effAtlas, ranger: rangerJ, sniper: sniperJ, karten: karten.karten, bilder: {} };
@@ -1136,8 +1137,9 @@ const VERSION = '2026-11-20-10';   // bei jedem Update hochzählen (auch in inde
   // ---------- Zeichnen ----------
   const cv = $('feld'), ctx = cv.getContext('2d');
   function frameZeichnen(img, f, x, y, sx = 1, sy = 1, ax = f.w / 2, ay = f.h / 2) {
+    const q = img === A.effImg ? EFF_Q : 1;   // Effekt-Sheet liegt in doppelter Auflösung vor
     ctx.save(); ctx.translate(x, y); ctx.scale(sx, sy);
-    ctx.drawImage(img, f.x, f.y, f.w, f.h, -ax, -ay, f.w, f.h);
+    ctx.drawImage(img, f.x * q, f.y * q, f.w * q, f.h * q, -ax, -ay, f.w, f.h);
     ctx.restore();
   }
   function effFrame(name, t, schleife) {
@@ -1212,6 +1214,48 @@ const VERSION = '2026-11-20-10';   // bei jedem Update hochzählen (auch in inde
     }
     ctx.restore();
   }
+  // Flammenkegel im Detailstil: viele weiche Flammenzungen, heller Kern, Rauch und Funken am Ende (im gedrehten Mündungssystem)
+  function flammenkegel(L, t) {
+    const z = S.zeit, n = 22, blobs = [];
+    for (let i = 0; i < n; i++) {
+      const q = ((i / n) + z * 2.6 + (t.x % 7) * 0.05) % 1, d = q * L, r = 4 + d * 0.3, quer = Math.sin(i * 12.9898 + z * 17) * d * 0.12;
+      blobs.push({ q, d, r, quer });
+    }
+    blobs.sort((a, b) => b.q - a.q);   // hinten (weit weg, dunkler) zuerst, heller Kern obenauf
+    ctx.save();
+    for (const { q, d, r, quer } of blobs) {
+      const g = ctx.createRadialGradient(d, quer, 0, d, quer, r), a = 0.85 - q * 0.45;
+      g.addColorStop(0, `rgba(255,${Math.round(238 - q * 150)},${Math.round(130 - q * 115)},${a})`);
+      g.addColorStop(0.55, `rgba(250,${Math.round(150 - q * 80)},25,${a * 0.6})`); g.addColorStop(1, 'rgba(170,40,10,0)');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(d, quer, r, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalCompositeOperation = 'lighter';   // leicht glühender Kern im vorderen Teil
+    for (const { q, d, r, quer } of blobs) if (q < 0.5) { const g = ctx.createRadialGradient(d, quer, 0, d, quer, r * 0.6); g.addColorStop(0, `rgba(255,200,90,${0.35 * (1 - q * 2)})`); g.addColorStop(1, 'rgba(255,120,30,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(d, quer, r * 0.6, 0, Math.PI * 2); ctx.fill(); }
+    ctx.globalCompositeOperation = 'source-over';
+    const k = ctx.createLinearGradient(0, 0, L * 0.4, 0); k.addColorStop(0, 'rgba(255,255,235,0.95)'); k.addColorStop(0.5, 'rgba(255,214,110,0.7)'); k.addColorStop(1, 'rgba(255,160,50,0)');
+    ctx.fillStyle = k; ctx.beginPath(); ctx.moveTo(0, -2.5); ctx.quadraticCurveTo(L * 0.22, -L * 0.06, L * 0.4, 0); ctx.quadraticCurveTo(L * 0.22, L * 0.06, 0, 2.5); ctx.fill();
+    for (let i = 0; i < 5; i++) {
+      const q = ((i / 5) + z * 1.3) % 1, d = L * (0.75 + q * 0.4), y = Math.sin(i * 4.1 + z * 5) * L * 0.18, r = 8 + q * 16, g = ctx.createRadialGradient(d, y, 0, d, y, r);
+      g.addColorStop(0, `rgba(70,62,56,${(1 - q) * 0.28})`); g.addColorStop(1, 'rgba(70,62,56,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(d, y, r, 0, Math.PI * 2); ctx.fill();
+    }
+    for (let i = 0; i < 8; i++) { const q = ((i * 0.137) + z * 2.1) % 1, d = L * (0.3 + q * 0.75), y = Math.sin(i * 9.7 + z * 9) * L * 0.3 * q; ctx.fillStyle = `rgba(255,${170 + (i % 3) * 25},70,${1 - q})`; ctx.fillRect(d, y, 2, 2); }
+    ctx.restore();
+  }
+  // Rakete im Detailstil: Körper mit Leitwerk, flackernder Treibsatz, Rauchfahne
+  function raketeZeichnen(p) {
+    const z = S.zeit * 40 + p.x * 0.1;
+    for (let i = 5; i >= 1; i--) { const x = -10 - i * 9, r = 3 + i * 1.6; ctx.fillStyle = `rgba(190,184,176,${0.32 - i * 0.05})`; ctx.beginPath(); ctx.arc(x, Math.sin(z * 0.3 + i) * 1.5, r, 0, Math.PI * 2); ctx.fill(); }
+    ctx.save(); ctx.globalCompositeOperation = 'lighter';
+    const lf = 10 + Math.sin(z) * 3, g = ctx.createRadialGradient(-8, 0, 0, -8, 0, lf);
+    g.addColorStop(0, 'rgba(255,255,230,1)'); g.addColorStop(0.35, 'rgba(255,200,80,0.9)'); g.addColorStop(1, 'rgba(255,90,20,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(-10, 0, lf, 4, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    ctx.fillStyle = '#2A2E22'; ctx.beginPath(); ctx.moveTo(-7, -2.6); ctx.lineTo(-10, -5.5); ctx.lineTo(-4, -2.6); ctx.moveTo(-7, 2.6); ctx.lineTo(-10, 5.5); ctx.lineTo(-4, 2.6); ctx.fill();
+    const k = ctx.createLinearGradient(0, -2.6, 0, 2.6); k.addColorStop(0, '#9AA070'); k.addColorStop(0.4, '#5E6A3A'); k.addColorStop(1, '#262C14');
+    ctx.fillStyle = k; ctx.fillRect(-8, -2.6, 14, 5.2);
+    const h = ctx.createLinearGradient(0, -2.8, 0, 2.8); h.addColorStop(0, '#E87A6A'); h.addColorStop(0.45, '#B02A20'); h.addColorStop(1, '#4A0E0A');
+    ctx.fillStyle = h; ctx.beginPath(); ctx.moveTo(5, -2.8); ctx.quadraticCurveTo(11, -2.4, 13, 0); ctx.quadraticCurveTo(11, 2.4, 5, 2.8); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.fillRect(-7, -2, 18, 1);
+  }
   function zeichnen() {
     ctx.drawImage(A.bilder[A.karten.indexOf(K)], 0, 0, W, H);
     for (const f of S.flaechen) { const k = (f.r || 46) / 51; frameZeichnen(A.effImg, effFrame('brandflaeche', f.t, true), f.x, f.y, k, k); }
@@ -1251,8 +1295,8 @@ const VERSION = '2026-11-20-10';   // bei jedem Update hochzählen (auch in inde
       if (t.typ === 'flamme' && t.schussT < 0.25 && t.zielRef) {
         const w = werte(t), m = muendung(t), L = w.rangePx + 10;
         ctx.save(); ctx.translate(m.x, m.y); ctx.rotate(t.winkel);
-        const gr = ctx.createLinearGradient(0, 0, L, 0); gr.addColorStop(0, 'rgba(255,246,200,0.95)'); gr.addColorStop(0.35, 'rgba(255,200,58,0.85)'); gr.addColorStop(0.8, 'rgba(255,106,31,0.55)'); gr.addColorStop(1, 'rgba(200,48,26,0)');
-        ctx.fillStyle = gr; ctx.beginPath(); ctx.moveTo(0, -3); ctx.quadraticCurveTo(L * 0.6, -L * 0.42 - Math.sin(S.zeit * 30) * 4, L, -L * 0.3); ctx.lineTo(L, L * 0.3); ctx.quadraticCurveTo(L * 0.6, L * 0.42 + Math.cos(S.zeit * 30) * 4, 0, 3); ctx.closePath(); ctx.fill(); ctx.restore();
+        flammenkegel(L, t);
+        ctx.restore();
       }
       if (t.typ === 'arzt' && t.pflege && S.tuerme.includes(t.pflege)) {
         const m = muendung(t), z = t.pflege, farbe = z.uberBis > S.zeit ? '79,168,255' : z.kritzBis > S.zeit ? '255,138,31' : '124,217,146';
@@ -1263,25 +1307,29 @@ const VERSION = '2026-11-20-10';   // bei jedem Update hochzählen (auch in inde
       if (t.uberBis > S.zeit) { ctx.strokeStyle = 'rgba(79,168,255,0.85)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(t.x, t.y, 38, 0, Math.PI * 2); ctx.stroke(); }
       if (t.kritzBis > S.zeit) { ctx.strokeStyle = 'rgba(255,138,31,0.85)'; ctx.lineWidth = 3; ctx.setLineDash([6, 4]); ctx.beginPath(); ctx.arc(t.x, t.y, 40, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]); }
     }
-    for (const r of S.ringe) { const k = r.t / 0.6; ctx.strokeStyle = `rgba(255,138,31,${1 - k})`; ctx.lineWidth = 14 * (1 - k) + 2; ctx.beginPath(); ctx.arc(r.x, r.y, r.r * (0.4 + k * 0.6), 0, Math.PI * 2); ctx.stroke(); }
+    for (const r of S.ringe) {   // Feuerring: glühende Druckwelle mit hellem Kern und Flammensaum
+      const k = r.t / 0.6, rr = r.r * (0.4 + k * 0.6);
+      ctx.save();
+      ctx.shadowColor = '#E8501A'; ctx.shadowBlur = 18; ctx.strokeStyle = `rgba(226,84,24,${(1 - k) * 0.75})`; ctx.lineWidth = 20 * (1 - k) + 4; ctx.beginPath(); ctx.arc(r.x, r.y, rr, 0, Math.PI * 2); ctx.stroke();
+      ctx.shadowBlur = 0; ctx.strokeStyle = `rgba(255,196,90,${(1 - k) * 0.9})`; ctx.lineWidth = 5 * (1 - k) + 1; ctx.stroke();
+      for (let i = 0; i < 28; i++) { const w = (i / 28) * Math.PI * 2 + r.t * 3, z = rr + Math.sin(i * 7.3 + S.zeit * 20) * 6, gr = 4 + (1 - k) * 5, x = r.x + Math.cos(w) * z, y = r.y + Math.sin(w) * z, g = ctx.createRadialGradient(x, y, 0, x, y, gr); g.addColorStop(0, `rgba(255,${190 + (i % 3) * 20},90,${(1 - k) * 0.85})`); g.addColorStop(1, 'rgba(220,70,20,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, gr, 0, Math.PI * 2); ctx.fill(); }
+      ctx.restore();
+    }
     for (const p of S.geschosse) {
       if (p.rakete) {
         ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot || 0);
-        const sp = ctx.createLinearGradient(-34, 0, 0, 0); sp.addColorStop(0, 'rgba(180,180,180,0)'); sp.addColorStop(1, 'rgba(200,200,200,0.7)');
-        ctx.fillStyle = sp; ctx.fillRect(-34, -3, 34, 6);
-        ctx.fillStyle = '#FFB23E'; ctx.beginPath(); ctx.moveTo(-6, -3); ctx.lineTo(-14, 0); ctx.lineTo(-6, 3); ctx.fill();
-        ctx.fillStyle = '#5A5A3A'; ctx.fillRect(-6, -2.5, 12, 5); ctx.fillStyle = '#C8301A'; ctx.beginPath(); ctx.moveTo(6, -2.5); ctx.lineTo(11, 0); ctx.lineTo(6, 2.5); ctx.fill();
+        raketeZeichnen(p);
         ctx.restore(); continue;
       }
       const an = A.effAtlas.animationen[p.art], fr = A.effAtlas.frames[an.bilder[0]];
       ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot || 0); const k = p.artillerie ? 0.9 : p.wurf ? 0.7 : p.klein ? 0.55 : 0.8;
-      ctx.drawImage(A.effImg, fr.x, fr.y, fr.w, fr.h, -fr.w * k / 2, -fr.h * k / 2, fr.w * k, fr.h * k); ctx.restore();
+      ctx.drawImage(A.effImg, fr.x * EFF_Q, fr.y * EFF_Q, fr.w * EFF_Q, fr.h * EFF_Q, -fr.w * k / 2, -fr.h * k / 2, fr.w * k, fr.h * k); ctx.restore();
     }
     for (const e of S.effekte) {
       const fr = effFrame(e.name, e.t, e.name === 'leuchtkugel');
       ctx.save(); ctx.translate(e.x, e.y); ctx.rotate(e.rot); ctx.scale(e.gr, e.gr);
       const ax = e.name === 'muendungsfeuer' ? 3 : fr.w / 2;
-      ctx.drawImage(A.effImg, fr.x, fr.y, fr.w, fr.h, -ax, -fr.h / 2, fr.w, fr.h); ctx.restore();
+      ctx.drawImage(A.effImg, fr.x * EFF_Q, fr.y * EFF_Q, fr.w * EFF_Q, fr.h * EFF_Q, -ax, -fr.h / 2, fr.w, fr.h); ctx.restore();
     }
     for (const st of S.strahlen) {
       const a = 1 - st.t / 0.3;
