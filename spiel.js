@@ -1,7 +1,7 @@
 // Maiskolbistan Militär-Defense – Testkarte 1 (Westkolbistan)
 // Reines JavaScript, kein Bau-Schritt. Grafiken aus dem Maiskolbistan-Info-Repo (seiten/td-ranger-sprites).
 'use strict';
-const VERSION = '2026-11-20-13';   // bei jedem Update hochzählen (auch in index.html)
+const VERSION = '2026-11-20-14';   // bei jedem Update hochzählen (auch in index.html)
 
 (() => {
   const W = 1140, H = 810, MITTE = 570;
@@ -160,7 +160,7 @@ const VERSION = '2026-11-20-13';   // bei jedem Update hochzählen (auch in inde
       info: 'Flammenwerfer: kurze Reichweite, trifft alle Gegner im Flammenkegel und setzt sie in Brand (Feuer wirkt voll gegen Panzerung). Oberer Pfad nach TDX, unterer Pfad „Brandsatz“ legt brennende Lachen.'
     },
     arzt: {
-      name: 'Feldarzt', kosten: 250, schraeg: 'bilder/arzt_schraeg.png', json: 'arzt', tech: 'arzt',
+      name: 'Feldarzt', kosten: 250, schraeg: 'bilder/arzt_schraeg.png', json: 'arzt', tech: 'arzt', groesse: 84,
       pfade: ['Schutzladung', 'Kraftladung'],
       basis: { dmg: 0, reload: 1, burst: 1, range: 12, erholung: 50, arzt: true },
       A: [
@@ -1300,9 +1300,17 @@ const VERSION = '2026-11-20-13';   // bei jedem Update hochzählen (auch in inde
       }
       if (t.typ === 'arzt' && t.pflege && S.tuerme.includes(t.pflege)) {
         const m = muendung(t), z = t.pflege, farbe = z.uberBis > S.zeit ? '79,168,255' : z.kritzBis > S.zeit ? '255,138,31' : '124,217,146';
-        ctx.save(); ctx.strokeStyle = `rgba(${farbe},0.75)`; ctx.lineWidth = 5 + Math.sin(S.zeit * 12) * 1.5; ctx.lineCap = 'round';
-        ctx.beginPath(); ctx.moveTo(m.x, m.y); ctx.quadraticCurveTo((m.x + z.x) / 2, (m.y + z.y) / 2 - 18, z.x, z.y - 10); ctx.stroke();
-        ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.lineWidth = 1.5; ctx.stroke(); ctx.restore();
+        // Heilstrahl im Detailstil: weicher Schein, pulsierender Kern, Lichtpunkte wandern zum Ziel, Leuchten am Ziel
+        const cx = (m.x + z.x) / 2, cy = (m.y + z.y) / 2 - 18, zx = z.x, zy = z.y - 10, q = (t2) => [(1 - t2) * (1 - t2) * m.x + 2 * (1 - t2) * t2 * cx + t2 * t2 * zx, (1 - t2) * (1 - t2) * m.y + 2 * (1 - t2) * t2 * cy + t2 * t2 * zy];
+        ctx.save(); ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(m.x, m.y); ctx.quadraticCurveTo(cx, cy, zx, zy);
+        ctx.shadowColor = `rgb(${farbe})`; ctx.shadowBlur = 14; ctx.strokeStyle = `rgba(${farbe},0.45)`; ctx.lineWidth = 9 + Math.sin(S.zeit * 12) * 2; ctx.stroke();
+        ctx.shadowBlur = 0; ctx.strokeStyle = `rgba(${farbe},0.9)`; ctx.lineWidth = 3.2; ctx.stroke();
+        ctx.strokeStyle = 'rgba(255,255,255,0.85)'; ctx.lineWidth = 1.2; ctx.stroke();
+        for (let i = 0; i < 6; i++) { const t2 = (i / 6 + S.zeit * 0.9) % 1, [px, py] = q(t2); ctx.fillStyle = `rgba(255,255,255,${0.9 - t2 * 0.4})`; ctx.beginPath(); ctx.arc(px, py, 2.2 + Math.sin(t2 * Math.PI) * 1.4, 0, Math.PI * 2); ctx.fill(); }
+        const gl = ctx.createRadialGradient(zx, zy, 0, zx, zy, 22); gl.addColorStop(0, `rgba(${farbe},0.55)`); gl.addColorStop(1, `rgba(${farbe},0)`);
+        ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(zx, zy, 22, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
       }
       if (t.uberBis > S.zeit) { ctx.strokeStyle = 'rgba(79,168,255,0.85)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(t.x, t.y, 38, 0, Math.PI * 2); ctx.stroke(); }
       if (t.kritzBis > S.zeit) { ctx.strokeStyle = 'rgba(255,138,31,0.85)'; ctx.lineWidth = 3; ctx.setLineDash([6, 4]); ctx.beginPath(); ctx.arc(t.x, t.y, 40, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]); }
