@@ -1,12 +1,14 @@
 // Maiskolbistan Militär-Defense – Testkarte 1 (Westkolbistan)
 // Reines JavaScript, kein Bau-Schritt. Grafiken aus dem Maiskolbistan-Info-Repo (seiten/td-ranger-sprites).
 'use strict';
-const VERSION = '2026-11-20-7';   // bei jedem Update hochzählen (auch in index.html)
+const VERSION = '2026-11-20-8';   // bei jedem Update hochzählen (auch in index.html)
 
 (() => {
   const W = 1140, H = 810, MITTE = 570;
   const EINHEIT = 14;           // 1 Reichweiten-Einheit (TDX-Wiki) = 14 px
   const TURM_GROESSE = 120;     // Draufsicht-Turm auf der Karte
+  // Zeichengröße auf der Karte; die Railgun-Stellung (Pfad B ab 3) ist größer als der Railgun-Soldat
+  const turmGroesse = (t) => { const d = TUERME[t.typ]; return (d.groesseStellung && t.b >= 3) ? d.groesseStellung : (d.groesse || TURM_GROESSE); };
   const fmt = (n) => Math.round(n).toLocaleString('de-DE');
   const $ = (id) => document.getElementById(id);
 
@@ -56,7 +58,7 @@ const VERSION = '2026-11-20-7';   // bei jedem Update hochzählen (auch in index
       info: 'Scharfschütze: riesige Reichweite, langsame, starke Schüsse. Erkennt Getarnte ab Adlerauge (Phantom 2).'
     },
     juggernaut: {
-      name: 'Juggernaut', kosten: 3200, schraeg: 'bilder/juggernaut_schraeg.png', json: 'juggernaut', tech: 'juggernaut', groesse: 150, platz: 30,
+      name: 'Juggernaut', kosten: 3200, schraeg: 'bilder/juggernaut_schraeg.png', json: 'juggernaut', tech: 'juggernaut', groesse: 105, platz: 30,
       pfade: ['Feuerwalze', 'Doppelfeuer'],
       basis: { dmg: 8, reload: 0.1, burst: 1, range: 15, dauerfeuer: true },
       A: [
@@ -76,7 +78,7 @@ const VERSION = '2026-11-20-7';   // bei jedem Update hochzählen (auch in index
       info: 'Juggernaut: Minigun im Dauerfeuer, enormer Schaden pro Sekunde. Feuerwalze durchschlägt ab Stufe 4 Panzerung, Doppelfeuer erkennt ab Stufe 3 Getarnte.'
     },
     railgun: {
-      name: 'Railgunner', kosten: 1600, schraeg: 'bilder/railgun_schraeg.png', json: 'railgun', tech: 'railgun', groesse: 150, platz: 30,
+      name: 'Railgunner', kosten: 1600, schraeg: 'bilder/railgun_schraeg.png', json: 'railgun', tech: 'railgun', groesse: 84, groesseStellung: 115, platz: 30,
       pfade: ['Schienen-Soldat', 'Geschützstellung'],
       basis: { dmg: 150, reload: 5, burst: 1, range: 22, laser: true },
       A: [
@@ -137,7 +139,7 @@ const VERSION = '2026-11-20-7';   // bei jedem Update hochzählen (auch in index
       info: 'Raketenwerfer: Raketen mit Explosion, Bonus gegen Panzer und Fahrzeuge. Panzerjäger-Pfad bis zur Javelin, unten bis zum Mehrfachwerfer.'
     },
     flamme: {
-      name: 'Flammenwerfer', kosten: 425, schraeg: 'bilder/flamme_schraeg.png', json: 'flamme', tech: 'flamme',
+      name: 'Flammenwerfer', kosten: 425, schraeg: 'bilder/flamme_schraeg.png', json: 'flamme', tech: 'flamme', groesse: 84,
       pfade: ['Hitze', 'Brandsatz'],
       basis: { dmg: 2, reload: 0.2, burst: 1, range: 6, brandDps: 1, brandDauer: 5, flamme: true },
       A: [
@@ -736,7 +738,7 @@ const VERSION = '2026-11-20-7';   // bei jedem Update hochzählen (auch in index
   }
   function muendung(t) {
     const code = t.a + '-' + t.b, info = A[t.typ].frames[code].bilder[0].muendung;
-    const k = (t.gr || TUERME[t.typ].groesse || TURM_GROESSE) / 160, mx = (info.x - 80) * k, my = (info.y - 80) * k, c = Math.cos(t.winkel), s = Math.sin(t.winkel);
+    const k = (t.gr || turmGroesse(t)) / 160, mx = (info.x - 80) * k, my = (info.y - 80) * k, c = Math.cos(t.winkel), s = Math.sin(t.winkel);
     return { x: t.x + mx * c - my * s, y: t.y + mx * s + my * c };
   }
   function geschossArt(t, w) {
@@ -1173,7 +1175,7 @@ const VERSION = '2026-11-20-7';   // bei jedem Update hochzählen (auch in index
       ctx.restore(); return;
     }
     const img = { ranger: A.rangerTop, sniper: A.sniperTop, juggernaut: A.jugTop, railgun: A.railTop }[t.typ] || A.top[t.typ];
-    const GR = TUERME[t.typ].groesse || TURM_GROESSE;
+    const GR = turmGroesse(t);
     const row = KOMBIS.indexOf(t.a + '-' + t.b);
     const fr = t.schussT < 0.04 ? 1 : t.schussT < 0.09 ? 2 : 0;
     ctx.save(); ctx.globalAlpha = alpha; ctx.translate(t.x, t.y); ctx.rotate(t.winkel);
