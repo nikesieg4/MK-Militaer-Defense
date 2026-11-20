@@ -1,7 +1,7 @@
 // Maiskolbistan Militär-Defense – Testkarte 1 (Westkolbistan)
 // Reines JavaScript, kein Bau-Schritt. Grafiken aus dem Maiskolbistan-Info-Repo (seiten/td-ranger-sprites).
 'use strict';
-const VERSION = '2026-11-20-6';   // bei jedem Update hochzählen (auch in index.html)
+const VERSION = '2026-11-20-7';   // bei jedem Update hochzählen (auch in index.html)
 
 (() => {
   const W = 1140, H = 810, MITTE = 570;
@@ -18,7 +18,7 @@ const VERSION = '2026-11-20-6';   // bei jedem Update hochzählen (auch in index
   // Werte nach dem TDX-Wiki (Ranger, Sniper), Reichweite in Einheiten
   const TUERME = {
     ranger: {
-      name: 'Ranger', kosten: 250, sheet: 'rangerTop', schraeg: 'bilder/ranger_schraeg.png', json: 'ranger',
+      name: 'Ranger', kosten: 250, sheet: 'rangerTop', groesse: 84, schraeg: 'bilder/ranger_schraeg.png', json: 'ranger',
       basis: { dmg: 1, reload: 1.75, burst: 2, range: 9 },
       A: [
         { n: 'Laservisier', k: 165, d: { burst: 1, range: 3 } },
@@ -37,7 +37,7 @@ const VERSION = '2026-11-20-6';   // bei jedem Update hochzählen (auch in index
       info: 'Ranger: Feuerstöße mit dem Sturmgewehr. Erkennt Getarnte ab Tarnblick (Präzision 3), durchschlägt Panzerung ab Sturmausrüstung (Sturm 3).'
     },
     sniper: {
-      name: 'Scharfschütze', kosten: 285, sheet: 'sniperTop', schraeg: 'bilder/scharfschuetze_schraeg.png', json: 'sniper', tech: 'sniper',
+      name: 'Scharfschütze', kosten: 285, sheet: 'sniperTop', groesse: 84, schraeg: 'bilder/scharfschuetze_schraeg.png', json: 'sniper', tech: 'sniper',
       basis: { dmg: 8, reload: 2.75, burst: 1, range: 21 },
       A: [
         { n: 'Feldausbildung', k: 300, d: { reload: -0.75, range: 4 } },
