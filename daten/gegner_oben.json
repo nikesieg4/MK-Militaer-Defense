@@ -1,0 +1,728 @@
+{
+ "image": "gegner_oben.png",
+ "hinweis": "Fahrende Gegner von oben: Fahrtrichtung +x, um die Zellmitte in Wegrichtung drehen, mit def.gr skalieren",
+ "frames": {
+  "humvee_oben_1": {
+   "x": 0,
+   "y": 0,
+   "w": 192,
+   "h": 192
+  },
+  "humvee_oben_2": {
+   "x": 192,
+   "y": 0,
+   "w": 192,
+   "h": 192
+  },
+  "humvee_oben_3": {
+   "x": 384,
+   "y": 0,
+   "w": 192,
+   "h": 192
+  },
+  "humvee_oben_4": {
+   "x": 576,
+   "y": 0,
+   "w": 192,
+   "h": 192
+  },
+  "panzer_oben_1": {
+   "x": 0,
+   "y": 192,
+   "w": 256,
+   "h": 256
+  },
+  "panzer_oben_2": {
+   "x": 256,
+   "y": 192,
+   "w": 256,
+   "h": 256
+  },
+  "panzer_oben_3": {
+   "x": 512,
+   "y": 192,
+   "w": 256,
+   "h": 256
+  },
+  "panzer_oben_4": {
+   "x": 768,
+   "y": 192,
+   "w": 256,
+   "h": 256
+  },
+  "schuetzenpanzer_oben_1": {
+   "x": 0,
+   "y": 448,
+   "w": 224,
+   "h": 224
+  },
+  "schuetzenpanzer_oben_2": {
+   "x": 224,
+   "y": 448,
+   "w": 224,
+   "h": 224
+  },
+  "schuetzenpanzer_oben_3": {
+   "x": 448,
+   "y": 448,
+   "w": 224,
+   "h": 224
+  },
+  "schuetzenpanzer_oben_4": {
+   "x": 672,
+   "y": 448,
+   "w": 224,
+   "h": 224
+  },
+  "ratte_oben_1": {
+   "x": 0,
+   "y": 672,
+   "w": 432,
+   "h": 432
+  },
+  "ratte_oben_2": {
+   "x": 432,
+   "y": 672,
+   "w": 432,
+   "h": 432
+  },
+  "ratte_oben_3": {
+   "x": 864,
+   "y": 672,
+   "w": 432,
+   "h": 432
+  },
+  "ratte_oben_4": {
+   "x": 1296,
+   "y": 672,
+   "w": 432,
+   "h": 432
+  },
+  "ratte_feuer_oben_1": {
+   "x": 0,
+   "y": 1104,
+   "w": 432,
+   "h": 432
+  },
+  "ratte_feuer_oben_2": {
+   "x": 432,
+   "y": 1104,
+   "w": 432,
+   "h": 432
+  },
+  "ratte_feuer_oben_3": {
+   "x": 864,
+   "y": 1104,
+   "w": 432,
+   "h": 432
+  },
+  "pickup_oben_1": {
+   "x": 0,
+   "y": 1536,
+   "w": 192,
+   "h": 192
+  },
+  "pickup_oben_2": {
+   "x": 192,
+   "y": 1536,
+   "w": 192,
+   "h": 192
+  },
+  "pickup_oben_3": {
+   "x": 384,
+   "y": 1536,
+   "w": 192,
+   "h": 192
+  },
+  "pickup_oben_4": {
+   "x": 576,
+   "y": 1536,
+   "w": 192,
+   "h": 192
+  },
+  "dschungelkoenig_oben_1": {
+   "x": 0,
+   "y": 1728,
+   "w": 432,
+   "h": 432
+  },
+  "dschungelkoenig_oben_2": {
+   "x": 432,
+   "y": 1728,
+   "w": 432,
+   "h": 432
+  },
+  "dschungelkoenig_oben_3": {
+   "x": 864,
+   "y": 1728,
+   "w": 432,
+   "h": 432
+  },
+  "dschungelkoenig_oben_4": {
+   "x": 1296,
+   "y": 1728,
+   "w": 432,
+   "h": 432
+  },
+  "pistenraupe_oben_1": {
+   "x": 0,
+   "y": 2160,
+   "w": 256,
+   "h": 256
+  },
+  "pistenraupe_oben_2": {
+   "x": 256,
+   "y": 2160,
+   "w": 256,
+   "h": 256
+  },
+  "pistenraupe_oben_3": {
+   "x": 512,
+   "y": 2160,
+   "w": 256,
+   "h": 256
+  },
+  "pistenraupe_oben_4": {
+   "x": 768,
+   "y": 2160,
+   "w": 256,
+   "h": 256
+  },
+  "lawinenbrecher_oben_1": {
+   "x": 0,
+   "y": 2416,
+   "w": 432,
+   "h": 432
+  },
+  "lawinenbrecher_oben_2": {
+   "x": 432,
+   "y": 2416,
+   "w": 432,
+   "h": 432
+  },
+  "lawinenbrecher_oben_3": {
+   "x": 864,
+   "y": 2416,
+   "w": 432,
+   "h": 432
+  },
+  "lawinenbrecher_oben_4": {
+   "x": 1296,
+   "y": 2416,
+   "w": 432,
+   "h": 432
+  },
+  "amphibienfahrzeug_oben_1": {
+   "x": 0,
+   "y": 2848,
+   "w": 224,
+   "h": 224
+  },
+  "amphibienfahrzeug_oben_2": {
+   "x": 224,
+   "y": 2848,
+   "w": 224,
+   "h": 224
+  },
+  "amphibienfahrzeug_oben_3": {
+   "x": 448,
+   "y": 2848,
+   "w": 224,
+   "h": 224
+  },
+  "amphibienfahrzeug_oben_4": {
+   "x": 672,
+   "y": 2848,
+   "w": 224,
+   "h": 224
+  },
+  "hovercraft_oben_1": {
+   "x": 0,
+   "y": 3072,
+   "w": 256,
+   "h": 256
+  },
+  "hovercraft_oben_2": {
+   "x": 256,
+   "y": 3072,
+   "w": 256,
+   "h": 256
+  },
+  "hovercraft_oben_3": {
+   "x": 512,
+   "y": 3072,
+   "w": 256,
+   "h": 256
+  },
+  "hovercraft_oben_4": {
+   "x": 768,
+   "y": 3072,
+   "w": 256,
+   "h": 256
+  },
+  "seeschlange_oben_1": {
+   "x": 0,
+   "y": 3328,
+   "w": 432,
+   "h": 432
+  },
+  "seeschlange_oben_2": {
+   "x": 432,
+   "y": 3328,
+   "w": 432,
+   "h": 432
+  },
+  "seeschlange_oben_3": {
+   "x": 864,
+   "y": 3328,
+   "w": 432,
+   "h": 432
+  },
+  "seeschlange_oben_4": {
+   "x": 1296,
+   "y": 3328,
+   "w": 432,
+   "h": 432
+  },
+  "raeuberhauptmann_oben_1": {
+   "x": 0,
+   "y": 3760,
+   "w": 256,
+   "h": 256
+  },
+  "raeuberhauptmann_oben_2": {
+   "x": 256,
+   "y": 3760,
+   "w": 256,
+   "h": 256
+  },
+  "raeuberhauptmann_oben_3": {
+   "x": 512,
+   "y": 3760,
+   "w": 256,
+   "h": 256
+  },
+  "raeuberhauptmann_oben_4": {
+   "x": 768,
+   "y": 3760,
+   "w": 256,
+   "h": 256
+  },
+  "sandsturmkhan_oben_1": {
+   "x": 0,
+   "y": 4016,
+   "w": 432,
+   "h": 432
+  },
+  "sandsturmkhan_oben_2": {
+   "x": 432,
+   "y": 4016,
+   "w": 432,
+   "h": 432
+  },
+  "sandsturmkhan_oben_3": {
+   "x": 864,
+   "y": 4016,
+   "w": 432,
+   "h": 432
+  },
+  "sandsturmkhan_oben_4": {
+   "x": 1296,
+   "y": 4016,
+   "w": 432,
+   "h": 432
+  },
+  "kolbenfresser_oben_1": {
+   "x": 0,
+   "y": 4448,
+   "w": 432,
+   "h": 432
+  },
+  "kolbenfresser_oben_2": {
+   "x": 432,
+   "y": 4448,
+   "w": 432,
+   "h": 432
+  },
+  "kolbenfresser_oben_3": {
+   "x": 864,
+   "y": 4448,
+   "w": 432,
+   "h": 432
+  },
+  "kolbenfresser_oben_4": {
+   "x": 1296,
+   "y": 4448,
+   "w": 432,
+   "h": 432
+  },
+  "kolbenfresser_feuer_oben_1": {
+   "x": 0,
+   "y": 4880,
+   "w": 432,
+   "h": 432
+  },
+  "kolbenfresser_feuer_oben_2": {
+   "x": 432,
+   "y": 4880,
+   "w": 432,
+   "h": 432
+  },
+  "kolbenfresser_feuer_oben_3": {
+   "x": 864,
+   "y": 4880,
+   "w": 432,
+   "h": 432
+  },
+  "motorrad_oben_1": {
+   "x": 0,
+   "y": 5312,
+   "w": 160,
+   "h": 160
+  },
+  "motorrad_oben_2": {
+   "x": 160,
+   "y": 5312,
+   "w": 160,
+   "h": 160
+  },
+  "motorrad_oben_3": {
+   "x": 320,
+   "y": 5312,
+   "w": 160,
+   "h": 160
+  },
+  "motorrad_oben_4": {
+   "x": 480,
+   "y": 5312,
+   "w": 160,
+   "h": 160
+  },
+  "schneemobil_oben_1": {
+   "x": 0,
+   "y": 5472,
+   "w": 160,
+   "h": 160
+  },
+  "schneemobil_oben_2": {
+   "x": 160,
+   "y": 5472,
+   "w": 160,
+   "h": 160
+  },
+  "schneemobil_oben_3": {
+   "x": 320,
+   "y": 5472,
+   "w": 160,
+   "h": 160
+  },
+  "schneemobil_oben_4": {
+   "x": 480,
+   "y": 5472,
+   "w": 160,
+   "h": 160
+  },
+  "buggy_oben_1": {
+   "x": 0,
+   "y": 5632,
+   "w": 160,
+   "h": 160
+  },
+  "buggy_oben_2": {
+   "x": 160,
+   "y": 5632,
+   "w": 160,
+   "h": 160
+  },
+  "buggy_oben_3": {
+   "x": 320,
+   "y": 5632,
+   "w": 160,
+   "h": 160
+  },
+  "buggy_oben_4": {
+   "x": 480,
+   "y": 5632,
+   "w": 160,
+   "h": 160
+  }
+ },
+ "animationen": {
+  "humvee": {
+   "bilder": [
+    "humvee_oben_1",
+    "humvee_oben_2",
+    "humvee_oben_3",
+    "humvee_oben_4"
+   ],
+   "fps": 12,
+   "schleife": true,
+   "anker": {
+    "x": 96,
+    "y": 96
+   }
+  },
+  "panzer": {
+   "bilder": [
+    "panzer_oben_1",
+    "panzer_oben_2",
+    "panzer_oben_3",
+    "panzer_oben_4"
+   ],
+   "fps": 10,
+   "schleife": true,
+   "anker": {
+    "x": 128,
+    "y": 128
+   }
+  },
+  "schuetzenpanzer": {
+   "bilder": [
+    "schuetzenpanzer_oben_1",
+    "schuetzenpanzer_oben_2",
+    "schuetzenpanzer_oben_3",
+    "schuetzenpanzer_oben_4"
+   ],
+   "fps": 10,
+   "schleife": true,
+   "anker": {
+    "x": 112,
+    "y": 112
+   }
+  },
+  "ratte": {
+   "bilder": [
+    "ratte_oben_1",
+    "ratte_oben_2",
+    "ratte_oben_3",
+    "ratte_oben_4"
+   ],
+   "fps": 8,
+   "schleife": true,
+   "anker": {
+    "x": 216,
+    "y": 216
+   }
+  },
+  "ratte_feuer": {
+   "bilder": [
+    "ratte_feuer_oben_1",
+    "ratte_feuer_oben_2",
+    "ratte_feuer_oben_3"
+   ],
+   "fps": 8,
+   "schleife": true,
+   "anker": {
+    "x": 216,
+    "y": 216
+   },
+   "muendung": {
+    "x": 401.9,
+    "y": 216
+   }
+  },
+  "pickup": {
+   "bilder": [
+    "pickup_oben_1",
+    "pickup_oben_2",
+    "pickup_oben_3",
+    "pickup_oben_4"
+   ],
+   "fps": 12,
+   "schleife": true,
+   "anker": {
+    "x": 96,
+    "y": 96
+   }
+  },
+  "dschungelkoenig": {
+   "bilder": [
+    "dschungelkoenig_oben_1",
+    "dschungelkoenig_oben_2",
+    "dschungelkoenig_oben_3",
+    "dschungelkoenig_oben_4"
+   ],
+   "fps": 8,
+   "schleife": true,
+   "anker": {
+    "x": 216,
+    "y": 216
+   }
+  },
+  "pistenraupe": {
+   "bilder": [
+    "pistenraupe_oben_1",
+    "pistenraupe_oben_2",
+    "pistenraupe_oben_3",
+    "pistenraupe_oben_4"
+   ],
+   "fps": 10,
+   "schleife": true,
+   "anker": {
+    "x": 128,
+    "y": 128
+   }
+  },
+  "lawinenbrecher": {
+   "bilder": [
+    "lawinenbrecher_oben_1",
+    "lawinenbrecher_oben_2",
+    "lawinenbrecher_oben_3",
+    "lawinenbrecher_oben_4"
+   ],
+   "fps": 8,
+   "schleife": true,
+   "anker": {
+    "x": 216,
+    "y": 216
+   }
+  },
+  "amphibienfahrzeug": {
+   "bilder": [
+    "amphibienfahrzeug_oben_1",
+    "amphibienfahrzeug_oben_2",
+    "amphibienfahrzeug_oben_3",
+    "amphibienfahrzeug_oben_4"
+   ],
+   "fps": 10,
+   "schleife": true,
+   "anker": {
+    "x": 112,
+    "y": 112
+   }
+  },
+  "hovercraft": {
+   "bilder": [
+    "hovercraft_oben_1",
+    "hovercraft_oben_2",
+    "hovercraft_oben_3",
+    "hovercraft_oben_4"
+   ],
+   "fps": 8,
+   "schleife": true,
+   "anker": {
+    "x": 128,
+    "y": 128
+   }
+  },
+  "seeschlange": {
+   "bilder": [
+    "seeschlange_oben_1",
+    "seeschlange_oben_2",
+    "seeschlange_oben_3",
+    "seeschlange_oben_4"
+   ],
+   "fps": 8,
+   "schleife": true,
+   "anker": {
+    "x": 216,
+    "y": 216
+   }
+  },
+  "raeuberhauptmann": {
+   "bilder": [
+    "raeuberhauptmann_oben_1",
+    "raeuberhauptmann_oben_2",
+    "raeuberhauptmann_oben_3",
+    "raeuberhauptmann_oben_4"
+   ],
+   "fps": 10,
+   "schleife": true,
+   "anker": {
+    "x": 128,
+    "y": 128
+   }
+  },
+  "sandsturmkhan": {
+   "bilder": [
+    "sandsturmkhan_oben_1",
+    "sandsturmkhan_oben_2",
+    "sandsturmkhan_oben_3",
+    "sandsturmkhan_oben_4"
+   ],
+   "fps": 6,
+   "schleife": true,
+   "anker": {
+    "x": 216,
+    "y": 216
+   }
+  },
+  "kolbenfresser": {
+   "bilder": [
+    "kolbenfresser_oben_1",
+    "kolbenfresser_oben_2",
+    "kolbenfresser_oben_3",
+    "kolbenfresser_oben_4"
+   ],
+   "fps": 8,
+   "schleife": true,
+   "anker": {
+    "x": 216,
+    "y": 216
+   }
+  },
+  "kolbenfresser_feuer": {
+   "bilder": [
+    "kolbenfresser_feuer_oben_1",
+    "kolbenfresser_feuer_oben_2",
+    "kolbenfresser_feuer_oben_3"
+   ],
+   "fps": 8,
+   "schleife": true,
+   "anker": {
+    "x": 216,
+    "y": 216
+   },
+   "muendung": {
+    "x": 401.9,
+    "y": 216
+   }
+  },
+  "motorrad": {
+   "bilder": [
+    "motorrad_oben_1",
+    "motorrad_oben_2",
+    "motorrad_oben_3",
+    "motorrad_oben_4"
+   ],
+   "fps": 14,
+   "schleife": true,
+   "anker": {
+    "x": 80,
+    "y": 80
+   }
+  },
+  "schneemobil": {
+   "bilder": [
+    "schneemobil_oben_1",
+    "schneemobil_oben_2",
+    "schneemobil_oben_3",
+    "schneemobil_oben_4"
+   ],
+   "fps": 12,
+   "schleife": true,
+   "anker": {
+    "x": 80,
+    "y": 80
+   }
+  },
+  "buggy": {
+   "bilder": [
+    "buggy_oben_1",
+    "buggy_oben_2",
+    "buggy_oben_3",
+    "buggy_oben_4"
+   ],
+   "fps": 14,
+   "schleife": true,
+   "anker": {
+    "x": 80,
+    "y": 80
+   }
+  }
+ },
+ "size": {
+  "w": 1728,
+  "h": 5792
+ }
+}

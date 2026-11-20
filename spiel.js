@@ -1,7 +1,7 @@
 // Maiskolbistan Militär-Defense – Testkarte 1 (Westkolbistan)
 // Reines JavaScript, kein Bau-Schritt. Grafiken aus dem Maiskolbistan-Info-Repo (seiten/td-ranger-sprites).
 'use strict';
-const VERSION = '2026-11-20-18';   // bei jedem Update hochzählen (auch in index.html)
+const VERSION = '2026-11-20-19';   // bei jedem Update hochzählen (auch in index.html)
 
 (() => {
   const W = 1140, H = 810, MITTE = 570;
@@ -462,13 +462,14 @@ const VERSION = '2026-11-20-18';   // bei jedem Update hochzählen (auch in inde
   async function laden() {
     const P1 = ['artillerie', 'raketen', 'flamme', 'arzt', 'laser'];
     const p1 = await Promise.all(P1.flatMap((t) => [bild(`bilder/${t}_draufsicht@2x.png`), json(`daten/${t}_draufsicht.json`)]));
+    const [gegnerObenImg, gegnerOben] = await Promise.all([bild('bilder/gegner_oben.png'), json('daten/gegner_oben.json')]);   // fahrende Gegner von oben
     const [fahrTop, fahrJ, fabrikImg] = await Promise.all([bild('bilder/fahrzeug_draufsicht@2x.png'), json('daten/fahrzeug_draufsicht.json'), bild('bilder/fabrik@2x.png')]);
     const [depot, jugTop, railTop, jugJ, railJ, rangerTop, sniperTop, gegnerImg, effImg, gegnerAtlas, effAtlas, rangerJ, sniperJ, karten] = await Promise.all([
       bild('bilder/depot.png'), bild('bilder/juggernaut_draufsicht@2x.png'), bild('bilder/railgun_draufsicht@2x.png'), json('daten/juggernaut_draufsicht.json'), json('daten/railgun_draufsicht.json'), bild('bilder/ranger_draufsicht@2x.png'), bild('bilder/scharfschuetze_draufsicht@2x.png'),
       bild('bilder/gegner_spritesheet.png'), bild('bilder/effekte_spritesheet@2x.png'),
       json('daten/gegner_atlas.json'), json('daten/effekte_atlas.json'), json('daten/ranger_draufsicht.json'), json('daten/scharfschuetze_draufsicht.json'), json('daten/karten.json')
     ]);
-    A = { top: {}, fahrTop, fabrik: fahrJ, fabrikImg, depot, jugTop, railTop, juggernaut: jugJ, railgun: railJ, rangerTop, sniperTop, gegnerImg, effImg, gegnerAtlas, effAtlas, ranger: rangerJ, sniper: sniperJ, karten: karten.karten, bilder: {} };
+    A = { top: {}, fahrTop, fabrik: fahrJ, fabrikImg, depot, jugTop, railTop, juggernaut: jugJ, railgun: railJ, rangerTop, sniperTop, gegnerImg, effImg, gegnerAtlas, effAtlas, gegnerObenImg, gegnerOben, ranger: rangerJ, sniper: sniperJ, karten: karten.karten, bilder: {} };
     P1.forEach((t, i) => { A.top[t] = p1[i * 2]; A[t] = p1[i * 2 + 1]; });
     if (typeof P.stufe !== 'number') { P.stufe = 1; P.xp = 0; }
     if (!P.rekord) P.rekord = {};
@@ -1009,8 +1010,10 @@ const VERSION = '2026-11-20-18';   // bei jedem Update hochzählen (auch in inde
 
   function bossSchuss(g) {
     const def = GEGNER[g.typ], z = g.bossZiel; if (!z) return;
-    const mx = g.x + (380 - 192) * def.gr * (g.links ? -1 : 1), my = g.y + (62 - 206) * def.gr;
-    effekt('muendungsfeuer', mx, my, g.links ? Math.PI : 0, 1.4);
+    const ao = A.gegnerOben.animationen[g.typ + '_feuer'];
+    let mx = g.x + (380 - 192) * def.gr * (g.links ? -1 : 1), my = g.y + (62 - 206) * def.gr, mw = g.links ? Math.PI : 0;
+    if (ao && ao.muendung) { const r = g.rot || 0, lx = (ao.muendung.x - ao.anker.x) * def.gr, ly = (ao.muendung.y - ao.anker.y) * def.gr; mx = g.x + lx * Math.cos(r) - ly * Math.sin(r); my = g.y + lx * Math.sin(r) + ly * Math.cos(r); mw = r; }
+    effekt('muendungsfeuer', mx, my, mw, 1.4);
     S.geschosse.push({ art: 'granate_gross', x: mx, y: my, sx: mx, sy: my, tx: z.x, ty: z.y, flug: 0, dauer: 1.0, wurf: true, boss: true, ziel: z });
   }
 
@@ -1088,6 +1091,10 @@ const VERSION = '2026-11-20-18';   // bei jedem Update hochzählen (auch in inde
       }
       if (!(def.betaeuben && g.stopp > 0)) { g.d += def.tempo * (g.eilBis > S.zeit ? 1.4 : 1) * (g.bremseBis > S.zeit ? 0.7 : 1) * dt; g.t += dt; }
       const p = wegPos(g.w, g.d); g.x = p.x; g.y = p.y; if (Math.abs(p.dx) > 0.3) g.links = p.dx < 0;
+      if (p.dx || p.dy) {   // Fahrtrichtung für Fahrzeuge (von oben gezeichnet): weich nachdrehen
+        const ziel = Math.atan2(p.dy, p.dx);
+        if (g.rot === undefined) g.rot = ziel; else { let d = ziel - g.rot; d = Math.atan2(Math.sin(d), Math.cos(d)); g.rot += d * Math.min(1, dt * 6); }
+      }
       if (g.brennt > 0) { g.brennt -= dt; schaden(g, (g.brennDps || 4) * dt, 'feuer'); if (g.brennt <= 0) { g.brennDps = 0; g.schwaeche = 0; } }
       if (g.d >= wege[g.w].gesamt) {
         g.hp = 0; g.durch = true; S.leben -= def.schaden;
@@ -1188,11 +1195,16 @@ const VERSION = '2026-11-20-18';   // bei jedem Update hochzählen (auch in inde
     const def = GEGNER[g.typ], feuer = def.betaeuben && g.feuerT < 0.375;
     const an = A.gegnerAtlas.animationen[feuer ? g.typ + '_feuer' : g.typ];
     const f = A.gegnerAtlas.frames[an.bilder[feuer ? Math.min(2, Math.floor(g.feuerT * 8)) : Math.floor(g.t * an.fps) % an.bilder.length]];
+    const ao = A.gegnerOben.animationen[feuer ? g.typ + '_feuer' : g.typ];
     ctx.save(); ctx.globalAlpha = abgetaucht(g) ? 0.25 : getarnt(g) ? 0.45 : 1;
-    frameZeichnen(A.gegnerImg, f, g.x, g.y, (g.links ? -1 : 1) * def.gr, def.gr, an.anker.x, an.anker.y);
+    if (ao) {   // Fahrzeug: von oben, dreht sich mit dem Weg
+      const fo = A.gegnerOben.frames[ao.bilder[feuer ? Math.min(2, Math.floor(g.feuerT * 8)) : Math.floor(g.t * ao.fps) % ao.bilder.length]];
+      ctx.translate(g.x, g.y); ctx.rotate(g.rot || 0); ctx.scale(def.gr, def.gr);
+      ctx.drawImage(A.gegnerObenImg, fo.x, fo.y, fo.w, fo.h, -ao.anker.x, -ao.anker.y, fo.w, fo.h);
+    } else frameZeichnen(A.gegnerImg, f, g.x, g.y, (g.links ? -1 : 1) * def.gr, def.gr, an.anker.x, an.anker.y);
     ctx.restore();
     if (g.hp < g.max && !def.boss) {
-      const bw = Math.max(36, Math.min(80, f.w * def.gr * 0.45)), y = g.y - f.h * def.gr * 0.85;
+      const bw = Math.max(36, Math.min(80, f.w * def.gr * 0.45)), y = ao ? g.y - f.w * def.gr * 0.3 - 8 : g.y - f.h * def.gr * 0.85;
       ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fillRect(g.x - bw / 2 - 1, y - 1, bw + 2, 6);
       ctx.fillStyle = g.hp / g.max > 0.4 ? '#7CD992' : '#FF6B5E'; ctx.fillRect(g.x - bw / 2, y, bw * Math.max(0, g.hp / g.max), 4);
     }
